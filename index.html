@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -101,7 +101,7 @@
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 mb-2">
                             Passo 1
                         </span>
-                        <h2 id="titulo-formulario-inicial" class="text-lg font-bold text-slate-900">Iniciar Novo Ciclo de Teste</h2>
+                        <h2 class="text-lg font-bold text-slate-900">Iniciar Novo Ciclo de Teste</h2>
                         <p class="text-slate-500 text-xs">Defina os parâmetros iniciais da aplicação de partida.</p>
                     </div>
 
@@ -230,13 +230,10 @@
                             <div id="inicial-preview-container" class="grid grid-cols-5 gap-2 mt-4"></div>
                         </div>
 
-                        <!-- Botão Dinâmico de Ação -->
-                        <div id="botoes-acao-inicial-container" class="space-y-2 pt-2">
-                            <button type="submit" id="btn-submit-inicial" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-circle-check"></i>
-                                <span>Iniciar Ciclo de Teste</span>
-                            </button>
-                        </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-2">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Iniciar Ciclo de Teste
+                        </button>
                     </form>
                 </div>
 
@@ -395,23 +392,6 @@
         </div>
     </main>
 
-    <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO (PERSONALIZADO) -->
-    <div id="confirmacao-exclusao-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 mx-4 transform transition-all text-center space-y-4">
-            <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto text-xl">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <div>
-                <h3 class="text-slate-900 font-extrabold text-base">Confirmar Exclusão</h3>
-                <p class="text-slate-500 text-xs mt-1">Deseja realmente excluir este teste completo e todas as suas semanas de evolução? Esta ação é irreversível.</p>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="fecharModalExclusao()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs transition-colors">Não, Cancelar</button>
-                <button id="btn-confirmar-exclusao" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs transition-colors">Sim, Excluir</button>
-            </div>
-        </div>
-    </div>
-
     <!-- MODAL DE VEREDITO / CONCLUSÃO DO TESTE -->
     <div id="veredicto-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 mx-4 transform transition-all">
@@ -459,36 +439,29 @@
         let testes = [];
         let fotosIniciaisCarregadas = [];
         let fotosSemanaisCarregadas = [];
-        let idTesteSendoEditado = null;
-        let idTesteParaApagar = null;
 
         // Inicialização
         window.addEventListener('DOMContentLoaded', () => {
             inicializarCampos();
             carregarDoLocalStorage();
             renderListaTestes();
-
-            // Configurar escuta do botão de confirmação de exclusão
-            document.getElementById('btn-confirmar-exclusao').addEventListener('click', confirmarExclusao);
         });
 
         function inicializarCampos() {
-            // Gerar lista de blocos (1 a 18) caso ainda não gerada
+            // Gerar lista de blocos (1 a 18)
             const blocoSelect = document.getElementById('inicial-bloco-select');
-            if (blocoSelect.options.length <= 2) {
-                for (let i = 1; i <= 18; i++) {
-                    const opt = document.createElement('option');
-                    opt.value = i < 10 ? `Bloco 0${i}` : `Bloco ${i}`;
-                    opt.textContent = i < 10 ? `Bloco 0${i}` : `Bloco ${i}`;
-                    blocoSelect.insertBefore(opt, blocoSelect.lastElementChild);
-                }
+            for (let i = 1; i <= 18; i++) {
+                const opt = document.createElement('option');
+                opt.value = i < 10 ? `Bloco 0${i}` : `Bloco ${i}`;
+                opt.textContent = i < 10 ? `Bloco 0${i}` : `Bloco ${i}`;
+                blocoSelect.insertBefore(opt, blocoSelect.lastElementChild);
             }
 
             // Hora atual automática no formulário inicial
             const agora = new Date();
             const horas = String(agora.getHours()).padStart(2, '0');
             const minutos = String(agora.getMinutes()).padStart(2, '0');
-            document.getElementById('inicial-horario').value = `${hours}:${minutos}`;
+            document.getElementById('inicial-horario').value = `${horas}:${minutos}`;
 
             // Data atual automática
             const hoje = agora.toISOString().substring(0, 10);
@@ -652,7 +625,7 @@
             }
         }
 
-        // SALVAR DADOS INICIAIS (ABA 1) - SUPORTA CRIAÇÃO E EDIÇÃO
+        // SALVAR DADOS INICIAIS (ABA 1)
         function salvarDadosIniciais(e) {
             e.preventDefault();
 
@@ -673,54 +646,30 @@
                 return;
             }
 
-            if (idTesteSendoEditado) {
-                // Modo: Edição de registro existente
-                const idx = testes.findIndex(x => x.id === idTesteSendoEditado);
-                if (idx !== -1) {
-                    testes[idx].bloco = bloco;
-                    testes[idx].data = document.getElementById('inicial-data').value;
-                    testes[idx].semana = document.getElementById('inicial-semana').value;
-                    testes[idx].horario = document.getElementById('inicial-horario').value;
-                    testes[idx].cultura = cultura;
-                    testes[idx].variedade = variedade;
-                    testes[idx].produto = document.getElementById('inicial-produto').value;
-                    testes[idx].totalAplicado = document.getElementById('inicial-total-aplicado').value;
-                    testes[idx].unidade = unidade;
-                    testes[idx].totalCanteiros = document.getElementById('inicial-total-canteiros').value;
-                    testes[idx].totalMudas = document.getElementById('inicial-total-mudas').value;
-                    testes[idx].fotos = [...fotosIniciaisCarregadas];
+            const novoTeste = {
+                id: 'teste_' + Date.now(),
+                bloco,
+                data: document.getElementById('inicial-data').value,
+                semana: document.getElementById('inicial-semana').value,
+                horario: document.getElementById('inicial-horario').value,
+                cultura,
+                variedade,
+                produto: document.getElementById('inicial-produto').value,
+                totalAplicado: document.getElementById('inicial-total-aplicado').value,
+                unidade,
+                totalCanteiros: document.getElementById('inicial-total-canteiros').value,
+                totalMudas: document.getElementById('inicial-total-mudas').value,
+                fotos: [...fotosIniciaisCarregadas],
+                acompanhamentos: [],
+                status: 'Ativo', // Ativo, Concluído
+                veredicto: null, // Descrição técnica final
+                oculto: false // Propriedade do "olho"
+            };
 
-                    showToast("Sucesso!", "O teste foi atualizado com sucesso no histórico.");
-                }
-                resetarFormInicialEdicao();
-            } else {
-                // Modo: Criação de novo registro
-                const novoTeste = {
-                    id: 'teste_' + Date.now(),
-                    bloco,
-                    data: document.getElementById('inicial-data').value,
-                    semana: document.getElementById('inicial-semana').value,
-                    horario: document.getElementById('inicial-horario').value,
-                    cultura,
-                    variedade,
-                    produto: document.getElementById('inicial-produto').value,
-                    totalAplicado: document.getElementById('inicial-total-aplicado').value,
-                    unidade,
-                    totalCanteiros: document.getElementById('inicial-total-canteiros').value,
-                    totalMudas: document.getElementById('inicial-total-mudas').value,
-                    fotos: [...fotosIniciaisCarregadas],
-                    acompanhamentos: [],
-                    status: 'Ativo', // Ativo, Concluído
-                    veredicto: null, // Descrição técnica final
-                    oculto: false // Propriedade do "olho"
-                };
-
-                testes.unshift(novoTeste);
-                showToast("Sucesso!", "Novo teste iniciado com sucesso e guardado no histórico.");
-            }
-
+            testes.unshift(novoTeste);
             salvarNoLocalStorage();
             renderListaTestes();
+            showToast("Sucesso!", "Novo teste iniciado com sucesso e guardado no histórico.");
             
             // Resetar formulário
             document.getElementById('cadastro-inicial-form').reset();
@@ -729,150 +678,17 @@
             inicializarCampos();
         }
 
-        // EDITAR TESTE INICIAL (CARREGAR DADOS NO FORMULÁRIO)
-        function editarTeste(id) {
-            const t = testes.find(x => x.id === id);
-            if (!t) return;
-
-            idTesteSendoEditado = id;
-            switchTab('inicial');
-
-            // Preencher Bloco
-            const blocoSelect = document.getElementById('inicial-bloco-select');
-            const isPresetBloco = Array.from(blocoSelect.options).some(opt => opt.value === t.bloco);
-            if (isPresetBloco) {
-                blocoSelect.value = t.bloco;
-                document.getElementById('inicial-bloco-outros-container').classList.add('hidden');
-                document.getElementById('inicial-bloco-outros').value = '';
-            } else {
-                blocoSelect.value = 'Outros';
-                document.getElementById('inicial-bloco-outros-container').classList.remove('hidden');
-                document.getElementById('inicial-bloco-outros').value = t.bloco;
-            }
-
-            // Data, Semana, Horário
-            document.getElementById('inicial-data').value = t.data;
-            document.getElementById('inicial-semana').value = t.semana;
-            document.getElementById('inicial-horario').value = t.horario;
-
-            // Cultura
-            const culturaSelect = document.getElementById('inicial-cultura-select');
-            const isPresetCultura = Array.from(culturaSelect.options).some(opt => opt.value === t.cultura);
-            if (isPresetCultura) {
-                culturaSelect.value = t.cultura;
-                document.getElementById('inicial-cultura-outros-container').classList.add('hidden');
-                document.getElementById('inicial-cultura-outros').value = '';
-            } else {
-                culturaSelect.value = 'Outros';
-                document.getElementById('inicial-cultura-outros-container').classList.remove('hidden');
-                document.getElementById('inicial-cultura-outros').value = t.cultura;
-            }
-
-            // Variedade
-            const variedadeSelect = document.getElementById('inicial-variedade-select');
-            const isPresetVariedade = Array.from(variedadeSelect.options).some(opt => opt.value === t.variedade);
-            if (isPresetVariedade) {
-                variedadeSelect.value = t.variedade;
-                document.getElementById('inicial-variedade-outros-container').classList.add('hidden');
-                document.getElementById('inicial-variedade-outros').value = '';
-            } else {
-                variedadeSelect.value = 'Outros';
-                document.getElementById('inicial-variedade-outros-container').classList.remove('hidden');
-                document.getElementById('inicial-variedade-outros').value = t.variedade;
-            }
-
-            // Produto e Dose
-            document.getElementById('inicial-produto').value = t.produto;
-            document.getElementById('inicial-total-aplicado').value = t.totalAplicado;
-
-            // Unidade
-            const unidadeSelect = document.getElementById('inicial-unidade-select');
-            const isPresetUnidade = Array.from(unidadeSelect.options).some(opt => opt.value === t.unidade);
-            if (isPresetUnidade) {
-                unidadeSelect.value = t.unidade;
-                document.getElementById('inicial-unidade-outros-container').classList.add('hidden');
-                document.getElementById('inicial-unidade-outros').value = '';
-            } else {
-                unidadeSelect.value = 'Outros';
-                document.getElementById('inicial-unidade-outros-container').classList.remove('hidden');
-                document.getElementById('inicial-unidade-outros').value = t.unidade;
-            }
-
-            // Canteiros e Mudas
-            document.getElementById('inicial-total-canteiros').value = t.totalCanteiros;
-            document.getElementById('inicial-total-mudas').value = t.totalMudas;
-
-            // Fotos
-            fotosIniciaisCarregadas = [...t.fotos];
-            const container = document.getElementById('inicial-preview-container');
-            container.innerHTML = '';
-            fotosIniciaisCarregadas.forEach((base64Data, index) => {
-                const div = document.createElement('div');
-                div.className = "relative aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200 group";
-                div.innerHTML = `
-                    <img src="${base64Data}" class="w-full h-full object-cover">
-                    <button type="button" onclick="removerFotoPrevia('inicial-preview-container', ${index})" class="absolute top-1 right-1 w-5 h-5 bg-rose-600 text-white text-[10px] rounded-full flex items-center justify-center shadow hover:bg-rose-700 transition-colors">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                `;
-                container.appendChild(div);
-            });
-
-            // Remover obrigatoriedade das fotos para evitar erro ao atualizar
-            document.getElementById('inicial-fotos').removeAttribute('required');
-
-            // Ajustar Título e Botão de Ação do formulário
-            document.getElementById('titulo-formulario-inicial').innerText = "Editar Parâmetros do Ciclo";
-            const btnSubmit = document.getElementById('btn-submit-inicial');
-            btnSubmit.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2";
-            btnSubmit.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> <span>Atualizar Dados do Teste</span>`;
-
-            // Adicionar Botão de Cancelar se não existir
-            let btnCancelar = document.getElementById('btn-cancelar-edicao-inicial');
-            if (!btnCancelar) {
-                btnCancelar = document.createElement('button');
-                btnCancelar.type = 'button';
-                btnCancelar.id = 'btn-cancelar-edicao-inicial';
-                btnCancelar.className = "w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-4 rounded-xl text-xs transition-colors text-center";
-                btnCancelar.innerText = "Cancelar Edição";
-                btnCancelar.onclick = resetarFormInicialEdicao;
-                document.getElementById('botoes-acao-inicial-container').appendChild(btnCancelar);
-            }
-
-            showToast("Modo de Edição Ativo", "Altere as informações acima e salve para atualizar o histórico.", "warning");
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // RESETAR MODO EDIÇÃO PARA CRIAÇÃO
-        function resetarFormInicialEdicao() {
-            idTesteSendoEditado = null;
-            document.getElementById('titulo-formulario-inicial').innerText = "Iniciar Novo Ciclo de Teste";
-            
-            const btnSubmit = document.getElementById('btn-submit-inicial');
-            btnSubmit.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2";
-            btnSubmit.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>Iniciar Ciclo de Teste</span>`;
-
-            const btnCancelar = document.getElementById('btn-cancelar-edicao-inicial');
-            if (btnCancelar) btnCancelar.remove();
-
-            document.getElementById('cadastro-inicial-form').reset();
-            document.getElementById('inicial-preview-container').innerHTML = '';
-            fotosIniciaisCarregadas = [];
-            document.getElementById('inicial-fotos').setAttribute('required', 'true');
-            inicializarCampos();
-        }
-
         // AUTO-PREENCHER CAMPOS DO TESTE VINCULADO (ABA 2)
         function autoPreencherTesteAtivo() {
             const vinculoId = document.getElementById('acomp-teste-vinculo').value;
             const blocoView = document.getElementById('acomp-view-bloco');
             const culturaView = document.getElementById('acomp-view-cultura');
-            const variedadetView = document.getElementById('acomp-view-variedade');
+            const variedadeView = document.getElementById('acomp-view-variedade');
 
             if (!vinculoId) {
                 blocoView.textContent = '-';
                 culturaView.textContent = '-';
-                variedadetView.textContent = '-';
+                variedadeView.textContent = '-';
                 return;
             }
 
@@ -880,7 +696,7 @@
             if (t) {
                 blocoView.textContent = t.bloco;
                 culturaView.textContent = t.cultura;
-                variedadetView.textContent = t.variedade;
+                variedadeView.textContent = t.variedade;
             }
         }
 
@@ -961,42 +777,23 @@
             }
         }
 
-        // APAGAR UM TESTE INTEIRO (ACIONA MODAL DE CONFIRMAÇÃO)
+        // APAGAR UM TESTE INTEIRO
         function apagarTeste(id) {
-            idTesteParaApagar = id;
-            document.getElementById('confirmacao-exclusao-modal').classList.remove('hidden');
-        }
-
-        function fecharModalExclusao() {
-            document.getElementById('confirmacao-exclusao-modal').classList.add('hidden');
-            idTesteParaApagar = null;
-        }
-
-        function confirmarExclusao() {
-            if (idTesteParaApagar) {
-                testes = testes.filter(x => x.id !== idTesteParaApagar);
+            // Confirmando através de uma caixa customizada integrada ao fluxo
+            if (confirm("Deseja realmente excluir este teste completo e todas as suas semanas de evolução? Esta ação é irreversível.")) {
+                testes = testes.filter(x => x.id !== id);
                 salvarNoLocalStorage();
                 renderListaTestes();
-                carregarVinculosTeste(); // Atualizar vínculos dropdown também
                 showToast("Excluído", "O registro do teste foi removido completamente do histórico.", "warning");
-                
-                // Se o teste apagado estiver em edição, resetar o formulário
-                if (idTesteSendoEditado === idTesteParaApagar) {
-                    resetarFormInicialEdicao();
-                }
             }
-            fecharModalExclusao();
         }
 
         // LIMPAR TODO O HISTÓRICO
         function limparTudo() {
             if (confirm("AVISO: Esta ação irá apagar TODOS os testes registrados e limpar permanentemente a memória. Confirmar?")) {
                 testes = [];
-                idTesteSendoEditado = null;
                 salvarNoLocalStorage();
                 renderListaTestes();
-                carregarVinculosTeste();
-                resetarFormInicialEdicao();
                 showToast("Painel Limpo", "Toda a memória do aplicativo foi reiniciada.", "error");
             }
         }
@@ -1061,6 +858,8 @@
                     ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase rounded-full border border-emerald-100 flex items-center gap-1"><i class="fa-solid fa-lock"></i> Concluído</span>`
                     : `<span class="px-2.5 py-1 bg-amber-50 text-amber-700 text-[10px] font-bold uppercase rounded-full border border-amber-100 flex items-center gap-1"><i class="fa-solid fa-arrows-spin animate-spin"></i> Em Curso</span>`;
 
+                const acompContagem = t.acompanhamentos.length;
+
                 card.innerHTML = `
                     <div class="p-5 border-b border-slate-50 flex items-center justify-between gap-4 bg-slate-50/50">
                         <div class="flex items-center gap-3">
@@ -1077,11 +876,6 @@
                         </div>
                         <div class="flex items-center gap-2">
                             ${statusBadge}
-                            <!-- Botão de Editar (Lápis) -->
-                            <button onclick="editarTeste('${t.id}')" class="w-8 h-8 rounded-lg flex items-center justify-center text-amber-500 hover:bg-amber-50 transition-colors" title="Editar Teste">
-                                <i class="fa-solid fa-pen text-sm"></i>
-                            </button>
-                            <!-- Botão de Apagar (Lixeira) -->
                             <button onclick="apagarTeste('${t.id}')" class="w-8 h-8 rounded-lg flex items-center justify-center text-rose-500 hover:bg-rose-50 transition-colors" title="Deletar Teste">
                                 <i class="fa-solid fa-trash-can text-sm"></i>
                             </button>
@@ -1313,6 +1107,7 @@
 
             // PÁGINAS SEGUINTES: SEÇÃO DE ACOMPANHAMENTOS SEMANAIS
             if (t.acompanhamentos.length > 0) {
+                // Dividir acompanhamentos em blocos para evitar estourar a página (por exemplo, 2 por página)
                 const itemsPorPagina = 2;
                 for (let i = 0; i < t.acompanhamentos.length; i += itemsPorPagina) {
                     const fatia = t.acompanhamentos.slice(i, i + itemsPorPagina);
@@ -1425,4 +1220,4 @@
         }
     </script>
 </body>
-</html>
+</html>     
