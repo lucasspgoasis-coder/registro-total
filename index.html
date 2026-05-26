@@ -4,630 +4,543 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Acompanhamento de Teste - Fazenda Oásis</title>
-    <!-- Tailwind CSS para Estilização Premium -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome para ícones -->
+    <!-- FontAwesome para Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Biblioteca HTML2PDF para exportação de PDF de alta fidelidade -->
+    <!-- html2pdf.js para Exportação de PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;850&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        oasis: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#16a34a',
+                            600: '#15803d',
+                            700: '#166534',
+                            800: '#14532d',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-        .modal-open {
-            overflow: hidden;
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
         }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Configurações específicas para garantir quebras de página perfeitas no PDF */
         .pdf-page {
             page-break-after: always;
-            box-sizing: border-box;
+            position: relative;
         }
         .pdf-page:last-child {
             page-break-after: avoid;
         }
-        /* Custom scrollbar para visual moderno */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased">
 
-    <!-- Header principal com Logotipo Oficial -->
-    <header class="bg-emerald-800 text-white shadow-md sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm"></div>
+
+    <!-- MAIN HEADER -->
+    <header class="bg-white border-b border-slate-100 shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-                <div class="bg-transparent flex items-center justify-center">
-                    <!-- Logotipo Oficial sem contornos e com tamanho considerável -->
-                    <img id="logo-header" src="https://i.imgur.com/wEozr34.png" alt="Fazenda Oásis Logo" 
-                         class="h-20 w-auto object-contain" 
-                         onerror="this.onerror=null; this.src='https://placehold.co/180x90/ffffff/065f46?text=Fazenda+Oasis';">
+                <!-- LOGO SEM CONTORNO -->
+                <div class="w-20 h-20 flex items-center justify-center overflow-hidden bg-transparent">
+                    <img src="https://i.imgur.com/wEozr34.png" alt="Fazenda Oásis Logo" class="max-w-full max-h-full object-contain block border-0 ring-0 outline-none" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80&w=100';">
                 </div>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-black tracking-tight">Registro de Acompanhamento de Teste</h1>
-                    <p class="text-emerald-200 text-sm font-semibold flex items-center gap-1">
-                        <i class="fa-solid fa-seedling"></i> Fazenda Oásis • Ciclos Completos
+                    <h1 class="text-2xl font-black text-slate-900 tracking-tight">Registro de Acompanhamento de Teste</h1>
+                    <p class="text-emerald-600 font-semibold tracking-wide uppercase text-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-mountain-sun"></i> Fazenda Oásis
                     </p>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <span id="current-date" class="text-xs bg-emerald-900/60 px-4 py-2 rounded-full text-emerald-100 font-bold border border-emerald-700/50"></span>
+            
+            <!-- NAVEGAÇÃO SUPERIOR / ABAS -->
+            <div class="flex bg-slate-100 p-1.5 rounded-xl border border-slate-200 w-full sm:w-auto">
+                <button onclick="switchTab('inicial')" id="btn-tab-inicial" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-white text-emerald-700 shadow-sm">
+                    <i class="fa-solid fa-seedling"></i>
+                    Dados Iniciais
+                </button>
+                <button onclick="switchTab('acompanhamento')" id="btn-tab-acompanhamento" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    Acompanhamento Semanal
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- Conteúdo Principal -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Coluna da Esquerda: Formulários de Entrada (Lg: Col-5) -->
-        <section class="lg:col-span-5 space-y-6">
+    <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <!-- Botões Superiores para escolher o tipo de registro -->
-            <div class="grid grid-cols-2 gap-2 bg-slate-200 p-1.5 rounded-2xl border border-slate-300/60">
-                <button onclick="switchTab('inicial')" id="tab-inicial-btn"
-                        class="py-3 px-4 rounded-xl text-xs font-extrabold transition-all flex flex-col sm:flex-row items-center justify-center gap-2 shadow-sm text-center bg-white text-emerald-950">
-                    <i class="fa-solid fa-file-invoice text-base"></i>
-                    <span>Dados Iniciais</span>
-                </button>
-                <button onclick="switchTab('semanal')" id="tab-semanal-btn"
-                        class="py-3 px-4 rounded-xl text-xs font-extrabold transition-all flex flex-col sm:flex-row items-center justify-center gap-2 text-center text-slate-600 hover:text-slate-900">
-                    <i class="fa-solid fa-calendar-check text-base"></i>
-                    <span>Acompanhamento</span>
-                </button>
-            </div>
+            <!-- FORMULÁRIOS DE CADASTRO (COLUNA ESQUERDA - 5/12 COLS) -->
+            <section class="lg:col-span-5 space-y-6">
+                
+                <!-- ABA 1: FORMULÁRIO DE DADOS INICIAIS -->
+                <div id="form-inicial" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-6">
+                    <div class="border-b border-slate-100 pb-4">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 mb-2">
+                            Passo 1
+                        </span>
+                        <h2 id="titulo-formulario-inicial" class="text-lg font-bold text-slate-900">Iniciar Novo Ciclo de Teste</h2>
+                        <p class="text-slate-500 text-xs">Defina os parâmetros iniciais da aplicação de partida.</p>
+                    </div>
 
-            <!-- CARD FORMULÁRIO 1: DADOS INICIAIS DE APLICAÇÃO -->
-            <div id="form-inicial-card" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                    <h2 id="form-inicial-title" class="text-base font-black text-slate-900 flex items-center gap-2">
-                        <span class="p-2 bg-emerald-100 text-emerald-800 rounded-xl"><i class="fa-solid fa-file-signature text-sm"></i></span>
-                        Dados Iniciais de Aplicação
-                    </h2>
-                    <span id="edit-inicial-indicator" class="hidden text-xs bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-bold animate-pulse">
-                        Modo Edição
-                    </span>
-                </div>
-
-                <form id="form-inicial" class="space-y-4" onsubmit="handleFormInicialSubmit(event)">
-                    <input type="hidden" id="record-inicial-id">
-
-                    <!-- Data e Semana Automática -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <form id="cadastro-inicial-form" class="space-y-4" onsubmit="salvarDadosIniciais(event)">
+                        <!-- Bloco -->
                         <div>
-                            <label for="init-date" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Data da Aplicação <span class="text-rose-500">*</span></label>
-                            <input type="date" id="init-date" required
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
-                                   onchange="updateAutomatedWeek('init-date', 'init-week')">
-                        </div>
-                        <div>
-                            <label for="init-week" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Semana (Automática)</label>
-                            <input type="text" id="init-week" readonly
-                                   class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-600 font-black focus:outline-none cursor-not-allowed">
-                        </div>
-                    </div>
-
-                    <!-- Horário Automático -->
-                    <div>
-                        <label for="init-time" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Horário do Registro <span class="text-rose-500">*</span></label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-2 text-slate-400 text-sm"><i class="fa-regular fa-clock"></i></span>
-                            <input type="time" id="init-time" required
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        </div>
-                    </div>
-
-                    <!-- Bloco Seleção -->
-                    <div>
-                        <label for="init-block" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Bloco <span class="text-rose-500">*</span></label>
-                        <select id="init-block" required onchange="toggleCustomInput('init-block', 'custom-init-block-container')"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                            <option value="">Selecione o Bloco</option>
-                            <!-- Blocos 1 ao 18 -->
-                            <script>
-                                for(let i=1; i<=18; i++) {
-                                    let pad = i < 10 ? '0' + i : i;
-                                    document.write(`<option value="${pad}">Bloco ${pad}</option>`);
-                                }
-                            </script>
-                            <option value="outros">Outros (Digitar...)</option>
-                        </select>
-                        <div id="custom-init-block-container" class="mt-2 hidden">
-                            <input type="text" id="custom-init-block" placeholder="Digite o nome/número do bloco"
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        </div>
-                    </div>
-
-                    <!-- Cultura -->
-                    <div>
-                        <label for="init-crop" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Cultura <span class="text-rose-500">*</span></label>
-                        <select id="init-crop" required onchange="toggleCustomInput('init-crop', 'custom-init-crop-container')"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                            <option value="">Selecione a Cultura</option>
-                            <option value="Brócolis">Brócolis</option>
-                            <option value="Couve flor">Couve flor</option>
-                            <option value="outros">Outros (Digitar...)</option>
-                        </select>
-                        <div id="custom-init-crop-container" class="mt-2 hidden">
-                            <input type="text" id="custom-init-crop" placeholder="Digite o nome da cultura"
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        </div>
-                    </div>
-
-                    <!-- Variedade -->
-                    <div>
-                        <label for="init-variety" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Variedade <span class="text-rose-500">*</span></label>
-                        <select id="init-variety" required onchange="toggleCustomInput('init-variety', 'custom-init-variety-container')"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                            <option value="">Selecione a Variedade</option>
-                            <option value="Syngenta BRO 68">Syngenta BRO 68</option>
-                            <option value="TSV Master">TSV Master</option>
-                            <option value="Pharlap">Pharlap</option>
-                            <option value="Jiraya">Jiraya</option>
-                            <option value="outros">Outros (Digitar...)</option>
-                        </select>
-                        <div id="custom-init-variety-container" class="mt-2 hidden">
-                            <input type="text" id="custom-init-variety" placeholder="Digite a variedade"
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        </div>
-                    </div>
-
-                    <!-- Produto Aplicado -->
-                    <div>
-                        <label for="init-product" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Produto Aplicado <span class="text-rose-500">*</span></label>
-                        <input type="text" id="init-product" required placeholder="Ex: Bioestimulante Oásis A"
-                               class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                    </div>
-
-                    <!-- Dose Aplicada e Unidade -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="init-amount" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Total Aplicado <span class="text-rose-500">*</span></label>
-                            <input type="number" id="init-amount" required step="any" min="0.01" placeholder="Ex: 500"
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        </div>
-                        <div>
-                            <label for="init-unit" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Unidade <span class="text-rose-500">*</span></label>
-                            <select id="init-unit" required onchange="toggleCustomInput('init-unit', 'custom-init-unit-container')"
-                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                                <option value="">Selecione</option>
-                                <option value="ml">ml</option>
-                                <option value="kg">kg</option>
-                                <option value="gm">gm</option>
-                                <option value="L">L</option>
-                                <option value="outros">Outros (Digitar...)</option>
-                            </select>
-                            <div id="custom-init-unit-container" class="mt-2 hidden">
-                                <input type="text" id="custom-init-unit" placeholder="Outra unidade"
-                                       class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Bloco *</label>
+                            <div class="grid grid-cols-1 gap-2">
+                                <select id="inicial-bloco-select" onchange="toggleOutros('inicial-bloco-select', 'inicial-bloco-outros-container')" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all" required>
+                                    <option value="">Selecione o Bloco...</option>
+                                    <!-- Blocos de 1 a 18 gerados dinamicamente via JS -->
+                                    <option value="Outros">Outro (Digitar)</option>
+                                </select>
+                                <div id="inicial-bloco-outros-container" class="hidden">
+                                    <input type="text" id="inicial-bloco-outros" placeholder="Digite o número/nome do bloco" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all">
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Total de Canteiros e Mudas -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="init-beds" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Total Canteiros <span class="text-rose-500">*</span></label>
-                            <input type="number" id="init-beds" required min="1" placeholder="Ex: 10"
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        </div>
-                        <div>
-                            <label for="init-seedlings" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Total Mudas <span class="text-rose-500">*</span></label>
-                            <input type="number" id="init-seedlings" required min="1" placeholder="Ex: 3500"
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        </div>
-                    </div>
-
-                    <!-- Fotos Iniciais (Mínimo 5) -->
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-                        <span class="block text-[11px] font-bold uppercase text-slate-600 flex items-center justify-between">
-                            <span>Fotos Iniciais da Aplicação <span class="text-rose-500">*</span></span>
-                            <span id="init-photo-badge" class="bg-rose-100 text-rose-800 text-[10px] px-2.5 py-1 rounded-full font-extrabold">0 / Mínimo 5</span>
-                        </span>
-                        
-                        <div id="init-drop-zone" class="border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-xl p-4 text-center cursor-pointer transition-all bg-white flex flex-col items-center justify-center">
-                            <input type="file" id="init-file-uploader" multiple accept="image/*" class="hidden" onchange="handleFileSelect(event, 'inicial')">
-                            <i class="fa-solid fa-cloud-arrow-up text-slate-400 text-2xl mb-1"></i>
-                            <p class="text-xs text-slate-600 font-bold">Arraste ou clique para enviar</p>
-                            <p class="text-[9px] text-slate-400 mt-1">Carregue no mínimo 5 fotos representativas.</p>
-                        </div>
-
-                        <div id="init-previews-grid" class="grid grid-cols-5 gap-2 pt-2"></div>
-                    </div>
-
-                    <!-- Botões de Ação -->
-                    <div class="flex gap-2 pt-2">
-                        <button type="button" id="cancel-edit-init-btn" onclick="resetFormInicial()"
-                                class="hidden flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 px-4 rounded-xl text-xs transition-all">
-                            Cancelar Edição
-                        </button>
-                        <button type="submit" id="save-init-btn"
-                                class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-2.5 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-sm shadow-emerald-700/20">
-                            <i class="fa-solid fa-floppy-disk"></i> <span id="save-init-btn-text">Salvar Dados Iniciais</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- CARD FORMULÁRIO 2: ACOMPANHAMENTO SEMANAL -->
-            <div id="form-semanal-card" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5 hidden">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                    <h2 id="form-semanal-title" class="text-base font-black text-slate-900 flex items-center gap-2">
-                        <span class="p-2 bg-emerald-100 text-emerald-800 rounded-xl"><i class="fa-solid fa-calendar-plus text-sm"></i></span>
-                        Documentação Semanal
-                    </h2>
-                    <span id="edit-semanal-indicator" class="hidden text-xs bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-bold animate-pulse">
-                        Modo Edição
-                    </span>
-                </div>
-
-                <form id="form-semanal" class="space-y-4" onsubmit="handleFormSemanalSubmit(event)">
-                    <input type="hidden" id="record-semanal-id">
-
-                    <!-- Vínculo ao Teste Existente -->
-                    <div>
-                        <label for="sem-link-id" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Vincular a um Teste Inicial <span class="text-slate-400 font-normal">(Opcional, preenche os dados)</span></label>
-                        <select id="sem-link-id" onchange="handleLinkChange()"
-                                class="w-full bg-amber-50/50 border border-amber-200 text-amber-950 rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
-                            <option value="">Acompanhamento Avulso (Inserir manualmente)</option>
-                        </select>
-                    </div>
-
-                    <!-- Bloco Seleção -->
-                    <div>
-                        <label for="sem-block" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Bloco <span class="text-rose-500">*</span></label>
-                        <select id="sem-block" required onchange="toggleCustomInput('sem-block', 'custom-sem-block-container')"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                            <option value="">Selecione o Bloco</option>
-                            <!-- Blocos 1 ao 18 -->
-                            <script>
-                                for(let i=1; i<=18; i++) {
-                                    let pad = i < 10 ? '0' + i : i;
-                                    document.write(`<option value="${pad}">Bloco ${pad}</option>`);
-                                }
-                            </script>
-                            <option value="outros">Outros (Digitar...)</option>
-                        </select>
-                        <div id="custom-sem-block-container" class="mt-2 hidden">
-                            <input type="text" id="custom-sem-block" placeholder="Digite o nome/número do bloco"
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        </div>
-                    </div>
-
-                    <!-- Data do Registro e Semana -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="sem-date" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Data do Registro <span class="text-rose-500">*</span></label>
-                            <input type="date" id="sem-date" required
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
-                                   onchange="updateAutomatedWeek('sem-date', 'sem-week')">
-                        </div>
-                        <div>
-                            <label for="sem-week" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Semana (Automática)</label>
-                            <input type="text" id="sem-week" readonly
-                                   class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-600 font-black focus:outline-none cursor-not-allowed">
-                        </div>
-                    </div>
-
-                    <!-- Cultura -->
-                    <div>
-                        <label for="sem-crop" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Cultura <span class="text-rose-500">*</span></label>
-                        <select id="sem-crop" required onchange="toggleCustomInput('sem-crop', 'custom-sem-crop-container')"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                            <option value="">Selecione a Cultura</option>
-                            <option value="Brócolis">Brócolis</option>
-                            <option value="Couve flor">Couve flor</option>
-                            <option value="outros">Outros (Digitar...)</option>
-                        </select>
-                        <div id="custom-sem-crop-container" class="mt-2 hidden">
-                            <input type="text" id="custom-sem-crop" placeholder="Digite o nome da cultura"
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        </div>
-                    </div>
-
-                    <!-- Variedade -->
-                    <div>
-                        <label for="sem-variety" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Variedade <span class="text-rose-500">*</span></label>
-                        <select id="sem-variety" required onchange="toggleCustomInput('sem-variety', 'custom-sem-variety-container')"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                            <option value="">Selecione a Variedade</option>
-                            <option value="Syngenta BRO 68">Syngenta BRO 68</option>
-                            <option value="TSV Master">TSV Master</option>
-                            <option value="Pharlap">Pharlap</option>
-                            <option value="Jiraya">Jiraya</option>
-                            <option value="outros">Outros (Digitar...)</option>
-                        </select>
-                        <div id="custom-sem-variety-container" class="mt-2 hidden">
-                            <input type="text" id="custom-sem-variety" placeholder="Digite a variedade"
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        </div>
-                    </div>
-
-                    <!-- Total em Campo e Estado do Solo -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="sem-total-field" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Total em Campo <span class="text-rose-500">*</span></label>
-                            <input type="number" id="sem-total-field" required min="1" placeholder="Ex: 3450"
-                                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        </div>
-                        <div>
-                            <label for="sem-soil" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Estado do Solo <span class="text-rose-500">*</span></label>
-                            <select id="sem-soil" required onchange="toggleCustomInput('sem-soil', 'custom-sem-soil-container')"
-                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                                <option value="">Selecione o Estado</option>
-                                <option value="Seco">Seco</option>
-                                <option value="Úmido">Úmido</option>
-                                <option value="Encharcado">Encharcado</option>
-                                <option value="Adequado">Adequado</option>
-                                <option value="outros">Outros (Digitar...)</option>
-                            </select>
-                            <div id="custom-sem-soil-container" class="mt-2 hidden">
-                                <input type="text" id="custom-sem-soil" placeholder="Descreva o estado do solo"
-                                       class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                        <!-- Data e Semana Automática -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Data de Aplicação *</label>
+                                <input type="date" id="inicial-data" onchange="atualizarSemana('inicial-data', 'inicial-semana')" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Semana do Ano</label>
+                                <div class="relative">
+                                    <input type="text" id="inicial-semana" class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm text-slate-600 font-medium focus:outline-none cursor-not-allowed" readonly placeholder="Calculada automático">
+                                    <i class="fa-solid fa-calculator absolute right-3.5 top-3.5 text-slate-400 text-xs"></i>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Detalhes do Desenvolvimento da Planta -->
-                    <div>
-                        <label for="sem-details" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Desenvolvimento da Planta com Aplicação <span class="text-rose-500">*</span></label>
-                        <textarea id="sem-details" required rows="3" placeholder="Descreva minuciosamente o aspecto visual, crescimento, cor das folhas, controle de pragas após a aplicação do produto..."
-                                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all resize-y"></textarea>
-                    </div>
-
-                    <!-- Fotos Semanais (Máximo 5) -->
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-                        <span class="block text-[11px] font-bold uppercase text-slate-600 flex items-center justify-between">
-                            <span>Fotos do Progresso <span class="text-slate-400 font-normal">(Máximo 5)</span></span>
-                            <span id="sem-photo-badge" class="bg-emerald-100 text-emerald-800 text-[10px] px-2.5 py-1 rounded-full font-extrabold">0 / Máximo 5</span>
-                        </span>
-                        
-                        <div id="sem-drop-zone" class="border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-xl p-4 text-center cursor-pointer transition-all bg-white flex flex-col items-center justify-center">
-                            <input type="file" id="sem-file-uploader" multiple accept="image/*" class="hidden" onchange="handleFileSelect(event, 'semanal')">
-                            <i class="fa-solid fa-cloud-arrow-up text-slate-400 text-2xl mb-1"></i>
-                            <p class="text-xs text-slate-600 font-bold">Arraste ou clique para enviar</p>
-                            <p class="text-[9px] text-slate-400 mt-1">Carregue no máximo 5 fotos de acompanhamento.</p>
+                        <!-- Horário Automático (Preenche com a hora atual na abertura) -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Horário do Registro *</label>
+                            <input type="time" id="inicial-horario" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all" required>
                         </div>
 
-                        <div id="sem-previews-grid" class="grid grid-cols-5 gap-2 pt-2"></div>
-                    </div>
+                        <!-- Cultura -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Cultura *</label>
+                            <div class="grid grid-cols-1 gap-2">
+                                <select id="inicial-cultura-select" onchange="toggleOutros('inicial-cultura-select', 'inicial-cultura-outros-container')" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all" required>
+                                    <option value="">Selecione a Cultura...</option>
+                                    <option value="Brócolis">Brócolis</option>
+                                    <option value="Couve-flor">Couve-flor</option>
+                                    <option value="Outros">Outra (Digitar)</option>
+                                </select>
+                                <div id="inicial-cultura-outros-container" class="hidden">
+                                    <input type="text" id="inicial-cultura-outros" placeholder="Digite o nome da cultura" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all">
+                                </div>
+                            </div>
+                        </div>
 
-                    <!-- Botões de Ação -->
-                    <div class="flex gap-2 pt-2">
-                        <button type="button" id="cancel-edit-sem-btn" onclick="resetFormSemanal()"
-                                class="hidden flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 px-4 rounded-xl text-xs transition-all">
-                            Cancelar Edição
-                        </button>
-                        <button type="submit" id="save-sem-btn"
-                                class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-2.5 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-sm shadow-emerald-700/20">
-                            <i class="fa-solid fa-floppy-disk"></i> <span id="save-sem-btn-text">Salvar Progresso</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </section>
+                        <!-- Variedade -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Variedade *</label>
+                            <div class="grid grid-cols-1 gap-2">
+                                <select id="inicial-variedade-select" onchange="toggleOutros('inicial-variedade-select', 'inicial-variedade-outros-container')" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all" required>
+                                    <option value="">Selecione a Variedade...</option>
+                                    <option value="Syngenta BRO 68">Syngenta BRO 68</option>
+                                    <option value="TSV Master">TSV Master</option>
+                                    <option value="Pharlap">Pharlap</option>
+                                    <option value="Jiraya">Jiraya</option>
+                                    <option value="Outros">Outra (Digitar)</option>
+                                </select>
+                                <div id="inicial-variedade-outros-container" class="hidden">
+                                    <input type="text" id="inicial-variedade-outros" placeholder="Digite a variedade" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all">
+                                </div>
+                            </div>
+                        </div>
 
-        <!-- Coluna da Direita: Histórico e Acompanhamento Completo (Lg: Col-7) -->
-        <section class="lg:col-span-7 space-y-6">
-            
-            <!-- Cards de Métricas e Botão Unificado para Gerar PDF Completo -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                        <span class="p-1.5 bg-emerald-100 text-emerald-800 rounded-lg"><i class="fa-solid fa-cubes text-sm"></i></span>
-                        Histórico do Ciclo de Testes
-                    </h2>
-                    <p class="text-slate-500 text-xs mt-0.5">Gestão de dados iniciais e acompanhamentos semanais da fazenda</p>
+                        <!-- Produto Aplicado -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Produto Aplicado *</label>
+                            <input type="text" id="inicial-produto" placeholder="Nome ou princípio ativo" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all" required>
+                        </div>
+
+                        <!-- Total Aplicado & Unidade -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Dose Aplicada *</label>
+                                <input type="number" step="any" min="0.001" id="inicial-total-aplicado" placeholder="Ex: 500" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Unidade *</label>
+                                <select id="inicial-unidade-select" onchange="toggleOutros('inicial-unidade-select', 'inicial-unidade-outros-container')" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all" required>
+                                    <option value="ml">ml</option>
+                                    <option value="L">L</option>
+                                    <option value="gm">gm</option>
+                                    <option value="kg">kg</option>
+                                    <option value="Outros">Outro (Digitar)</option>
+                                </select>
+                                <div id="inicial-unidade-outros-container" class="hidden mt-2">
+                                    <input type="text" id="inicial-unidade-outros" placeholder="Nova unidade" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Canteiros & Total Mudas -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Total Canteiros *</label>
+                                <input type="number" min="1" id="inicial-total-canteiros" placeholder="Ex: 10" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Total Mudas *</label>
+                                <input type="number" min="1" id="inicial-total-mudas" placeholder="Ex: 1500" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all" required>
+                            </div>
+                        </div>
+
+                        <!-- Anexar Fotos (Máximo de 5) -->
+                        <div class="border-t border-slate-100 pt-4">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Anexar Fotos (Máximo 5) *</label>
+                            <span class="text-[10px] text-slate-400 block mb-3">Arraste ou clique abaixo para enviar até 5 fotos das plantas na partida.</span>
+                            
+                            <div class="relative border-2 border-dashed border-slate-200 hover:border-emerald-500 rounded-xl p-4 transition-colors bg-slate-50 flex flex-col items-center justify-center cursor-pointer group">
+                                <input type="file" id="inicial-fotos" accept="image/*" multiple onchange="previewImages(this, 'inicial-preview-container')" class="absolute inset-0 opacity-0 cursor-pointer" required>
+                                <i class="fa-solid fa-cloud-arrow-up text-slate-400 group-hover:text-emerald-500 text-2xl mb-2 transition-colors"></i>
+                                <span class="text-xs font-semibold text-slate-600 group-hover:text-slate-800">Selecione arquivos de imagem</span>
+                            </div>
+
+                            <!-- Preview das imagens -->
+                            <div id="inicial-preview-container" class="grid grid-cols-5 gap-2 mt-4"></div>
+                        </div>
+
+                        <!-- Botão Dinâmico de Ação -->
+                        <div id="botoes-acao-inicial-container" class="space-y-2 pt-2">
+                            <button type="submit" id="btn-submit-inicial" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Iniciar Ciclo de Teste</span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
-                <!-- Botão de Baixar Relatório PDF Unificado (Ir Tudo Junto no Final) -->
-                <button onclick="generateUnifiedPDF()" id="pdf-btn"
-                        class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-extrabold py-3 px-5 rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-sm shadow-amber-500/25">
-                    <i class="fa-solid fa-file-pdf text-sm"></i> Baixar Relatório Completo (PDF)
-                </button>
-            </div>
+                <!-- ABA 2: FORMULÁRIO DE ACOMPANHAMENTO SEMANAL (OCULTO POR PADRÃO) -->
+                <div id="form-acompanhamento" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-6 hidden">
+                    <div class="border-b border-slate-100 pb-4">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 mb-2">
+                            Passo 2
+                        </span>
+                        <h2 class="text-lg font-bold text-slate-900">Acompanhamento Semanal</h2>
+                        <p class="text-slate-500 text-xs">Vincule a um teste ativo e descreva os resultados semanais.</p>
+                    </div>
 
-            <!-- Filtros do Histórico -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-wrap gap-3 items-center">
-                <span class="text-xs font-bold text-slate-500 uppercase flex items-center gap-1.5">
-                    <i class="fa-solid fa-filter"></i> Filtrar por:
-                </span>
-                
-                <!-- Filtro Bloco -->
-                <select id="filter-block" onchange="renderHistory()" 
-                        class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold text-slate-700">
-                    <option value="">Todos os Blocos</option>
-                </select>
+                    <form id="acompanhamento-semanal-form" class="space-y-4" onsubmit="salvarAcompanhamentoSemanal(event)">
+                        
+                        <!-- Vincular ao Teste Existente -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Selecionar Teste Ativo *</label>
+                            <select id="acomp-teste-vinculo" onchange="autoPreencherTesteAtivo()" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all" required>
+                                <option value="">Escolha um teste aberto no histórico...</option>
+                            </select>
+                        </div>
 
-                <!-- Filtro Cultura -->
-                <select id="filter-crop" onchange="renderHistory()" 
-                        class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold text-slate-700">
-                    <option value="">Todas as Culturas</option>
-                    <option value="Brócolis">Brócolis</option>
-                    <option value="Couve flor">Couve flor</option>
-                </select>
-                
-                <!-- Botão Limpar Filtros -->
-                <button onclick="clearFilters()" class="text-xs text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 ml-auto">
-                    <i class="fa-solid fa-rotate-left"></i> Limpar Filtros
-                </button>
-            </div>
+                        <!-- Data e Semana Automática -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Data do Registro *</label>
+                                <input type="date" id="acomp-data" onchange="atualizarSemana('acomp-data', 'acomp-semana')" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Semana do Ano</label>
+                                <div class="relative">
+                                    <input type="text" id="acomp-semana" class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm text-slate-600 font-medium focus:outline-none cursor-not-allowed" readonly placeholder="Calculada automático">
+                                    <i class="fa-solid fa-calculator absolute right-3.5 top-3.5 text-slate-400 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
 
-            <!-- Lista de Registros Cadastrados -->
-            <div id="history-container" class="space-y-4">
-                <!-- Inserido dinamicamente via JS -->
-            </div>
+                        <!-- Campos autocompletados (bloqueados apenas para visualização) -->
+                        <div class="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Bloco</label>
+                                <div id="acomp-view-bloco" class="text-xs font-semibold text-slate-700 mt-0.5">-</div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Cultura</label>
+                                <div id="acomp-view-cultura" class="text-xs font-semibold text-slate-700 mt-0.5">-</div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Variedade</label>
+                                <div id="acomp-view-variedade" class="text-xs font-semibold text-slate-700 mt-0.5">-</div>
+                            </div>
+                        </div>
 
-            <!-- Estado Vazio -->
-            <div id="empty-state" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center hidden">
-                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fa-solid fa-clipboard-question text-2xl text-slate-400"></i>
+                        <!-- Dados de Campo Atuais -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Total de Mudas Atuais *</label>
+                                <input type="number" min="0" id="acomp-total-campo" placeholder="Vivas no campo" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Estado do Solo *</label>
+                                <select id="acomp-estado-solo" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="Seco">Seco</option>
+                                    <option value="Úmido Adequado">Úmido Adequado</option>
+                                    <option value="Encharcado">Encharcado</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Avaliação Geral do Estado -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Estado Geral do Teste *</label>
+                            <div class="grid grid-cols-4 gap-2">
+                                <label class="flex flex-col items-center gap-1 p-2 rounded-xl border border-slate-200 cursor-pointer bg-slate-50 hover:bg-white has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 transition-all">
+                                    <input type="radio" name="acomp-avaliacao" value="Excelente" class="accent-emerald-600" required>
+                                    <span class="text-[10px] font-bold text-slate-700">Excelente</span>
+                                </label>
+                                <label class="flex flex-col items-center gap-1 p-2 rounded-xl border border-slate-200 cursor-pointer bg-slate-50 hover:bg-white has-[:checked]:border-teal-500 has-[:checked]:bg-teal-50 transition-all">
+                                    <input type="radio" name="acomp-avaliacao" value="Satisfatório" class="accent-teal-600">
+                                    <span class="text-[10px] font-bold text-slate-700">Satisfatório</span>
+                                </label>
+                                <label class="flex flex-col items-center gap-1 p-2 rounded-xl border border-slate-200 cursor-pointer bg-slate-50 hover:bg-white has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50 transition-all">
+                                    <input type="radio" name="acomp-avaliacao" value="Regular" class="accent-amber-600">
+                                    <span class="text-[10px] font-bold text-slate-700">Regular</span>
+                                </label>
+                                <label class="flex flex-col items-center gap-1 p-2 rounded-xl border border-slate-200 cursor-pointer bg-slate-50 hover:bg-white has-[:checked]:border-rose-500 has-[:checked]:bg-rose-50 transition-all">
+                                    <input type="radio" name="acomp-avaliacao" value="Insatisfatório" class="accent-rose-600">
+                                    <span class="text-[10px] font-bold text-slate-700">Ruim</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Detalhamento Semanal -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Análise e Detalhes da Planta *</label>
+                            <textarea id="acomp-detalhes" rows="3" placeholder="Descreva os efeitos do produto, evolução de folhagem, controle de pragas, etc." class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all" required></textarea>
+                        </div>
+
+                        <!-- Fotos Semanais (Máximo 5) -->
+                        <div class="border-t border-slate-100 pt-4">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Fotos Semanais (Máximo 5) *</label>
+                            <span class="text-[10px] text-slate-400 block mb-3">Envie até 5 fotos comprovando a evolução visual nesta semana.</span>
+                            
+                            <div class="relative border-2 border-dashed border-slate-200 hover:border-indigo-500 rounded-xl p-4 transition-colors bg-slate-50 flex flex-col items-center justify-center cursor-pointer group">
+                                <input type="file" id="acomp-fotos" accept="image/*" multiple onchange="previewImages(this, 'acomp-preview-container')" class="absolute inset-0 opacity-0 cursor-pointer" required>
+                                <i class="fa-solid fa-cloud-arrow-up text-slate-400 group-hover:text-indigo-500 text-2xl mb-2 transition-colors"></i>
+                                <span class="text-xs font-semibold text-slate-600 group-hover:text-slate-800">Selecione arquivos de imagem</span>
+                            </div>
+
+                            <!-- Preview das imagens -->
+                            <div id="acomp-preview-container" class="grid grid-cols-5 gap-2 mt-4"></div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-2">
+                            <i class="fa-solid fa-save"></i>
+                            Gravar Acompanhamento
+                        </button>
+                    </form>
                 </div>
-                <h3 class="text-slate-800 font-bold text-base mb-1">Nenhum Registro Inicial Encontrado</h3>
-                <p class="text-slate-500 text-xs max-w-sm mx-auto">Adicione novos testes na aba "Dados Iniciais" para iniciar o acompanhamento e compilar o seu relatório unificado.</p>
-            </div>
-        </section>
+            </section>
+
+            <!-- HISTÓRICO E GESTÃO DE CICLOS (COLUNA DIREITA - 7/12 COLS) -->
+            <section class="lg:col-span-7 space-y-6">
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5 mb-6">
+                        <div>
+                            <h2 class="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                                <i class="fa-solid fa-folder-open text-emerald-600"></i>
+                                Painel de Ciclos Ativos
+                            </h2>
+                            <p class="text-slate-500 text-xs">Aqui você acompanha as etapas de cada teste e gera o PDF consolidado.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="limparTudo()" class="px-3.5 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-trash-can"></i> Limpar Painel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Testes Cadastrados -->
+                    <div id="lista-testes-container" class="space-y-6 custom-scroll overflow-y-auto max-h-[75vh] pr-2">
+                        <!-- Gerado Dinamicamente -->
+                        <div class="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed border-slate-100 rounded-2xl">
+                            <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-400 mb-3">
+                                <i class="fa-solid fa-flask-vial text-2xl"></i>
+                            </div>
+                            <h3 class="text-sm font-bold text-slate-700">Nenhum teste iniciado</h3>
+                            <p class="text-slate-400 text-xs mt-1 max-w-xs">Insira os dados iniciais do teste à esquerda para iniciar a documentação do ciclo.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
-    <!-- Rodapé -->
-    <footer class="bg-slate-800 text-slate-400 border-t border-slate-700 py-6 mt-12 text-center text-xs">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>&copy; 2026 Fazenda Oásis. Painel de Controle e Acompanhamento de Ciclos.</p>
-            <div class="flex items-center gap-4">
-                <span class="flex items-center gap-1"><i class="fa-solid fa-shield text-emerald-500"></i> Registros Seguros</span>
-                <span class="flex items-center gap-1"><i class="fa-solid fa-mobile-screen text-emerald-500"></i> Suporte Mobile</span>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Sistema de Alertas Flutuantes (Toasts) -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full"></div>
-
-    <!-- Modal de Ampliação de Foto -->
-    <div id="photo-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4" onclick="closePhotoModal()">
-        <div class="bg-white rounded-2xl max-w-3xl w-full p-4 relative animate-fade-in" onclick="event.stopPropagation()">
-            <button onclick="closePhotoModal()" class="absolute -top-3 -right-3 w-8 h-8 bg-rose-600 hover:bg-rose-700 text-white rounded-full flex items-center justify-center shadow-md transition-all">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <img id="modal-expanded-img" src="" alt="Ampliada" class="w-full h-auto max-h-[75vh] object-contain rounded-xl">
-        </div>
-    </div>
-
-    <!-- Modal Customizado de Confirmação de Exclusão -->
-    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center space-y-4">
-            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-xl">
+    <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO (PERSONALIZADO) -->
+    <div id="confirmacao-exclusao-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 mx-4 transform transition-all text-center space-y-4">
+            <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto text-xl">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <div>
-                <h3 class="text-slate-900 font-bold text-base">Confirmar Exclusão</h3>
-                <p class="text-slate-500 text-xs mt-1">Deseja realmente excluir permanentemente este registro? Essa ação não poderá ser desfeita.</p>
+                <h3 class="text-slate-900 font-extrabold text-base">Confirmar Exclusão</h3>
+                <p class="text-slate-500 text-xs mt-1">Deseja realmente excluir este teste completo e todas as suas semanas de evolução? Esta ação é irreversível.</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="closeConfirmModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-xl text-xs transition-all">
-                    Cancelar
-                </button>
-                <button id="confirm-delete-btn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 rounded-xl text-xs transition-all">
-                    Excluir
-                </button>
+                <button onclick="fecharModalExclusao()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs transition-colors">Não, Cancelar</button>
+                <button id="btn-confirmar-exclusao" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs transition-colors">Sim, Excluir</button>
             </div>
         </div>
     </div>
 
-    <!-- Container Invisível para Template do PDF -->
+    <!-- MODAL DE VEREDITO / CONCLUSÃO DO TESTE -->
+    <div id="veredicto-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 mx-4 transform transition-all">
+            <div class="flex justify-between items-start mb-4">
+                <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-award text-amber-500"></i>
+                    Veredito Técnico do Teste
+                </h3>
+                <button onclick="fecharVeredicto()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form onsubmit="salvarVeredicto(event)" class="space-y-4">
+                <input type="hidden" id="veredicto-id-teste">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Conclusão Final *</label>
+                    <select id="veredicto-status" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none" required>
+                        <option value="Satisfatório">Teste Eficaz (Satisfatório)</option>
+                        <option value="Inconclusivo">Teste Parcial (Inconclusivo)</option>
+                        <option value="Insatisfatório">Teste Ineficaz (Insatisfatório)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Parecer e Observações Finais *</label>
+                    <textarea id="veredicto-observacoes" rows="4" placeholder="Descreva os resultados finais. O produto é viável comercialmente? Qual foi o impacto no plantio?" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none" required></textarea>
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="fecharVeredicto()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-sm transition-colors">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition-colors">Salvar Conclusão</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DOCUMENTO TEMPLATE DE IMPRESSÃO DO PDF (OCULTO NA TELA) -->
     <div class="hidden">
-        <div id="pdf-printable-template" class="bg-white text-slate-900" style="width: 210mm; font-family: 'Inter', sans-serif;"></div>
+        <div id="pdf-render-area" class="bg-white text-slate-900 p-8 space-y-12">
+            <!-- Estruturado dinamicamente via JS na hora de gerar -->
+        </div>
     </div>
 
 
-    <!-- ============================================== -->
-    <!-- SCRIPTS E LÓGICA DE PROGRAMAÇÃO DA APLICAÇÃO -->
-    <!-- ============================================== -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Banco de dados em memória persistido no localStorage
-        let appData = {
-            records: [],       // Registro de Dados Iniciais
-            followups: []      // Registro de Acompanhamentos Semanais
-        };
+        // CONFIGURAÇÕES E ESTADO GLOBAL
+        let testes = [];
+        let fotosIniciaisCarregadas = [];
+        let fotosSemanaisCarregadas = [];
+        let idTesteSendoEditado = null;
+        let idTesteParaApagar = null;
 
-        // Estado temporário de uploads ativos (imagens em Base64)
-        let activePhotosInicial = [];
-        let activePhotosSemanal = [];
-
-        // Controle para modal de confirmação
-        let deleteCallback = null;
-
-        // Inicializar aplicação
+        // Inicialização
         window.addEventListener('DOMContentLoaded', () => {
-            // Ajustar datas padrão
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('init-date').value = today;
-            document.getElementById('sem-date').value = today;
-            
-            updateAutomatedWeek('init-date', 'init-week');
-            updateAutomatedWeek('sem-date', 'sem-week');
-            setNowTime();
-            
-            // Exibir data atual formatada no cabeçalho
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', options);
+            inicializarCampos();
+            carregarDoLocalStorage();
+            renderListaTestes();
 
-            // Carregar do localStorage de forma segura
-            loadFromLocalStorage();
-            
-            // Configurar suporte para Drag & Drop das fotos
-            setupDragAndDrop('init-drop-zone', 'inicial');
-            setupDragAndDrop('sem-drop-zone', 'semanal');
+            // Configurar escuta do botão de confirmação de exclusão
+            document.getElementById('btn-confirmar-exclusao').addEventListener('click', confirmarExclusao);
         });
 
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem('fazenda_oasis_test_tracker_v2');
-            if (saved) {
-                try {
-                    appData = JSON.parse(saved);
-                    if (!appData.records) appData.records = [];
-                    if (!appData.followups) appData.followups = [];
-                    
-                    // Garante migração consistente se faltar chaves de colapso
-                    appData.records.forEach(r => {
-                        if (r.collapsed === undefined) r.collapsed = false;
-                    });
-                } catch (e) {
-                    showToast('Erro ao carregar dados salvos. Iniciando base vazia.', 'error');
+        function inicializarCampos() {
+            // Gerar lista de blocos (1 a 18) caso ainda não gerada
+            const blocoSelect = document.getElementById('inicial-bloco-select');
+            if (blocoSelect.options.length <= 2) {
+                for (let i = 1; i <= 18; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = i < 10 ? `Bloco 0${i}` : `Bloco ${i}`;
+                    opt.textContent = i < 10 ? `Bloco 0${i}` : `Bloco ${i}`;
+                    blocoSelect.insertBefore(opt, blocoSelect.lastElementChild);
                 }
             }
-            renderHistory();
-            updateFilterSelectors();
-            updateLinkSelectOptions();
+
+            // Hora atual automática no formulário inicial
+            const agora = new Date();
+            const horas = String(agora.getHours()).padStart(2, '0');
+            const minutos = String(agora.getMinutes()).padStart(2, '0');
+            document.getElementById('inicial-horario').value = `${hours}:${minutos}`;
+
+            // Data atual automática
+            const hoje = agora.toISOString().substring(0, 10);
+            document.getElementById('inicial-data').value = hoje;
+            document.getElementById('acomp-data').value = hoje;
+            atualizarSemana('inicial-data', 'inicial-semana');
+            atualizarSemana('acomp-data', 'acomp-semana');
         }
 
-        function saveToLocalStorage() {
-            localStorage.setItem('fazenda_oasis_test_tracker_v2', JSON.stringify(appData));
+        // ALTERNAR ABAS
+        function switchTab(tab) {
+            const btnIni = document.getElementById('btn-tab-inicial');
+            const btnAco = document.getElementById('btn-tab-acompanhamento');
+            const formIni = document.getElementById('form-inicial');
+            const formAco = document.getElementById('form-acompanhamento');
+
+            if (tab === 'inicial') {
+                btnIni.className = "flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-white text-emerald-700 shadow-sm";
+                btnAco.className = "flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900";
+                formIni.classList.remove('hidden');
+                formAco.classList.add('hidden');
+            } else {
+                btnAco.className = "flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-white text-indigo-700 shadow-sm";
+                btnIni.className = "flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900";
+                formAco.classList.remove('hidden');
+                formIni.classList.add('hidden');
+                // Carregar dropdown de vínculos atualizado
+                carregarVinculosTeste();
+            }
         }
 
-        // Definir hora local automática
-        function setNowTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('init-time').value = `${hours}:${minutes}`;
-        }
+        // ATUALIZAR SEMANA AUTOMATICAMENTE
+        function atualizarSemana(dateInputId, weekInputId) {
+            const dataVal = document.getElementById(dateInputId).value;
+            if (!dataVal) return;
 
-        function updateAutomatedWeek(inputId, weekId) {
-            const dateInput = document.getElementById(inputId).value;
-            if (!dateInput) return;
-
-            const date = new Date(dateInput);
-            const weekNum = getWeekNumber(date);
-            document.getElementById(weekId).value = weekNum;
-        }
-
-        function getWeekNumber(d) {
-            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            const d = new Date(dataVal);
+            d.setHours(0, 0, 0, 0);
+            d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+            const yearStart = new Date(d.getFullYear(), 0, 1);
             const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-            return weekNo;
+            
+            document.getElementById(weekInputId).value = `Semana ${String(weekNo).padStart(2, '0')} (${d.getFullYear()})`;
         }
 
-        // Exibe o input "outros" quando selecionado no dropdown
-        function toggleCustomInput(selectId, containerId) {
+        // DROPDOWN "OUTROS" REUTILIZÁVEL
+        function toggleOutros(selectId, outrosContainerId) {
             const selectEl = document.getElementById(selectId);
-            const containerEl = document.getElementById(containerId);
+            const containerEl = document.getElementById(outrosContainerId);
             const inputEl = containerEl.querySelector('input');
 
-            if (selectEl.value === 'outros') {
+            if (selectEl.value === 'Outros') {
                 containerEl.classList.remove('hidden');
                 inputEl.setAttribute('required', 'true');
             } else {
@@ -637,446 +550,879 @@
             }
         }
 
-        function switchTab(tab) {
-            const initBtn = document.getElementById('tab-inicial-btn');
-            const semBtn = document.getElementById('tab-semanal-btn');
-            const initCard = document.getElementById('form-inicial-card');
-            const semCard = document.getElementById('form-semanal-card');
-
-            if (tab === 'inicial') {
-                initBtn.className = "py-3 px-4 rounded-xl text-xs font-extrabold transition-all flex flex-col sm:flex-row items-center justify-center gap-2 shadow-sm text-center bg-white text-emerald-950";
-                semBtn.className = "py-3 px-4 rounded-xl text-xs font-extrabold transition-all flex flex-col sm:flex-row items-center justify-center gap-2 text-center text-slate-600 hover:text-slate-900";
-                initCard.classList.remove('hidden');
-                semCard.classList.add('hidden');
-            } else {
-                semBtn.className = "py-3 px-4 rounded-xl text-xs font-extrabold transition-all flex flex-col sm:flex-row items-center justify-center gap-2 shadow-sm text-center bg-white text-emerald-950";
-                initBtn.className = "py-3 px-4 rounded-xl text-xs font-extrabold transition-all flex flex-col sm:flex-row items-center justify-center gap-2 text-center text-slate-600 hover:text-slate-900";
-                semCard.classList.remove('hidden');
-                initCard.classList.add('hidden');
-                updateLinkSelectOptions(); // Manter dropdown de vínculos atualizado
+        // PREVIEW DE FOTOS (LIMITANDO A 5 IMAGENS)
+        function previewImages(input, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            let files = Array.from(input.files);
+            
+            // Validação de limite máximo de 5 fotos
+            if (files.length > 5) {
+                showToast("Aviso", "O máximo permitido são 5 fotos. Apenas as 5 primeiras serão consideradas.", "warning");
+                files = files.slice(0, 5);
+                
+                // Recriar o FileList no input para conter apenas as 5 imagens selecionadas
+                const dt = new DataTransfer();
+                files.forEach(file => dt.items.add(file));
+                input.files = dt.files;
             }
-        }
 
-        function setupDragAndDrop(dropZoneId, type) {
-            const dropZone = document.getElementById(dropZoneId);
-            const inputId = type === 'inicial' ? 'init-file-uploader' : 'sem-file-uploader';
+            const arrDestino = containerId === 'inicial-preview-container' ? fotosIniciaisCarregadas = [] : fotosSemanaisCarregadas = [];
 
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, (e) => {
-                    e.preventDefault();
-                    dropZone.classList.add('border-emerald-500', 'bg-emerald-50/20');
-                }, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, (e) => {
-                    e.preventDefault();
-                    dropZone.classList.remove('border-emerald-500', 'bg-emerald-50/20');
-                }, false);
-            });
-
-            dropZone.addEventListener('drop', (e) => {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                processUploadedFiles(files, type);
-            }, false);
-
-            dropZone.addEventListener('click', () => {
-                document.getElementById(inputId).click();
-            });
-        }
-
-        function handleFileSelect(event, type) {
-            const files = event.target.files;
-            processUploadedFiles(files, type);
-        }
-
-        function processUploadedFiles(files, type) {
-            if (files.length === 0) return;
-
-            const activeList = type === 'inicial' ? activePhotosInicial : activePhotosSemanal;
-            const maxPhotos = type === 'semanal' ? 5 : 999;
-
-            Array.from(files).forEach(file => {
-                if (!file.type.startsWith('image/')) {
-                    showToast('Apenas arquivos de imagem são permitidos.', 'error');
-                    return;
-                }
-
-                if (type === 'semanal' && activeList.length >= maxPhotos) {
-                    showToast('O acompanhamento semanal permite no máximo 5 fotos.', 'error');
-                    return;
-                }
-
+            files.forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    if (type === 'semanal' && activeList.length >= maxPhotos) return;
-                    activeList.push(e.target.result);
-                    updatePhotoPreviews(type);
+                    const base64Data = e.target.result;
+                    arrDestino.push(base64Data);
+
+                    const div = document.createElement('div');
+                    div.className = "relative aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200 group";
+                    div.innerHTML = `
+                        <img src="${base64Data}" class="w-full h-full object-cover">
+                        <button type="button" onclick="removerFotoPrevia('${containerId}', ${index})" class="absolute top-1 right-1 w-5 h-5 bg-rose-600 text-white text-[10px] rounded-full flex items-center justify-center shadow hover:bg-rose-700 transition-colors">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    `;
+                    container.appendChild(div);
                 };
                 reader.readAsDataURL(file);
             });
         }
 
-        function removePhoto(index, type) {
-            if (type === 'inicial') {
-                activePhotosInicial.splice(index, 1);
-            } else {
-                activePhotosSemanal.splice(index, 1);
-            }
-            updatePhotoPreviews(type);
+        function removerFotoPrevia(containerId, index) {
+            const inputId = containerId === 'inicial-preview-container' ? 'inicial-fotos' : 'acomp-fotos';
+            const input = document.getElementById(inputId);
+            const arr = containerId === 'inicial-preview-container' ? fotosIniciaisCarregadas : fotosSemanaisCarregadas;
+            
+            let files = Array.from(input.files);
+            files.splice(index, 1);
+            
+            const dt = new DataTransfer();
+            files.forEach(file => dt.items.add(file));
+            input.files = dt.files;
+            
+            previewImages(input, containerId);
         }
 
-        function updatePhotoPreviews(type) {
-            const gridId = type === 'inicial' ? 'init-previews-grid' : 'sem-previews-grid';
-            const badgeId = type === 'inicial' ? 'init-photo-badge' : 'sem-photo-badge';
-            const grid = document.getElementById(gridId);
-            const badge = document.getElementById(badgeId);
-            const activeList = type === 'inicial' ? activePhotosInicial : activePhotosSemanal;
-
-            grid.innerHTML = '';
-
-            activeList.forEach((base64, idx) => {
-                const item = document.createElement('div');
-                item.className = 'relative group aspect-square rounded-lg overflow-hidden border border-slate-200 bg-slate-100 shadow-sm';
-                item.innerHTML = `
-                    <img src="${base64}" class="w-full h-full object-cover">
-                    <button type="button" onclick="removePhoto(${idx}, '${type}')" 
-                            class="absolute top-1 right-1 bg-rose-600 hover:bg-rose-700 text-white w-5 h-5 rounded-full flex items-center justify-center shadow-md transition-all">
-                        <i class="fa-solid fa-xmark text-[10px]"></i>
-                    </button>
-                `;
-                grid.appendChild(item);
-            });
-
-            // Atualização dos Badges Dinâmicos de Foto
-            if (type === 'inicial') {
-                badge.innerText = `${activeList.length} / Mínimo 5`;
-                if (activeList.length >= 5) {
-                    badge.className = 'bg-emerald-100 text-emerald-800 text-[10px] px-2.5 py-1 rounded-full font-extrabold';
-                } else {
-                    badge.className = 'bg-rose-100 text-rose-800 text-[10px] px-2.5 py-1 rounded-full font-extrabold';
-                }
-            } else {
-                badge.innerText = `${activeList.length} / Máximo 5`;
-                if (activeList.length <= 5) {
-                    badge.className = 'bg-emerald-100 text-emerald-800 text-[10px] px-2.5 py-1 rounded-full font-extrabold';
-                } else {
-                    badge.className = 'bg-rose-100 text-rose-800 text-[10px] px-2.5 py-1 rounded-full font-extrabold';
-                }
-            }
-        }
-
-        function showToast(message, type = 'success') {
+        // TOAST NOTIFICATIONS PERSONALIZADAS
+        function showToast(titulo, mensagem, tipo = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             
-            const bgColor = type === 'success' ? 'bg-emerald-800' : 'bg-rose-800';
-            const icon = type === 'success' ? '<i class="fa-solid fa-circle-check text-emerald-400"></i>' : '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';
+            const bgClass = tipo === 'success' ? 'bg-emerald-600' : tipo === 'warning' ? 'bg-amber-500' : 'bg-rose-600';
+            const icon = tipo === 'success' ? 'fa-circle-check' : tipo === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-xmark';
 
-            toast.className = `${bgColor} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 text-xs font-bold transform translate-y-2 opacity-0 transition-all duration-300`;
+            toast.className = `flex items-start gap-3 p-4 text-white rounded-xl shadow-xl transition-all duration-300 transform translate-y-2 opacity-0 ${bgClass}`;
             toast.innerHTML = `
-                ${icon}
-                <span class="flex-grow">${message}</span>
-                <button onclick="this.parentElement.remove()" class="text-white/70 hover:text-white transition-all"><i class="fa-solid fa-xmark"></i></button>
+                <i class="fa-solid ${icon} mt-0.5 text-lg"></i>
+                <div>
+                    <h4 class="font-bold text-sm">${titulo}</h4>
+                    <p class="text-xs opacity-90 mt-0.5">${mensagem}</p>
+                </div>
             `;
-
+            
             container.appendChild(toast);
-
+            
+            // Trigger animation
             setTimeout(() => {
                 toast.classList.remove('translate-y-2', 'opacity-0');
             }, 10);
 
+            // Auto destroy
             setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
+                toast.classList.add('translate-y-2', 'opacity-0');
                 setTimeout(() => toast.remove(), 300);
-            }, 5000);
+            }, 4000);
         }
 
-        function updateLinkSelectOptions() {
-            const select = document.getElementById('sem-link-id');
-            const currentVal = select.value;
+        // PERSISTÊNCIA NO LOCALSTORAGE
+        function salvarNoLocalStorage() {
+            localStorage.setItem('fazenda_oasis_testes', JSON.stringify(testes));
+        }
 
-            select.innerHTML = '<option value="">Acompanhamento Avulso (Inserir manualmente)</option>';
+        function carregarDoLocalStorage() {
+            const dados = localStorage.getItem('fazenda_oasis_testes');
+            if (dados) {
+                try {
+                    testes = JSON.parse(dados);
+                } catch (e) {
+                    testes = [];
+                }
+            }
+        }
+
+        // SALVAR DADOS INICIAIS (ABA 1) - SUPORTA CRIAÇÃO E EDIÇÃO
+        function salvarDadosIniciais(e) {
+            e.preventDefault();
+
+            const blocoSelect = document.getElementById('inicial-bloco-select').value;
+            const bloco = blocoSelect === 'Outros' ? document.getElementById('inicial-bloco-outros').value : blocoSelect;
+
+            const culturaSelect = document.getElementById('inicial-cultura-select').value;
+            const cultura = culturaSelect === 'Outros' ? document.getElementById('inicial-cultura-outros').value : culturaSelect;
+
+            const variedadeSelect = document.getElementById('inicial-variedade-select').value;
+            const variedade = variedadeSelect === 'Outros' ? document.getElementById('inicial-variedade-outros').value : variedadeSelect;
+
+            const unidadeSelect = document.getElementById('inicial-unidade-select').value;
+            const unidade = unidadeSelect === 'Outros' ? document.getElementById('inicial-unidade-outros').value : unidadeSelect;
+
+            if (fotosIniciaisCarregadas.length === 0) {
+                showToast("Erro de Fotos", "Adicione fotos de acompanhamento (no máximo 5) para iniciar.", "error");
+                return;
+            }
+
+            if (idTesteSendoEditado) {
+                // Modo: Edição de registro existente
+                const idx = testes.findIndex(x => x.id === idTesteSendoEditado);
+                if (idx !== -1) {
+                    testes[idx].bloco = bloco;
+                    testes[idx].data = document.getElementById('inicial-data').value;
+                    testes[idx].semana = document.getElementById('inicial-semana').value;
+                    testes[idx].horario = document.getElementById('inicial-horario').value;
+                    testes[idx].cultura = cultura;
+                    testes[idx].variedade = variedade;
+                    testes[idx].produto = document.getElementById('inicial-produto').value;
+                    testes[idx].totalAplicado = document.getElementById('inicial-total-aplicado').value;
+                    testes[idx].unidade = unidade;
+                    testes[idx].totalCanteiros = document.getElementById('inicial-total-canteiros').value;
+                    testes[idx].totalMudas = document.getElementById('inicial-total-mudas').value;
+                    testes[idx].fotos = [...fotosIniciaisCarregadas];
+
+                    showToast("Sucesso!", "O teste foi atualizado com sucesso no histórico.");
+                }
+                resetarFormInicialEdicao();
+            } else {
+                // Modo: Criação de novo registro
+                const novoTeste = {
+                    id: 'teste_' + Date.now(),
+                    bloco,
+                    data: document.getElementById('inicial-data').value,
+                    semana: document.getElementById('inicial-semana').value,
+                    horario: document.getElementById('inicial-horario').value,
+                    cultura,
+                    variedade,
+                    produto: document.getElementById('inicial-produto').value,
+                    totalAplicado: document.getElementById('inicial-total-aplicado').value,
+                    unidade,
+                    totalCanteiros: document.getElementById('inicial-total-canteiros').value,
+                    totalMudas: document.getElementById('inicial-total-mudas').value,
+                    fotos: [...fotosIniciaisCarregadas],
+                    acompanhamentos: [],
+                    status: 'Ativo', // Ativo, Concluído
+                    veredicto: null, // Descrição técnica final
+                    oculto: false // Propriedade do "olho"
+                };
+
+                testes.unshift(novoTeste);
+                showToast("Sucesso!", "Novo teste iniciado com sucesso e guardado no histórico.");
+            }
+
+            salvarNoLocalStorage();
+            renderListaTestes();
             
-            appData.records.forEach(r => {
-                select.innerHTML += `<option value="${r.id}">${r.block} - ${r.crop} (${r.variety})</option>`;
+            // Resetar formulário
+            document.getElementById('cadastro-inicial-form').reset();
+            document.getElementById('inicial-preview-container').innerHTML = '';
+            fotosIniciaisCarregadas = [];
+            inicializarCampos();
+        }
+
+        // EDITAR TESTE INICIAL (CARREGAR DADOS NO FORMULÁRIO)
+        function editarTeste(id) {
+            const t = testes.find(x => x.id === id);
+            if (!t) return;
+
+            idTesteSendoEditado = id;
+            switchTab('inicial');
+
+            // Preencher Bloco
+            const blocoSelect = document.getElementById('inicial-bloco-select');
+            const isPresetBloco = Array.from(blocoSelect.options).some(opt => opt.value === t.bloco);
+            if (isPresetBloco) {
+                blocoSelect.value = t.bloco;
+                document.getElementById('inicial-bloco-outros-container').classList.add('hidden');
+                document.getElementById('inicial-bloco-outros').value = '';
+            } else {
+                blocoSelect.value = 'Outros';
+                document.getElementById('inicial-bloco-outros-container').classList.remove('hidden');
+                document.getElementById('inicial-bloco-outros').value = t.bloco;
+            }
+
+            // Data, Semana, Horário
+            document.getElementById('inicial-data').value = t.data;
+            document.getElementById('inicial-semana').value = t.semana;
+            document.getElementById('inicial-horario').value = t.horario;
+
+            // Cultura
+            const culturaSelect = document.getElementById('inicial-cultura-select');
+            const isPresetCultura = Array.from(culturaSelect.options).some(opt => opt.value === t.cultura);
+            if (isPresetCultura) {
+                culturaSelect.value = t.cultura;
+                document.getElementById('inicial-cultura-outros-container').classList.add('hidden');
+                document.getElementById('inicial-cultura-outros').value = '';
+            } else {
+                culturaSelect.value = 'Outros';
+                document.getElementById('inicial-cultura-outros-container').classList.remove('hidden');
+                document.getElementById('inicial-cultura-outros').value = t.cultura;
+            }
+
+            // Variedade
+            const variedadeSelect = document.getElementById('inicial-variedade-select');
+            const isPresetVariedade = Array.from(variedadeSelect.options).some(opt => opt.value === t.variedade);
+            if (isPresetVariedade) {
+                variedadeSelect.value = t.variedade;
+                document.getElementById('inicial-variedade-outros-container').classList.add('hidden');
+                document.getElementById('inicial-variedade-outros').value = '';
+            } else {
+                variedadeSelect.value = 'Outros';
+                document.getElementById('inicial-variedade-outros-container').classList.remove('hidden');
+                document.getElementById('inicial-variedade-outros').value = t.variedade;
+            }
+
+            // Produto e Dose
+            document.getElementById('inicial-produto').value = t.produto;
+            document.getElementById('inicial-total-aplicado').value = t.totalAplicado;
+
+            // Unidade
+            const unidadeSelect = document.getElementById('inicial-unidade-select');
+            const isPresetUnidade = Array.from(unidadeSelect.options).some(opt => opt.value === t.unidade);
+            if (isPresetUnidade) {
+                unidadeSelect.value = t.unidade;
+                document.getElementById('inicial-unidade-outros-container').classList.add('hidden');
+                document.getElementById('inicial-unidade-outros').value = '';
+            } else {
+                unidadeSelect.value = 'Outros';
+                document.getElementById('inicial-unidade-outros-container').classList.remove('hidden');
+                document.getElementById('inicial-unidade-outros').value = t.unidade;
+            }
+
+            // Canteiros e Mudas
+            document.getElementById('inicial-total-canteiros').value = t.totalCanteiros;
+            document.getElementById('inicial-total-mudas').value = t.totalMudas;
+
+            // Fotos
+            fotosIniciaisCarregadas = [...t.fotos];
+            const container = document.getElementById('inicial-preview-container');
+            container.innerHTML = '';
+            fotosIniciaisCarregadas.forEach((base64Data, index) => {
+                const div = document.createElement('div');
+                div.className = "relative aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200 group";
+                div.innerHTML = `
+                    <img src="${base64Data}" class="w-full h-full object-cover">
+                    <button type="button" onclick="removerFotoPrevia('inicial-preview-container', ${index})" class="absolute top-1 right-1 w-5 h-5 bg-rose-600 text-white text-[10px] rounded-full flex items-center justify-center shadow hover:bg-rose-700 transition-colors">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                `;
+                container.appendChild(div);
             });
 
-            select.value = currentVal;
-        }
+            // Remover obrigatoriedade das fotos para evitar erro ao atualizar
+            document.getElementById('inicial-fotos').removeAttribute('required');
 
-        function handleLinkChange() {
-            const linkId = document.getElementById('sem-link-id').value;
-            const blockSelect = document.getElementById('sem-block');
-            const cropSelect = document.getElementById('sem-crop');
-            const varietySelect = document.getElementById('sem-variety');
+            // Ajustar Título e Botão de Ação do formulário
+            document.getElementById('titulo-formulario-inicial').innerText = "Editar Parâmetros do Ciclo";
+            const btnSubmit = document.getElementById('btn-submit-inicial');
+            btnSubmit.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2";
+            btnSubmit.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> <span>Atualizar Dados do Teste</span>`;
 
-            if (linkId) {
-                const record = appData.records.find(r => r.id == linkId);
-                if (record) {
-                    // Forçar autocomplemento de Bloco
-                    const blockNum = record.block.replace('Bloco ', '');
-                    if (Array.from(blockSelect.options).some(o => o.value === blockNum)) {
-                        blockSelect.value = blockNum;
-                        document.getElementById('custom-sem-block-container').classList.add('hidden');
-                    } else {
-                        blockSelect.value = 'outros';
-                        document.getElementById('custom-sem-block-container').classList.remove('hidden');
-                        document.getElementById('custom-sem-block').value = record.block;
-                    }
-
-                    // Forçar autocomplemento de Cultura
-                    if (Array.from(cropSelect.options).some(o => o.value === record.crop)) {
-                        cropSelect.value = record.crop;
-                        document.getElementById('custom-sem-crop-container').classList.add('hidden');
-                    } else {
-                        cropSelect.value = 'outros';
-                        document.getElementById('custom-sem-crop-container').classList.remove('hidden');
-                        document.getElementById('custom-sem-crop').value = record.crop;
-                    }
-
-                    // Forçar autocomplemento de Variedade
-                    if (Array.from(varietySelect.options).some(o => o.value === record.variety)) {
-                        varietySelect.value = record.variety;
-                        document.getElementById('custom-sem-variety-container').classList.add('hidden');
-                    } else {
-                        varietySelect.value = 'outros';
-                        document.getElementById('custom-sem-variety-container').classList.remove('hidden');
-                        document.getElementById('custom-sem-variety').value = record.variety;
-                    }
-                    
-                    showToast('Dados do teste inicial vinculados automaticamente!', 'success');
-                }
-            } else {
-                blockSelect.value = '';
-                cropSelect.value = '';
-                varietySelect.value = '';
-                document.getElementById('custom-sem-block-container').classList.add('hidden');
-                document.getElementById('custom-sem-crop-container').classList.add('hidden');
-                document.getElementById('custom-sem-variety-container').classList.add('hidden');
-            }
-        }
-
-        function handleFormInicialSubmit(event) {
-            event.preventDefault();
-
-            if (activePhotosInicial.length < 5) {
-                showToast('Erro: Você precisa de no mínimo 5 fotos representativas para salvar os dados iniciais!', 'error');
-                return;
+            // Adicionar Botão de Cancelar se não existir
+            let btnCancelar = document.getElementById('btn-cancelar-edicao-inicial');
+            if (!btnCancelar) {
+                btnCancelar = document.createElement('button');
+                btnCancelar.type = 'button';
+                btnCancelar.id = 'btn-cancelar-edicao-inicial';
+                btnCancelar.className = "w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-4 rounded-xl text-xs transition-colors text-center";
+                btnCancelar.innerText = "Cancelar Edição";
+                btnCancelar.onclick = resetarFormInicialEdicao;
+                document.getElementById('botoes-acao-inicial-container').appendChild(btnCancelar);
             }
 
-            const id = document.getElementById('record-inicial-id').value;
-            const date = document.getElementById('init-date').value;
-            const week = document.getElementById('init-week').value;
-            const time = document.getElementById('init-time').value;
-
-            const blockSelect = document.getElementById('init-block').value;
-            const block = blockSelect === 'outros' ? document.getElementById('custom-init-block').value.trim() : `Bloco ${blockSelect}`;
-
-            const cropSelect = document.getElementById('init-crop').value;
-            const crop = cropSelect === 'outros' ? document.getElementById('custom-init-crop').value.trim() : cropSelect;
-
-            const varietySelect = document.getElementById('init-variety').value;
-            const variety = varietySelect === 'outros' ? document.getElementById('custom-init-variety').value.trim() : varietySelect;
-
-            const product = document.getElementById('init-product').value.trim();
-            const amount = document.getElementById('init-amount').value;
-
-            const unitSelect = document.getElementById('init-unit').value;
-            const unit = unitSelect === 'outros' ? document.getElementById('custom-init-unit').value.trim() : unitSelect;
-
-            const beds = document.getElementById('init-beds').value;
-            const seedlings = document.getElementById('init-seedlings').value;
-
-            if (!block || !crop || !variety || !product || !amount || !unit || !beds || !seedlings) {
-                showToast('Preencha todos os campos obrigatórios corretamente.', 'error');
-                return;
-            }
-
-            const newRecord = {
-                id: id ? parseInt(id) : Date.now(),
-                date,
-                week,
-                time,
-                block,
-                crop,
-                variety,
-                product,
-                amount,
-                unit,
-                beds: parseInt(beds),
-                seedlings: parseInt(seedlings),
-                photos: [...activePhotosInicial],
-                collapsed: false
-            };
-
-            if (id) {
-                const index = appData.records.findIndex(r => r.id === parseInt(id));
-                if (index !== -1) {
-                    newRecord.collapsed = appData.records[index].collapsed || false;
-                    appData.records[index] = newRecord;
-                    showToast('Dados iniciais de aplicação atualizados!');
-                }
-            } else {
-                appData.records.push(newRecord);
-                showToast('Dados iniciais registrados com sucesso!');
-            }
-
-            saveToLocalStorage();
-            resetFormInicial();
-            renderHistory();
-            updateFilterSelectors();
-            updateLinkSelectOptions();
-        }
-
-        function handleFormSemanalSubmit(event) {
-            event.preventDefault();
-
-            if (activePhotosSemanal.length > 5) {
-                showToast('Erro: É permitido anexar no máximo 5 fotos de progresso semanal!', 'error');
-                return;
-            }
-
-            const id = document.getElementById('record-semanal-id').value;
-            const linkId = document.getElementById('sem-link-id').value ? parseInt(document.getElementById('sem-link-id').value) : null;
-            const date = document.getElementById('sem-date').value;
-            const week = document.getElementById('sem-week').value;
-
-            const blockSelect = document.getElementById('sem-block').value;
-            const block = blockSelect === 'outros' ? document.getElementById('custom-sem-block').value.trim() : `Bloco ${blockSelect}`;
-
-            const cropSelect = document.getElementById('sem-crop').value;
-            const crop = cropSelect === 'outros' ? document.getElementById('custom-sem-crop').value.trim() : cropSelect;
-
-            const varietySelect = document.getElementById('sem-variety').value;
-            const variety = varietySelect === 'outros' ? document.getElementById('custom-sem-variety-container').querySelector('input').value.trim() : varietySelect;
-
-            const totalField = document.getElementById('sem-total-field').value;
-            
-            const soilSelect = document.getElementById('sem-soil').value;
-            const soil = soilSelect === 'outros' ? document.getElementById('custom-sem-soil').value.trim() : soilSelect;
-
-            const details = document.getElementById('sem-details').value.trim();
-
-            if (!block || !crop || !variety || !totalField || !soil || !details) {
-                showToast('Preencha todos os campos obrigatórios corretamente.', 'error');
-                return;
-            }
-
-            const newFollowup = {
-                id: id ? parseInt(id) : Date.now(),
-                linkId, // ID do teste inicial pai correspondente
-                date,
-                week,
-                block,
-                crop,
-                variety,
-                totalField: parseInt(totalField),
-                soil,
-                details,
-                photos: [...activePhotosSemanal]
-            };
-
-            if (id) {
-                const index = appData.followups.findIndex(f => f.id === parseInt(id));
-                if (index !== -1) {
-                    appData.followups[index] = newFollowup;
-                    showToast('Acompanhamento semanal atualizado!');
-                }
-            } else {
-                appData.followups.push(newFollowup);
-                showToast('Acompanhamento semanal adicionado!');
-            }
-
-            saveToLocalStorage();
-            resetFormSemanal();
-            renderHistory();
-        }
-
-        function resetFormInicial() {
-            document.getElementById('form-inicial').reset();
-            document.getElementById('record-inicial-id').value = '';
-            activePhotosInicial = [];
-            updatePhotoPreviews('inicial');
-
-            // Ocultar customs
-            document.getElementById('custom-init-block-container').classList.add('hidden');
-            document.getElementById('custom-init-crop-container').classList.add('hidden');
-            document.getElementById('custom-init-variety-container').classList.add('hidden');
-            document.getElementById('custom-init-unit-container').classList.add('hidden');
-
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('init-date').value = today;
-            updateAutomatedWeek('init-date', 'init-week');
-            setNowTime();
-
-            // Sair do modo edição
-            document.getElementById('form-inicial-title').innerHTML = `
-                <span class="p-2 bg-emerald-100 text-emerald-800 rounded-xl"><i class="fa-solid fa-file-signature text-sm"></i></span>
-                Dados Iniciais de Aplicação
-            `;
-            document.getElementById('edit-inicial-indicator').classList.add('hidden');
-            document.getElementById('cancel-edit-init-btn').classList.add('hidden');
-            document.getElementById('save-init-btn-text').innerText = 'Salvar Dados Iniciais';
-        }
-
-        function resetFormSemanal() {
-            document.getElementById('form-semanal').reset();
-            document.getElementById('record-semanal-id').value = '';
-            activePhotosSemanal = [];
-            updatePhotoPreviews('semanal');
-
-            document.getElementById('custom-sem-block-container').classList.add('hidden');
-            document.getElementById('custom-sem-crop-container').classList.add('hidden');
-            document.getElementById('custom-sem-variety-container').classList.add('hidden');
-            document.getElementById('custom-sem-soil-container').classList.add('hidden');
-
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('sem-date').value = today;
-            updateAutomatedWeek('sem-date', 'sem-week');
-
-            document.getElementById('form-semanal-title').innerHTML = `
-                <span class="p-2 bg-emerald-100 text-emerald-800 rounded-xl"><i class="fa-solid fa-calendar-plus text-sm"></i></span>
-                Documentação Semanal
-            `;
-            document.getElementById('edit-semanal-indicator').classList.add('hidden');
-            document.getElementById('cancel-edit-sem-btn').classList.add('hidden');
-            document.getElementById('save-sem-btn-text').innerText = 'Salvar Progresso';
-        }
-
-        function editInicial(id) {
-            const record = appData.records.find(r => r.id === id);
-            if (!record) return;
-
-            switchTab('inicial');
+            showToast("Modo de Edição Ativo", "Altere as informações acima e salve para atualizar o histórico.", "warning");
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-            document.getElementById('record-inicial-id').value = record.id;
-            document.getElementById('init-date').value = record.date;
-            document.getElementById('init-week').value = record.week;
-            document.getElementById('init-time').value = record.time;
+        // RESETAR MODO EDIÇÃO PARA CRIAÇÃO
+        function resetarFormInicialEdicao() {
+            idTesteSendoEditado = null;
+            document.getElementById('titulo-formulario-inicial').innerText = "Iniciar Novo Ciclo de Teste";
+            
+            const btnSubmit = document.getElementById('btn-submit-inicial');
+            btnSubmit.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2";
+            btnSubmit.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>Iniciar Ciclo de Teste</span>`;
 
-            const blockSelect = document.getElementById('init-block');
-            const blockNum = record.block.replace('Bloco ', '');
-            if (Array.from(blockSelect.options).some(o => o.value === blockNum)) {
-                blockSelect.value = blockNum;
-                document.getElementById('custom-init-block-container').classList.add('hidden');
-            } else {
-                blockSelect.value = 'outros';
-                document.getElementById('custom-init-block-container').classList.remove('hidden');
-                document.getElementById('custom-init-block').value = record.block;
+            const btnCancelar = document.getElementById('btn-cancelar-edicao-inicial');
+            if (btnCancelar) btnCancelar.remove();
+
+            document.getElementById('cadastro-inicial-form').reset();
+            document.getElementById('inicial-preview-container').innerHTML = '';
+            fotosIniciaisCarregadas = [];
+            document.getElementById('inicial-fotos').setAttribute('required', 'true');
+            inicializarCampos();
+        }
+
+        // AUTO-PREENCHER CAMPOS DO TESTE VINCULADO (ABA 2)
+        function autoPreencherTesteAtivo() {
+            const vinculoId = document.getElementById('acomp-teste-vinculo').value;
+            const blocoView = document.getElementById('acomp-view-bloco');
+            const culturaView = document.getElementById('acomp-view-cultura');
+            const variedadetView = document.getElementById('acomp-view-variedade');
+
+            if (!vinculoId) {
+                blocoView.textContent = '-';
+                culturaView.textContent = '-';
+                variedadetView.textContent = '-';
+                return;
             }
 
-            const cropSelect = document.getElementById('init-crop');
-            if (Array.from(cropSelect.options).some(o => o.value === record.crop)) {
-                cropSelect.value = record.crop;
-                document.getElementById('custom-init-crop-container').classList.add('hidden');
-            } else {
-                cropSelect.value = 'outros';
-                document.getElementById('custom-init-crop-container').classList.remove('hidden');
-                document.getElementById('custom-init-crop').value = record.crop;
+            const t = testes.find(x => x.id === vinculoId);
+            if (t) {
+                blocoView.textContent = t.bloco;
+                culturaView.textContent = t.cultura;
+                variedadetView.textContent = t.variedade;
+            }
+        }
+
+        // CARREGAR DROPDOWN DE VÍNCULOS
+        function carregarVinculosTeste() {
+            const select = document.getElementById('acomp-teste-vinculo');
+            select.innerHTML = '<option value="">Escolha um teste aberto no histórico...</option>';
+
+            // Listar testes ativos primeiro
+            const ativos = testes.filter(x => x.status === 'Ativo');
+            ativos.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t.id;
+                opt.textContent = `${t.bloco} - ${t.cultura} (${t.produto}) - ${t.semana}`;
+                select.appendChild(opt);
+            });
+        }
+
+        // SALVAR ACOMPANHAMENTO SEMANAL (ABA 2)
+        function salvarAcompanhamentoSemanal(e) {
+            e.preventDefault();
+
+            const vinculoId = document.getElementById('acomp-teste-vinculo').value;
+            if (!vinculoId) {
+                showToast("Erro", "Selecione o teste ativo a ser acompanhado.", "error");
+                return;
             }
 
-            const varietySelect = document.getElementById('init-variety
-...
+            const avaliacaoInput = document.querySelector('input[name="acomp-avaliacao"]:checked');
+            if (!avaliacaoInput) {
+                showToast("Erro", "Selecione a avaliação geral do estado das plantas.", "error");
+                return;
+            }
+
+            if (fotosSemanaisCarregadas.length === 0) {
+                showToast("Erro", "Adicione fotos de acompanhamento da semana (máximo 5).", "error");
+                return;
+            }
+
+            const indexTeste = testes.findIndex(x => x.id === vinculoId);
+            if (indexTeste === -1) return;
+
+            const novoAcomp = {
+                id: 'acomp_' + Date.now(),
+                data: document.getElementById('acomp-data').value,
+                semana: document.getElementById('acomp-semana').value,
+                totalMudasCampo: document.getElementById('acomp-total-campo').value,
+                estadoSolo: document.getElementById('acomp-estado-solo').value,
+                avaliacao: avaliacaoInput.value,
+                detalhes: document.getElementById('acomp-detalhes').value,
+                fotos: [...fotosSemanaisCarregadas]
+            };
+
+            testes[indexTeste].acompanhamentos.push(novoAcomp);
+            
+            // Ordenar acompanhamentos por data crescente
+            testes[indexTeste].acompanhamentos.sort((a, b) => new Date(a.data) - new Date(b.data));
+
+            salvarNoLocalStorage();
+            renderListaTestes();
+            showToast("Gravado!", "Acompanhamento semanal gravado com êxito.");
+
+            // Resetar form
+            document.getElementById('acompanhamento-semanal-form').reset();
+            document.getElementById('acomp-preview-container').innerHTML = '';
+            fotosSemanaisCarregadas = [];
+            inicializarCampos();
+            switchTab('inicial');
+        }
+
+        // ALTERNAR VISUALIZAÇÃO DE REGISTRO (OLHO)
+        function toggleOculto(id) {
+            const idx = testes.findIndex(x => x.id === id);
+            if (idx !== -1) {
+                testes[idx].oculto = !testes[idx].oculto;
+                salvarNoLocalStorage();
+                renderListaTestes();
+            }
+        }
+
+        // APAGAR UM TESTE INTEIRO (ACIONA MODAL DE CONFIRMAÇÃO)
+        function apagarTeste(id) {
+            idTesteParaApagar = id;
+            document.getElementById('confirmacao-exclusao-modal').classList.remove('hidden');
+        }
+
+        function fecharModalExclusao() {
+            document.getElementById('confirmacao-exclusao-modal').classList.add('hidden');
+            idTesteParaApagar = null;
+        }
+
+        function confirmarExclusao() {
+            if (idTesteParaApagar) {
+                testes = testes.filter(x => x.id !== idTesteParaApagar);
+                salvarNoLocalStorage();
+                renderListaTestes();
+                carregarVinculosTeste(); // Atualizar vínculos dropdown também
+                showToast("Excluído", "O registro do teste foi removido completamente do histórico.", "warning");
+                
+                // Se o teste apagado estiver em edição, resetar o formulário
+                if (idTesteSendoEditado === idTesteParaApagar) {
+                    resetarFormInicialEdicao();
+                }
+            }
+            fecharModalExclusao();
+        }
+
+        // LIMPAR TODO O HISTÓRICO
+        function limparTudo() {
+            if (confirm("AVISO: Esta ação irá apagar TODOS os testes registrados e limpar permanentemente a memória. Confirmar?")) {
+                testes = [];
+                idTesteSendoEditado = null;
+                salvarNoLocalStorage();
+                renderListaTestes();
+                carregarVinculosTeste();
+                resetarFormInicialEdicao();
+                showToast("Painel Limpo", "Toda a memória do aplicativo foi reiniciada.", "error");
+            }
+        }
+
+        // CONTROLAR MODAL DE VEREDITO FINAL
+        function abrirVeredicto(id) {
+            const t = testes.find(x => x.id === id);
+            if (!t) return;
+
+            document.getElementById('veredicto-id-teste').value = id;
+            document.getElementById('veredicto-status').value = t.veredicto?.status || 'Satisfatório';
+            document.getElementById('veredicto-observacoes').value = t.veredicto?.observacoes || '';
+
+            document.getElementById('veredicto-modal').classList.remove('hidden');
+        }
+
+        function fecharVeredicto() {
+            document.getElementById('veredicto-modal').classList.add('hidden');
+        }
+
+        function salvarVeredicto(e) {
+            e.preventDefault();
+            const id = document.getElementById('veredicto-id-teste').value;
+            const status = document.getElementById('veredicto-status').value;
+            const observacoes = document.getElementById('veredicto-observacoes').value;
+
+            const idx = testes.findIndex(x => x.id === id);
+            if (idx !== -1) {
+                testes[idx].veredicto = { status, observacoes };
+                testes[idx].status = 'Concluído';
+                salvarNoLocalStorage();
+                renderListaTestes();
+                fecharVeredicto();
+                showToast("Sucesso!", "Veredito técnico salvo! O teste foi marcado como concluído.");
+            }
+        }
+
+        // RENDERIZAÇÃO DOS CARDS DE HISTÓRICO
+        function renderListaTestes() {
+            const container = document.getElementById('lista-testes-container');
+            container.innerHTML = '';
+
+            if (testes.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed border-slate-100 rounded-2xl">
+                        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-400 mb-3">
+                            <i class="fa-solid fa-flask-vial text-2xl"></i>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-700">Nenhum teste iniciado</h3>
+                        <p class="text-slate-400 text-xs mt-1 max-w-xs">Insira os dados iniciais do teste à esquerda para iniciar a documentação do ciclo.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            testes.forEach(t => {
+                const card = document.createElement('div');
+                card.className = `bg-white border rounded-2xl overflow-hidden shadow-sm transition-all duration-300 ${t.status === 'Concluído' ? 'border-emerald-200' : 'border-slate-100'}`;
+
+                // Header do Card
+                let statusBadge = t.status === 'Concluído' 
+                    ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase rounded-full border border-emerald-100 flex items-center gap-1"><i class="fa-solid fa-lock"></i> Concluído</span>`
+                    : `<span class="px-2.5 py-1 bg-amber-50 text-amber-700 text-[10px] font-bold uppercase rounded-full border border-amber-100 flex items-center gap-1"><i class="fa-solid fa-arrows-spin animate-spin"></i> Em Curso</span>`;
+
+                card.innerHTML = `
+                    <div class="p-5 border-b border-slate-50 flex items-center justify-between gap-4 bg-slate-50/50">
+                        <div class="flex items-center gap-3">
+                            <!-- Olho para ocultar/exibir conteúdo detalhado -->
+                            <button onclick="toggleOculto('${t.id}')" class="text-slate-400 hover:text-emerald-600 transition-colors" title="Ocultar/Exibir detalhes">
+                                <i class="fa-solid ${t.oculto ? 'fa-eye-slash' : 'fa-eye'} text-lg"></i>
+                            </button>
+                            <div>
+                                <h3 class="font-extrabold text-slate-900 text-base flex items-center gap-1.5">
+                                    ${t.bloco} - ${t.cultura}
+                                </h3>
+                                <p class="text-xs text-slate-500 font-medium">Produto: <span class="text-emerald-700 font-bold">${t.produto}</span> | Variedade: ${t.variedade}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${statusBadge}
+                            <!-- Botão de Editar (Lápis) -->
+                            <button onclick="editarTeste('${t.id}')" class="w-8 h-8 rounded-lg flex items-center justify-center text-amber-500 hover:bg-amber-50 transition-colors" title="Editar Teste">
+                                <i class="fa-solid fa-pen text-sm"></i>
+                            </button>
+                            <!-- Botão de Apagar (Lixeira) -->
+                            <button onclick="apagarTeste('${t.id}')" class="w-8 h-8 rounded-lg flex items-center justify-center text-rose-500 hover:bg-rose-50 transition-colors" title="Deletar Teste">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                if (!t.oculto) {
+                    // Seção de Detalhes Expandidos
+                    const detDiv = document.createElement('div');
+                    detDiv.className = "p-5 space-y-5";
+
+                    // Info Grid
+                    detDiv.innerHTML = `
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-xl text-xs border border-slate-100">
+                            <div>
+                                <span class="text-slate-400 block uppercase font-bold text-[10px]">Partida do Teste</span>
+                                <span class="font-bold text-slate-800">${t.data} (${t.horario})</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block uppercase font-bold text-[10px]">Semana da Aplicação</span>
+                                <span class="font-bold text-slate-800">${t.semana}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block uppercase font-bold text-[10px]">Dose / Canteiros</span>
+                                <span class="font-bold text-slate-800">${t.totalAplicado} ${t.unidade} / ${t.totalCanteiros} cant.</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block uppercase font-bold text-[10px]">Total Mudas Instaladas</span>
+                                <span class="font-bold text-slate-800">${t.totalMudas} mudas</span>
+                            </div>
+                        </div>
+                    `;
+
+                    // Fotos Iniciais
+                    const galeriaIni = document.createElement('div');
+                    galeriaIni.className = "space-y-2";
+                    galeriaIni.innerHTML = `
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-images"></i> Fotos da Aplicação Inicial (${t.fotos.length})
+                        </h4>
+                        <div class="grid grid-cols-5 gap-2">
+                            ${t.fotos.map(f => `<a href="${f}" target="_blank" class="aspect-square bg-slate-50 rounded-lg overflow-hidden border border-slate-200 block hover:opacity-90"><img src="${f}" class="w-full h-full object-cover"></a>`).join('')}
+                        </div>
+                    `;
+                    detDiv.appendChild(galeriaIni);
+
+                    // Acompanhamentos Semanais (Timeline)
+                    const acompDiv = document.createElement('div');
+                    acompDiv.className = "border-t border-slate-100 pt-5 space-y-4";
+                    
+                    if (t.acompanhamentos.length === 0) {
+                        acompDiv.innerHTML = `
+                            <div class="text-center py-6 bg-slate-50 rounded-xl border border-slate-100">
+                                <p class="text-xs text-slate-500 font-semibold">Sem registros semanais</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Vá na aba "Acompanhamento Semanal" para registrar a evolução.</p>
+                            </div>
+                        `;
+                    } else {
+                        acompDiv.innerHTML = `<h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 mb-2"><i class="fa-solid fa-clock-rotate-left"></i> Histórico de Evolução Semanal</h4>`;
+                        const timeline = document.createElement('div');
+                        timeline.className = "relative border-l-2 border-slate-100 ml-3 pl-5 space-y-5 py-2";
+
+                        t.acompanhamentos.forEach((ac, acIdx) => {
+                            let colorBadge = "bg-emerald-50 text-emerald-700 border-emerald-100";
+                            if (ac.avaliacao === "Regular") colorBadge = "bg-amber-50 text-amber-700 border-amber-100";
+                            if (ac.avaliacao === "Insatisfatório") colorBadge = "bg-rose-50 text-rose-700 border-rose-100";
+
+                            timeline.innerHTML += `
+                                <div class="relative">
+                                    <div class="absolute -left-[29px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-slate-200"></div>
+                                    <div class="space-y-2">
+                                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                                            <span class="text-xs font-extrabold text-slate-800">${ac.semana} (${ac.data})</span>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="px-2 py-0.5 rounded-full border text-[9px] font-bold ${colorBadge}">${ac.avaliacao}</span>
+                                                <span class="text-[10px] text-slate-500 font-semibold">${ac.totalMudasCampo} mudas vivas | Solo: ${ac.estadoSolo}</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100 italic">"${ac.detalhes}"</p>
+                                        <div class="grid grid-cols-5 gap-1.5 max-w-sm">
+                                            ${ac.fotos.map(f => `<a href="${f}" target="_blank" class="aspect-square bg-slate-50 rounded-lg overflow-hidden border border-slate-200 block hover:opacity-90"><img src="${f}" class="w-full h-full object-cover"></a>`).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        acompDiv.appendChild(timeline);
+                    }
+                    detDiv.appendChild(acompDiv);
+
+                    // Veredicto / Conclusão Técnica Final
+                    const veredictoBox = document.createElement('div');
+                    veredictoBox.className = "border-t border-slate-100 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4";
+                    
+                    if (t.veredicto) {
+                        let classBadge = "bg-emerald-50 border-emerald-100 text-emerald-800";
+                        if (t.veredicto.status === "Insatisfatório") classBadge = "bg-rose-50 border-rose-100 text-rose-800";
+                        if (t.veredicto.status === "Inconclusivo") classBadge = "bg-amber-50 border-amber-100 text-amber-800";
+
+                        veredictoBox.innerHTML = `
+                            <div class="space-y-1.5 flex-1">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${classBadge}">
+                                    <i class="fa-solid fa-flag-checkered"></i> Veredito: ${t.veredicto.status}
+                                </span>
+                                <p class="text-xs text-slate-600 font-medium bg-emerald-50/20 p-3 rounded-xl border border-emerald-500/10 italic">"${t.veredicto.observacoes}"</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="abrirVeredicto('${t.id}')" class="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold hover:bg-slate-50 transition-colors flex items-center gap-1.5">
+                                    <i class="fa-solid fa-pen-to-square"></i> Alterar Veredito
+                                </button>
+                                <button onclick="exportarRelatorioPDF('${t.id}')" class="px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-file-pdf"></i> Exportar PDF
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        veredictoBox.innerHTML = `
+                            <div class="text-xs text-slate-500 flex items-center gap-2">
+                                <i class="fa-solid fa-info-circle text-amber-500 text-base"></i>
+                                Para finalizar o relatório consolidado deste teste, conclua o ciclo e salve o veredicto técnico.
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="abrirVeredicto('${t.id}')" class="px-4 py-2.5 rounded-xl bg-amber-500 text-white text-xs font-bold hover:bg-amber-600 transition-colors flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-flag-checkered"></i> Concluir & Veredito
+                                </button>
+                                <button onclick="exportarRelatorioPDF('${t.id}')" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors flex items-center gap-1.5">
+                                    <i class="fa-solid fa-file-pdf"></i> Exportar PDF (Parcial)
+                                </button>
+                            </div>
+                        `;
+                    }
+                    detDiv.appendChild(veredictoBox);
+
+                    card.appendChild(detDiv);
+                }
+
+                container.appendChild(card);
+            });
+        }
+
+        // EXPORTAR RELATÓRIO PDF EM FORMATO APRESENTAÇÃO/DOSSIÊ
+        function exportarRelatorioPDF(idTeste) {
+            const t = testes.find(x => x.id === idTeste);
+            if (!t) return;
+
+            const printArea = document.getElementById('pdf-render-area');
+            printArea.innerHTML = ''; // Limpar antiga renderização
+
+            // LOGO LINK (SEM CONTORNO)
+            const logoHtml = `
+                <div class="flex items-center justify-between border-b pb-6 mb-8 border-slate-200">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 flex items-center justify-center overflow-hidden bg-transparent">
+                            <img src="https://i.imgur.com/wEozr34.png" alt="Fazenda Oásis" class="max-w-full max-h-full object-contain block border-0 ring-0 outline-none" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80&w=100';">
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-black text-slate-900 leading-tight">Relatório de Acompanhamento de Teste</h1>
+                            <p class="text-emerald-700 font-extrabold text-xs tracking-wider uppercase">Fazenda Oásis</p>
+                        </div>
+                    </div>
+                    <div class="text-right text-xs text-slate-400 font-medium">
+                        <p>Documento Emitido em: ${new Date().toLocaleDateString('pt-BR')}</p>
+                        <p>ID do Ciclo: ${t.id}</p>
+                    </div>
+                </div>
+            `;
+
+            // PÁGINA 1: DADOS TÉCNICOS INICIAIS DA PARTIDA DO TESTE
+            let p1Html = `
+                <div class="pdf-page bg-white p-6">
+                    ${logoHtml}
+                    
+                    <div class="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-6 mb-6">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 mb-4">
+                            DADOS INICIAIS DA APLICAÇÃO
+                        </span>
+                        
+                        <div class="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
+                            <div>
+                                <span class="text-slate-400 block uppercase font-bold text-[10px] tracking-wide">Bloco do Campo</span>
+                                <span class="font-black text-slate-850 text-base">${t.bloco}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block uppercase font-bold text-[10px] tracking-wide">Cultura Monitorada</span>
+                                <span class="font-black text-slate-850 text-base">${t.cultura}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block uppercase font-bold text-[10px] tracking-wide">Variedade Biológica</span>
+                                <span class="font-bold text-slate-800">${t.variedade}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block uppercase font-bold text-[10px] tracking-wide">Produto Químico / Biológico</span>
+                                <span class="font-black text-emerald-700">${t.produto}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block uppercase font-bold text-[10px] tracking-wide">Dose e Volume</span>
+                                <span class="font-bold text-slate-800">${t.totalAplicado} ${t.unidade}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block uppercase font-bold text-[10px] tracking-wide">Data e Horário</span>
+                                <span class="font-bold text-slate-800">${t.data} às ${t.horario} (Semana: ${t.semana})</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block uppercase font-bold text-[10px] tracking-wide">Total de Canteiros</span>
+                                <span class="font-bold text-slate-800">${t.totalCanteiros} canteiros</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block uppercase font-bold text-[10px] tracking-wide">Mudas na Instalação</span>
+                                <span class="font-black text-slate-800">${t.totalMudas} mudas totais</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Galeria Inicial -->
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-black uppercase text-slate-400 tracking-wider">REGISTRO FOTOGRÁFICO DA PARTIDA</h3>
+                        <div class="grid grid-cols-3 gap-3">
+                            ${t.fotos.slice(0, 5).map(f => `
+                                <div class="aspect-video bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
+                                    <img src="${f}" class="w-full h-full object-cover">
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            printArea.innerHTML += p1Html;
+
+            // PÁGINAS SEGUINTES: SEÇÃO DE ACOMPANHAMENTOS SEMANAIS
+            if (t.acompanhamentos.length > 0) {
+                const itemsPorPagina = 2;
+                for (let i = 0; i < t.acompanhamentos.length; i += itemsPorPagina) {
+                    const fatia = t.acompanhamentos.slice(i, i + itemsPorPagina);
+                    let pagHtml = `
+                        <div class="pdf-page bg-white p-6">
+                            ${logoHtml}
+                            
+                            <h3 class="text-xs font-black uppercase text-emerald-700 tracking-wider mb-4">DIÁRIO DE EVOLUÇÃO CRONOLÓGICA SEMANAL</h3>
+                            <div class="space-y-6">
+                    `;
+
+                    fatia.forEach(ac => {
+                        let classBadge = "bg-emerald-50 text-emerald-800 border-emerald-100";
+                        if (ac.avaliacao === "Regular") classBadge = "bg-amber-50 text-amber-800 border-amber-100";
+                        if (ac.avaliacao === "Insatisfatório") classBadge = "bg-rose-50 text-rose-800 border-rose-100";
+
+                        pagHtml += `
+                            <div class="border border-slate-100 rounded-xl p-5 bg-slate-50/40 space-y-3">
+                                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                                    <div>
+                                        <span class="text-sm font-black text-slate-900">${ac.semana}</span>
+                                        <span class="text-[10px] text-slate-400 ml-2">Data do Registro: ${ac.data}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2.5 py-0.5 rounded-full border text-[9px] font-black uppercase ${classBadge}">Visual: ${ac.avaliacao}</span>
+                                        <span class="text-xs text-slate-500 font-bold">${ac.totalMudasCampo} mudas vivas (Solo: ${ac.estadoSolo})</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-700 leading-relaxed italic">"${ac.detalhes}"</p>
+                                </div>
+                                <div class="grid grid-cols-5 gap-2 pt-2">
+                                    ${ac.fotos.slice(0, 5).map(f => `
+                                        <div class="aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
+                                            <img src="${f}" class="w-full h-full object-cover">
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    pagHtml += `
+                            </div>
+                        </div>
+                    `;
+                    printArea.innerHTML += pagHtml;
+                }
+            }
+
+            // PÁGINA DE VEREDITO / CONCLUSÃO FINAL (SE EXISTIR)
+            if (t.veredicto) {
+                let classBox = "bg-emerald-50/50 border-emerald-200 text-emerald-900";
+                if (t.veredicto.status === "Insatisfatório") classBox = "bg-rose-50/50 border-rose-200 text-rose-900";
+                if (t.veredicto.status === "Inconclusivo") classBox = "bg-amber-50/50 border-amber-200 text-amber-900";
+
+                let veredictoHtml = `
+                    <div class="pdf-page bg-white p-6">
+                        ${logoHtml}
+                        
+                        <div class="flex flex-col items-center justify-center text-center py-6">
+                            <i class="fa-solid fa-square-poll-vertical text-emerald-600 text-5xl mb-3"></i>
+                            <h2 class="text-lg font-black text-slate-900 uppercase tracking-tight">ENCERRAMENTO DO CICLO DE TESTE</h2>
+                            <p class="text-slate-400 text-xs">Conclusão técnica final, análise do produto aplicado e parecer comercial.</p>
+                        </div>
+
+                        <div class="${classBox} border rounded-2xl p-6 mt-6 space-y-4">
+                            <div class="flex items-center justify-between border-b pb-3 border-slate-200/60">
+                                <span class="text-xs font-black uppercase tracking-wider">RESULTADO FINAL DA AVALIAÇÃO</span>
+                                <span class="px-3 py-1 rounded-full text-xs font-black uppercase bg-white border border-slate-300">${t.veredicto.status}</span>
+                            </div>
+                            <div class="space-y-2">
+                                <h4 class="text-xs font-bold uppercase text-slate-400">Parecer Técnico Detalhado</h4>
+                                <p class="text-sm font-medium leading-relaxed italic">"${t.veredicto.observacoes}"</p>
+                            </div>
+                        </div>
+
+                        <!-- Assinatura Técnica -->
+                        <div class="grid grid-cols-2 gap-8 pt-32 text-center text-xs">
+                            <div class="space-y-2">
+                                <div class="border-t border-slate-300 w-48 mx-auto"></div>
+                                <p class="font-bold text-slate-700">Responsável de Campo</p>
+                                <p class="text-slate-400 text-[10px]">Fazenda Oásis</p>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="border-t border-slate-300 w-48 mx-auto"></div>
+                                <p class="font-bold text-slate-700">Responsável Técnico / Agrônomo</p>
+                                <p class="text-slate-400 text-[10px]">Registro Profissional / CREA</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                printArea.innerHTML += veredictoHtml;
+            }
+
+            // EXPORTAÇÃO COMPLETA DE FORMA SILENCIOSA COM HTML2PDF
+            const opt = {
+                margin: 0,
+                filename: `Relatorio_Teste_${t.bloco}_${t.cultura.replace(' ', '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            showToast("Aguarde", "Gerando e compilando relatório PDF. Isso pode levar alguns segundos devido ao peso das fotos...", "warning");
+            
+            html2pdf().from(printArea).set(opt).save().then(() => {
+                showToast("Sucesso!", "O PDF consolidado foi baixado com todas as páginas e fotos.");
+            });
+        }
+    </script>
+</body>
+</html>
