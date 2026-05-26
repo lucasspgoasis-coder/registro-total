@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- html2pdf.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- html2canvas para exportação em JPG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -46,9 +48,9 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased pb-12">
 
-    <!-- Header -->
+    <!-- Cabeçalho / Header -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-4">
                 <div class="w-16 h-16 flex items-center justify-center bg-transparent overflow-hidden">
                     <img id="logo-preview" src="https://i.imgur.com/wEozr34.png" alt="Logo Fazenda Oásis" class="max-w-full max-h-full object-contain" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
@@ -59,8 +61,14 @@
                 </div>
             </div>
            
-            <div class="flex gap-2">
-                <button onclick="downloadCompletePDF()" class="inline-flex items-center gap-2 bg-oasis-700 hover:bg-oasis-800 text-white font-semibold px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm">
+            <div class="flex flex-wrap gap-2 justify-center">
+                <!-- Botão JPG -->
+                <button onclick="downloadCompleteJPG()" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Descarregar JPG
+                </button>
+                <!-- Botão PDF -->
+                <button onclick="downloadCompletePDF()" class="inline-flex items-center gap-2 bg-oasis-700 hover:bg-oasis-800 text-white font-semibold px-4 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     Descarregar PDF Unificado
                 </button>
@@ -70,28 +78,28 @@
 
     <main class="max-w-7xl mx-auto px-4 mt-8">
        
-        <!-- ABAS DE NAVEGAÇÃO DOS FORMULÁRIOS -->
+        <!-- Abas de Navegação dos Formulários -->
         <div class="flex flex-wrap border-b border-slate-200 mb-6 bg-white p-1 rounded-xl shadow-sm max-w-2xl gap-1">
             <button id="tab-initial-btn" onclick="switchTab('initial')" class="flex-1 min-w-[120px] py-2.5 px-3 text-center text-xs sm:text-sm font-bold rounded-lg transition-all bg-oasis-700 text-white shadow-sm inline-flex items-center justify-center gap-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                1. Dados Iniciais
+                1. Dados Iniciais / Plantio
             </button>
             <button id="tab-weekly-btn" onclick="switchTab('weekly')" class="flex-1 min-w-[120px] py-2.5 px-3 text-center text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-800 hover:bg-slate-50 inline-flex items-center justify-center gap-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                2. Acompanhamento
+                2. Acompanhamento Semanal
             </button>
             <button id="tab-harvest-btn" onclick="switchTab('harvest')" class="flex-1 min-w-[120px] py-2.5 px-3 text-center text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-800 hover:bg-slate-50 inline-flex items-center justify-center gap-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                3. Dados de Colheita
+                3. Rendimento e Colheita
             </button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
            
-            <!-- COLUNA FORMULÁRIOS (Lado Esquerdo - 40%) -->
+            <!-- Coluna de Formulários (Lado Esquerdo - 40%) -->
             <div class="lg:col-span-5 space-y-6">
                
-                <!-- ABA 1: FORMULÁRIO DADOS INICIAIS -->
+                <!-- Aba 1: Formulário Dados Iniciais -->
                 <section id="form-initial-section" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
                     <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
                         <h2 id="initial-form-title" class="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -127,7 +135,7 @@
                             </div>
                         </div>
 
-                        <!-- Horário Automático -->
+                        <!-- Horário do Registo -->
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -142,35 +150,44 @@
                             </div>
                         </div>
 
-                        <!-- Bloco -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                                Bloco
-                            </label>
-                            <select id="init-bloco-select" required onchange="toggleCustom('init-bloco')" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 transition-all text-slate-700 font-medium">
-                                <option value="">Selecione o Bloco</option>
-                                <option value="Bloco 01">Bloco 01</option>
-                                <option value="Bloco 02">Bloco 02</option>
-                                <option value="Bloco 03">Bloco 03</option>
-                                <option value="Bloco 04">Bloco 04</option>
-                                <option value="Bloco 05">Bloco 05</option>
-                                <option value="Bloco 06">Bloco 06</option>
-                                <option value="Bloco 07">Bloco 07</option>
-                                <option value="Bloco 08">Bloco 08</option>
-                                <option value="Bloco 09">Bloco 09</option>
-                                <option value="Bloco 10">Bloco 10</option>
-                                <option value="Bloco 11">Bloco 11</option>
-                                <option value="Bloco 12">Bloco 12</option>
-                                <option value="Bloco 13">Bloco 13</option>
-                                <option value="Bloco 14">Bloco 14</option>
-                                <option value="Bloco 15">Bloco 15</option>
-                                <option value="Bloco 16">Bloco 16</option>
-                                <option value="Bloco 17">Bloco 17</option>
-                                <option value="Bloco 18">Bloco 18</option>
-                                <option value="Outros">Outros (digitar...)</option>
-                            </select>
-                            <input type="text" id="init-bloco-custom" placeholder="Digite o nome do bloco" class="hidden mt-2 w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
+                        <!-- Bloco e Nº do Bloco -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                                    Bloco
+                                </label>
+                                <select id="init-bloco-select" required onchange="toggleCustom('init-bloco')" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 transition-all text-slate-700 font-medium">
+                                    <option value="">Selecione o Bloco</option>
+                                    <option value="Bloco 01">Bloco 01</option>
+                                    <option value="Bloco 02">Bloco 02</option>
+                                    <option value="Bloco 03">Bloco 03</option>
+                                    <option value="Bloco 04">Bloco 04</option>
+                                    <option value="Bloco 05">Bloco 05</option>
+                                    <option value="Bloco 06">Bloco 06</option>
+                                    <option value="Bloco 07">Bloco 07</option>
+                                    <option value="Bloco 08">Bloco 08</option>
+                                    <option value="Bloco 09">Bloco 09</option>
+                                    <option value="Bloco 10">Bloco 10</option>
+                                    <option value="Bloco 11">Bloco 11</option>
+                                    <option value="Bloco 12">Bloco 12</option>
+                                    <option value="Bloco 13">Bloco 13</option>
+                                    <option value="Bloco 14">Bloco 14</option>
+                                    <option value="Bloco 15">Bloco 15</option>
+                                    <option value="Bloco 16">Bloco 16</option>
+                                    <option value="Bloco 17">Bloco 17</option>
+                                    <option value="Bloco 18">Bloco 18</option>
+                                    <option value="Outros">Outros (digitar...)</option>
+                                </select>
+                                <input type="text" id="init-bloco-custom" placeholder="Digite o nome do bloco" class="hidden mt-2 w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+                                    Nº do Bloco
+                                </label>
+                                <input type="text" id="init-n-bloco" required placeholder="Ex: 5, A, 12" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
+                            </div>
                         </div>
 
                         <!-- Cultura -->
@@ -182,7 +199,7 @@
                             <select id="init-culture-select" required onchange="toggleCustom('init-culture')" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 transition-all text-slate-700 font-medium">
                                 <option value="">Selecione a Cultura</option>
                                 <option value="Brócolis">Brócolis</option>
-                                <option value="Couve flor">Couve flor</option>
+                                <option value="Couve-flor">Couve-flor</option>
                                 <option value="Outros">Outros (digitar...)</option>
                             </select>
                             <input type="text" id="init-culture-custom" placeholder="Digite a cultura" class="hidden mt-2 w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
@@ -227,7 +244,7 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                                Produto Aplicado
+                                Produto Aplicado / Tratamento
                             </label>
                             <input type="text" id="init-product" required placeholder="Ex: Fertilizante, Defensivo, etc." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
                         </div>
@@ -250,7 +267,7 @@
                                     <option value="">Selecione</option>
                                     <option value="ml">ml</option>
                                     <option value="kg">kg</option>
-                                    <option value="gm">gm</option>
+                                    <option value="g">g</option>
                                     <option value="L">L</option>
                                     <option value="Outros">Outros (digitar...)</option>
                                 </select>
@@ -263,14 +280,14 @@
                             <div class="flex justify-between items-center mb-1.5">
                                 <label class="block text-xs font-bold text-slate-500 uppercase flex items-center gap-1">
                                     <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                    Fotos Iniciais
+                                    Fotos Iniciais (Opcional)
                                 </label>
                                 <span id="init-photo-count" class="text-xs font-bold text-slate-500">0 selecionadas</span>
                             </div>
                             <div class="relative border-2 border-dashed border-slate-200 rounded-xl p-4 bg-slate-50 text-center hover:border-oasis-600 cursor-pointer transition-all">
                                 <input type="file" id="init-photos-input" multiple accept="image/*" onchange="handleInitialPhotoUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
                                 <span class="text-xs text-slate-600 font-semibold block">Clique para enviar as fotos</span>
-                                <span class="text-[10px] text-slate-400">Anexe imagens para ilustrar o plantio (opcional)</span>
+                                <span class="text-[10px] text-slate-400">Anexe imagens para ilustrar o plantio</span>
                             </div>
                             <div id="init-photos-preview" class="grid grid-cols-5 gap-2 mt-2"></div>
                         </div>
@@ -282,7 +299,7 @@
                     </form>
                 </section>
 
-                <!-- ABA 2: FORMULÁRIO DADOS SEMANAIS -->
+                <!-- Aba 2: Formulário Dados Semanais -->
                 <section id="form-weekly-section" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 hidden">
                     <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
                         <h2 id="weekly-form-title" class="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -300,7 +317,7 @@
                     <form id="weekly-form" onsubmit="saveWeeklyRecord(event)" class="space-y-4">
                         <input type="hidden" id="weekly-edit-id" value="">
 
-                        <!-- SELECIONAR TESTE INICIAL FIXADO -->
+                        <!-- Selecionar Teste Inicial Fixado -->
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
@@ -311,7 +328,16 @@
                             </select>
                         </div>
 
-                        <!-- Relatório de Como está a Planta -->
+                        <!-- Data do Acompanhamento -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                Data do Monitoramento
+                            </label>
+                            <input type="date" id="week-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all">
+                        </div>
+
+                        <!-- Observações do Desenvolvimento -->
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
@@ -344,7 +370,7 @@
                     </form>
                 </section>
 
-                <!-- ABA 3: FORMULÁRIO DADOS DA COLHEITA -->
+                <!-- Aba 3: Formulário Dados da Colheita -->
                 <section id="form-harvest-section" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 hidden">
                     <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
                         <h2 id="harvest-form-title" class="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -362,7 +388,7 @@
                     <form id="harvest-form" onsubmit="saveHarvestRecord(event)" class="space-y-4">
                         <input type="hidden" id="harvest-edit-id" value="">
 
-                        <!-- SELECIONAR TESTE INICIAL FIXADO -->
+                        <!-- Selecionar Teste Inicial Fixado -->
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
@@ -373,11 +399,11 @@
                             </select>
                         </div>
 
-                        <!-- Média gm -->
+                        <!-- Média em gramas -->
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
-                                Média (gm) por planta/cabeça
+                                Média (g) por planta/cabeça
                             </label>
                             <input type="number" step="any" id="harvest-average-gm" required placeholder="Ex: 450.5" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
                         </div>
@@ -425,10 +451,10 @@
                 </section>
             </div>
 
-            <!-- TABELA & HISTÓRICO GERAL (Lado Direito - 60%) -->
+            <!-- Tabela & Histórico Geral (Lado Direito - 60%) -->
             <div class="lg:col-span-7 space-y-6">
                
-                <!-- CARD DE RESUMOS -->
+                <!-- Card de Resumos / Estatísticas -->
                 <div class="grid grid-cols-3 gap-4">
                     <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between">
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Testes Iniciais</span>
@@ -459,20 +485,20 @@
                     </div>
                 </div>
 
-                <!-- LISTAGEM UNIFICADA DE DADOS -->
+                <!-- Painel Geral -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                     <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
                         <div>
                             <h3 class="text-lg font-bold text-slate-900">Painel Geral de Ciclos e Evoluções</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Os testes estão em ordem alfabética. Testes com olho cinzento/riscado serão ocultados do PDF.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Os testes estão em ordem alfabética. Testes com o ícone do olho desmarcado (riscado) serão ocultados do PDF/JPG.</p>
                         </div>
-                        <button onclick="clearSystemData()" class="text-xs text-red-600 hover:text-red-800 font-bold border border-red-200 hover:bg-red-50 px-3 py-2 rounded-lg transition-all inline-flex items-center gap-1.5">
+                        <button onclick="clearSystemData()" class="text-xs text-red-600 hover:text-red-800 font-bold border border-red-200 hover:bg-red-50 px-3 py-2 rounded-lg transition-all inline-flex items-center gap-1.5 flex-shrink-0">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             Limpar Histórico Completo
                         </button>
                     </div>
 
-                    <!-- CONTAINER DINÂMICO DOS REGISTROS -->
+                    <!-- Container Dinâmico dos Registos -->
                     <div id="unified-history-container" class="divide-y divide-slate-100 max-h-[800px] overflow-y-auto">
                         <!-- Gerado dinamicamente no JS -->
                     </div>
@@ -482,7 +508,7 @@
         </div>
     </main>
 
-    <!-- MODAL DE DIÁLOGO CUSTOMIZADO -->
+    <!-- Modal de Diálogo Customizado -->
     <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
             <div id="modal-icon" class="w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-blue-100 text-blue-700">
@@ -495,13 +521,13 @@
                     Cancelar
                 </button>
                 <button id="modal-confirm-action" onclick="closeModal()" class="bg-oasis-700 hover:bg-oasis-800 text-white font-semibold px-5 py-2 rounded-xl text-sm transition-colors inline-flex items-center gap-1">
-                    Ok
+                    Confirmar
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT DO SISTEMA -->
+    <!-- Script do Sistema -->
     <script>
         // Bancos de dados locais (Sincronizados com o LocalStorage)
         let initialRecords = [];
@@ -574,8 +600,8 @@
             }
         }
 
-        // Converter datas para o formato de exibição português/brasileiro
-        function formatDateBR(dateString) {
+        // Converter datas para o formato de exibição português
+        function formatDatePT(dateString) {
             if (!dateString) return '';
             const parts = dateString.split('-');
             if (parts.length !== 3) return dateString;
@@ -652,6 +678,10 @@
         function resetWeeklyForm() {
             document.getElementById('weekly-form').reset();
             document.getElementById('weekly-edit-id').value = '';
+
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+            document.getElementById('week-date').value = dateStr;
 
             tempWeeklyPhotos = [];
             updateWeeklyPhotosDisplay();
@@ -813,6 +843,7 @@
             count.textContent = `${tempHarvestPhotos.length} selecionada(s)`;
         }
 
+        // REMOVER FOTO DA COLHEITA
         function removeHarvestPhoto(idx) {
             tempHarvestPhotos.splice(idx, 1);
             updateHarvestPhotosDisplay();
@@ -827,12 +858,14 @@
             sortedInits.forEach(record => {
                 const opt = document.createElement('option');
                 opt.value = record.id;
-                opt.textContent = `${formatDateBR(record.date)} - ${record.bloco} - ${record.culture} (${record.variety})`;
+                const nBlocoDisplay = record.nBloco ? ` - Nº ${record.nBloco}` : '';
+                opt.textContent = `${formatDatePT(record.date)} - ${record.bloco}${nBlocoDisplay} - ${record.culture} (${record.variety})`;
                 dropdown.appendChild(opt);
             });
             if (selectId) dropdown.value = selectId;
         }
 
+        // ATUALIZAR DROPDOWN DA COLHEITA
         function updateHarvestParentDropdown() {
             const dropdown = document.getElementById('harvest-test-parent');
             const selectId = dropdown.value;
@@ -841,7 +874,8 @@
             sortedInits.forEach(record => {
                 const opt = document.createElement('option');
                 opt.value = record.id;
-                opt.textContent = `${formatDateBR(record.date)} - ${record.bloco} - ${record.culture} (${record.variety})`;
+                const nBlocoDisplay = record.nBloco ? ` - Nº ${record.nBloco}` : '';
+                opt.textContent = `${formatDatePT(record.date)} - ${record.bloco}${nBlocoDisplay} - ${record.culture} (${record.variety})`;
                 dropdown.appendChild(opt);
             });
             if (selectId) dropdown.value = selectId;
@@ -873,6 +907,7 @@
                 week: document.getElementById('init-week').value,
                 time: document.getElementById('init-time').value,
                 bloco: blocoValue,
+                nBloco: document.getElementById('init-n-bloco').value,
                 blocoOriginal: blocoSelect,
                 blocoCustomValue: blocoSelect === 'Outros' ? document.getElementById('init-bloco-custom').value : '',
                 culture: cultureValue,
@@ -881,10 +916,10 @@
                 variety: varietyValue,
                 varietyOriginal: varietySelect,
                 varietyCustomValue: varietySelect === 'Outros' ? document.getElementById('init-variety-custom').value : '',
-                beds: parseInt(document.getElementById('init-beds').value),
-                seedlings: parseInt(document.getElementById('init-seedlings').value),
+                beds: parseInt(document.getElementById('init-beds').value) || 0,
+                seedlings: parseInt(document.getElementById('init-seedlings').value) || 0,
                 product: document.getElementById('init-product').value,
-                totalApplied: parseFloat(document.getElementById('init-total-applied').value),
+                totalApplied: parseFloat(document.getElementById('init-total-applied').value) || 0,
                 unit: unitValue,
                 unitOriginal: unitSelect,
                 unitCustomValue: unitSelect === 'Outros' ? document.getElementById('init-unit-custom').value : '',
@@ -921,6 +956,7 @@
             const record = {
                 id: editId ? editId : 'week_' + Date.now().toString(),
                 parentId: parentId,
+                date: document.getElementById('week-date').value,
                 notes: document.getElementById('week-notes').value,
                 photos: [...tempWeeklyPhotos]
             };
@@ -954,9 +990,9 @@
             const record = {
                 id: editId ? editId : 'harvest_' + Date.now().toString(),
                 parentId: parentId,
-                averageGm: parseFloat(document.getElementById('harvest-average-gm').value),
-                totalHarvested: parseInt(document.getElementById('harvest-total-harvested').value),
-                totalKg: parseFloat(document.getElementById('harvest-total-kg').value),
+                averageGm: parseFloat(document.getElementById('harvest-average-gm').value) || 0,
+                totalHarvested: parseInt(document.getElementById('harvest-total-harvested').value) || 0,
+                totalKg: parseFloat(document.getElementById('harvest-total-kg').value) || 0,
                 photos: [...tempHarvestPhotos]
             };
 
@@ -1003,6 +1039,7 @@
             document.getElementById('init-date').value = record.date;
             document.getElementById('init-week').value = record.week;
             document.getElementById('init-time').value = record.time;
+            document.getElementById('init-n-bloco').value = record.nBloco || '';
 
             const blocoSelect = document.getElementById('init-bloco-select');
             blocoSelect.value = record.blocoOriginal;
@@ -1068,6 +1105,7 @@
 
             document.getElementById('weekly-edit-id').value = record.id;
             document.getElementById('weekly-test-parent').value = record.parentId;
+            document.getElementById('week-date').value = record.date || '';
             document.getElementById('week-notes').value = record.notes;
 
             tempWeeklyPhotos = [...record.photos];
@@ -1240,7 +1278,7 @@
                     `<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>` :
                     `<svg class="w-5 h-5 text-oasis-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>`;
 
-                const eyeTitle = isHidden ? "Reexibir no PDF" : "Ocultar do PDF";
+                const eyeTitle = isHidden ? "Reexibir no PDF/JPG" : "Ocultar do PDF/JPG";
 
                 // Histórico de acompanhamentos semanais
                 let weeklyTimelineHTML = '';
@@ -1253,22 +1291,22 @@
                             });
                         }
 
+                        const monitoringDate = weekly.date ? formatDatePT(weekly.date) : 'Sem data';
+
                         weeklyTimelineHTML += `
                             <div class="relative pl-6 pb-4 border-l-2 border-slate-200 last:pb-0">
                                 <span class="absolute -left-[7px] top-1.5 w-3.5 h-3.5 rounded-full bg-blue-500 border-2 border-white"></span>
                                 <div class="bg-slate-50/75 rounded-lg p-3 border border-slate-100">
                                     <div class="flex justify-between items-center mb-1.5">
                                         <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md flex items-center gap-1">
-                                            Evolução #${wIdx + 1}
+                                            Evolução #${wIdx + 1} (${monitoringDate})
                                         </span>
                                         <div class="flex gap-2.5">
                                             <button onclick="startWeeklyEditing('${weekly.id}')" class="text-[10px] text-blue-600 hover:underline font-bold inline-flex items-center gap-0.5">Editar</button>
                                             <button onclick="deleteWeeklyRecord('${weekly.id}')" class="text-[10px] text-red-500 hover:underline font-bold inline-flex items-center gap-0.5">Excluir</button>
                                         </div>
                                     </div>
-                                    <p class="text-xs text-slate-700 leading-relaxed mb-2 bg-white p-2.5 rounded border border-slate-100 shadow-inner">
-                                        "${weekly.notes}"
-                                    </p>
+                                    <p class="text-xs text-slate-700 leading-relaxed mb-2 bg-white p-2.5 rounded border border-slate-100 shadow-inner whitespace-pre-wrap">"${weekly.notes}"</p>
                                     <div class="flex gap-1.5 flex-wrap">
                                         ${weeklyPhotosHTML}
                                     </div>
@@ -1307,7 +1345,7 @@
                             <div class="grid grid-cols-3 gap-2 text-xs">
                                 <div class="bg-white p-2 rounded border border-amber-100">
                                     <span class="text-[10px] text-slate-400 block font-semibold uppercase">Média Unitária</span>
-                                    <strong class="text-amber-800 text-sm">${harvest.averageGm} gm</strong>
+                                    <strong class="text-amber-800 text-sm">${harvest.averageGm} g</strong>
                                 </div>
                                 <div class="bg-white p-2 rounded border border-amber-100">
                                     <span class="text-[10px] text-slate-400 block font-semibold uppercase">Total Colhido</span>
@@ -1327,10 +1365,12 @@
                 } else {
                     harvestHTML = `
                         <div class="mt-4 bg-slate-50 border border-slate-200 border-dashed rounded-xl p-4 text-center">
-                            <span class="text-xs text-slate-400 italic">Nenhum dado de colheita lançado para este teste ainda. Vá na aba "3. Dados de Colheita" para salvar.</span>
+                            <span class="text-xs text-slate-400 italic">Nenhum dado de colheita lançado para este teste ainda. Vá na aba "3. Rendimento e Colheita" para salvar.</span>
                         </div>
                     `;
                 }
+
+                const nBlocoDisplay = initRecord.nBloco ? ` - Nº ${initRecord.nBloco}` : '';
 
                 card.innerHTML = `
                     <div class="flex flex-col md:flex-row justify-between items-start gap-4">
@@ -1338,12 +1378,12 @@
                             <!-- Cabeçalho do teste inicial -->
                             <div class="flex flex-wrap gap-2 items-center">
                                 <span class="bg-oasis-100 text-oasis-900 font-bold text-xs px-2.5 py-1 rounded flex items-center gap-1">
-                                    ${initRecord.bloco}
+                                    ${initRecord.bloco}${nBlocoDisplay}
                                 </span>
                                 <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded flex items-center gap-1">
-                                    Iniciado em ${formatDateBR(initRecord.date)} (${initRecord.week})
+                                    Iniciado em ${formatDatePT(initRecord.date)} (${initRecord.week})
                                 </span>
-                                ${isHidden ? '<span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1">Ocultado do PDF</span>' : ''}
+                                ${isHidden ? '<span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1">Ocultado do PDF/JPG</span>' : ''}
                             </div>
 
                             <div>
@@ -1380,7 +1420,7 @@
 
                         </div>
 
-                        <!-- ACÇÕES DO CARTÃO DE REGISTRO (Lado Direito/Topo em mobile) -->
+                        <!-- ACÇÕES DO CARTÃO DE REGISTRO -->
                         <div class="flex md:flex-col justify-end w-full md:w-auto items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
                             <button onclick="toggleVisibility('${initRecord.id}')" title="${eyeTitle}" class="p-2 border border-slate-200 hover:border-slate-300 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600">
                                 ${eyeIcon}
@@ -1456,27 +1496,10 @@
             }
         }
 
-        // GERAÇÃO CORRIGIDA DE PDF UNIFICADO (Com renderizador offscreen dedicado)
-        function downloadCompletePDF() {
-            // Filtrar apenas registos visíveis
-            const visibleInits = initialRecords.filter(r => r.isVisible !== false);
-            if (visibleInits.length === 0) {
-                showModalAlert('Falta de Dados', 'Não existem testes ativos ou visíveis para compilar no PDF. Clique no olho cinzento no painel para reativá-los.', 'warning');
-                return;
-            }
-
-            // Criar um contentor off-screen com estilos específicos de folha A4
-            const tempDiv = document.createElement('div');
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.left = '-9999px';
-            tempDiv.style.top = '-9999px';
-            tempDiv.style.width = '800px'; // largura ideal para conversão html2pdf
-            tempDiv.style.background = '#ffffff';
-            document.body.appendChild(tempDiv);
-
-            // Construção do layout limpo do PDF
+        // FUNÇÃO CENTRAL PARA GERAR O HTML DO RELATÓRIO DO HISTÓRICO (PARTILHADO ENTRE PDF E JPG)
+        function generateOffscreenContentHTML(visibleInits) {
             let htmlContent = `
-                <div style="font-family: Arial, sans-serif; color: #1e293b; padding: 25px;">
+                <div style="font-family: Arial, sans-serif; color: #1e293b; padding: 25px; background: #ffffff;">
                     <!-- Cabeçalho Principal -->
                     <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2.5px solid #16a34a; padding-bottom: 15px; margin-bottom: 30px;">
                         <div style="display: flex; align-items: center; gap: 15px;">
@@ -1495,9 +1518,9 @@
 
             // Ordenar por Cultura e por Data (mesmo ordenamento do ecrã)
             const sortedVisible = [...visibleInits].sort((a, b) => {
-                const cultureCompare = a.culture.localeCompare(b.culture);
+                const cultureCompare = (a.culture || "").localeCompare(b.culture || "");
                 if (cultureCompare !== 0) return cultureCompare;
-                return b.date.localeCompare(a.date);
+                return (b.date || "").localeCompare(a.date || "");
             });
 
             // Gerar o documento de cada teste individualmente
@@ -1508,16 +1531,29 @@
                 // Forçar quebra de página se não for o primeiro item, mantendo o PDF super organizado
                 const pageBreakStyle = index > 0 ? 'page-break-before: always; padding-top: 15px;' : '';
 
+                // Formatar segunra de campos indefinidos
+                const blocoDisplay = initRecord.bloco || 'Sem Bloco';
+                const nBlocoDisplay = initRecord.nBloco ? ` - Nº ${initRecord.nBloco}` : '';
+                const cultureDisplay = initRecord.culture || 'Sem Cultura';
+                const varietyDisplay = initRecord.variety || 'Sem variedade';
+                const bedsDisplay = initRecord.beds || 0;
+                const seedlingsDisplay = initRecord.seedlings ? initRecord.seedlings.toLocaleString('pt-PT') : '0';
+                const productDisplay = initRecord.product || 'Nenhum';
+                const totalAppliedDisplay = initRecord.totalApplied || 0;
+                const unitDisplay = initRecord.unit || '';
+                const dateDisplay = initRecord.date ? formatDatePT(initRecord.date) : '';
+                const weekDisplay = initRecord.week || '';
+
                 htmlContent += `
                     <div style="${pageBreakStyle} margin-bottom: 35px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 25px; page-break-inside: avoid;">
                         
                         <!-- Barra de Título do Teste -->
                         <div style="display: flex; justify-content: space-between; align-items: center; background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px;">
                             <h3 style="margin: 0; font-size: 15px; color: #14532d; font-weight: bold; text-transform: uppercase;">
-                                ${initRecord.bloco} &mdash; ${initRecord.culture} (${initRecord.variety})
+                                ${blocoDisplay}${nBlocoDisplay} &mdash; ${cultureDisplay} (${varietyDisplay})
                             </h3>
                             <span style="font-size: 11px; background-color: #dcfce7; color: #14532d; padding: 4px 8px; border-radius: 5px; font-weight: bold;">
-                                Início: ${formatDateBR(initRecord.date)} (${initRecord.week})
+                                Início: ${dateDisplay} (${weekDisplay})
                             </span>
                         </div>
 
@@ -1525,26 +1561,26 @@
                         <div style="display: flex; gap: 10px; width: 100%; margin-bottom: 15px;">
                             <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center;">
                                 <span style="font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 4px;">Canteiros</span>
-                                <strong style="font-size: 14px; color: #1e293b;">${initRecord.beds}</strong>
+                                <strong style="font-size: 14px; color: #1e293b;">${bedsDisplay}</strong>
                             </div>
                             <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center;">
                                 <span style="font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 4px;">Mudas Totais</span>
-                                <strong style="font-size: 14px; color: #1e293b;">${initRecord.seedlings.toLocaleString('pt-PT')}</strong>
+                                <strong style="font-size: 14px; color: #1e293b;">${seedlingsDisplay}</strong>
                             </div>
                             <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center;">
                                 <span style="font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 4px;">Tratamento</span>
-                                <strong style="font-size: 12px; color: #15803d; word-break: break-all;">${initRecord.product}</strong>
+                                <strong style="font-size: 12px; color: #15803d; word-break: break-all;">${productDisplay}</strong>
                             </div>
                             <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center;">
                                 <span style="font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 4px;">Qtd Aplicada</span>
-                                <strong style="font-size: 14px; color: #1e293b;">${initRecord.totalApplied} ${initRecord.unit}</strong>
+                                <strong style="font-size: 14px; color: #1e293b;">${totalAppliedDisplay} ${unitDisplay}</strong>
                             </div>
                         </div>
 
                         <!-- Fotos Iniciais -->
                         ${initRecord.photos && initRecord.photos.length > 0 ? `
                             <div style="margin-bottom: 18px;">
-                                <h4 style="margin: 0 0 6px 0; font-size: 10px; text-transform: uppercase; color: #475569; font-weight: bold; tracking-spacing: 0.5px;">Imagens Iniciais do Plantio:</h4>
+                                <h4 style="margin: 0 0 6px 0; font-size: 10px; text-transform: uppercase; color: #475569; font-weight: bold; letter-spacing: 0.5px;">Imagens Iniciais do Plantio:</h4>
                                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                     ${initRecord.photos.map(p => `<img src="${p}" style="width: 75px; height: 75px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1;">`).join('')}
                                 </div>
@@ -1553,38 +1589,41 @@
 
                         <!-- Histórico de Acompanhamento -->
                         <div style="margin-top: 15px; margin-bottom: 18px;">
-                            <h4 style="margin: 0 0 8px 0; font-size: 10px; text-transform: uppercase; color: #475569; font-weight: bold; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; tracking-spacing: 0.5px;">Evoluções Semanais:</h4>
-                            ${relativeWeeklies.length > 0 ? relativeWeeklies.map((w, wIdx) => `
-                                <div style="margin-bottom: 12px; background: #f8fafc; border-left: 3px solid #3b82f6; padding: 10px 12px; border-radius: 0 6px 6px 0;">
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                                        <span style="font-size: 9px; font-weight: bold; color: #1d4ed8;">Atualização #${wIdx + 1}</span>
-                                    </div>
-                                    <p style="margin: 0 0 6px 0; font-size: 11px; color: #334155; font-style: italic; line-height: 1.4;">"${w.notes}"</p>
-                                    ${w.photos && w.photos.length > 0 ? `
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                            ${w.photos.map(wp => `<img src="${wp}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 3px; border: 1px solid #cbd5e1;">`).join('')}
+                            <h4 style="margin: 0 0 8px 0; font-size: 10px; text-transform: uppercase; color: #475569; font-weight: bold; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; letter-spacing: 0.5px;">Evoluções Semanais:</h4>
+                            ${relativeWeeklies.length > 0 ? relativeWeeklies.map((w, wIdx) => {
+                                const mDate = w.date ? formatDatePT(w.date) : 'Sem data';
+                                return `
+                                    <div style="margin-bottom: 12px; background: #f8fafc; border-left: 3px solid #3b82f6; padding: 10px 12px; border-radius: 0 6px 6px 0;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                            <span style="font-size: 9px; font-weight: bold; color: #1d4ed8;">Atualização #${wIdx + 1} (${mDate})</span>
                                         </div>
-                                    ` : ''}
-                                </div>
-                            `).join('') : '<p style="font-size: 11px; color: #94a3b8; font-style: italic; margin: 0;">Nenhum acompanhamento semanal lançado.</p>'}
+                                        <p style="margin: 0 0 6px 0; font-size: 11px; color: #334155; font-style: italic; line-height: 1.4; white-space: pre-wrap;">"${w.notes || ''}"</p>
+                                        ${w.photos && w.photos.length > 0 ? `
+                                            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;">
+                                                ${w.photos.map(wp => `<img src="${wp}" style="width: 55px; height: 55px; object-fit: cover; border-radius: 3px; border: 1px solid #cbd5e1;">`).join('')}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `;
+                            }).join('') : '<p style="font-size: 11px; color: #94a3b8; font-style: italic; margin: 0;">Nenhum acompanhamento semanal lançado.</p>'}
                         </div>
 
                         <!-- Secção de Colheita (Se aplicável) -->
                         ${harvest ? `
                             <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; margin-top: 15px;">
-                                <h4 style="margin: 0 0 8px 0; font-size: 10px; text-transform: uppercase; color: #b45309; font-weight: bold; tracking-spacing: 0.5px;">Dados Finais da Colheita:</h4>
+                                <h4 style="margin: 0 0 8px 0; font-size: 10px; text-transform: uppercase; color: #b45309; font-weight: bold; letter-spacing: 0.5px;">Dados Finais da Colheita:</h4>
                                 <div style="display: flex; gap: 10px; margin-bottom: 8px;">
                                     <div style="flex: 1; background: #ffffff; border: 1px solid #fde68a; padding: 8px; border-radius: 4px; text-align: center;">
                                         <span style="font-size: 8px; text-transform: uppercase; color: #78350f; font-weight: bold; display: block; margin-bottom: 3px;">Média p/ Planta</span>
-                                        <strong style="font-size: 13px; color: #92400e;">${harvest.averageGm} gm</strong>
+                                        <strong style="font-size: 13px; color: #92400e;">${harvest.averageGm || 0} g</strong>
                                     </div>
                                     <div style="flex: 1; background: #ffffff; border: 1px solid #fde68a; padding: 8px; border-radius: 4px; text-align: center;">
                                         <span style="font-size: 8px; text-transform: uppercase; color: #78350f; font-weight: bold; display: block; margin-bottom: 3px;">Unidades Colhidas</span>
-                                        <strong style="font-size: 13px; color: #92400e;">${harvest.totalHarvested} und</strong>
+                                        <strong style="font-size: 13px; color: #92400e;">${harvest.totalHarvested || 0} und</strong>
                                     </div>
                                     <div style="flex: 1; background: #ffffff; border: 1px solid #fde68a; padding: 8px; border-radius: 4px; text-align: center;">
                                         <span style="font-size: 8px; text-transform: uppercase; color: #78350f; font-weight: bold; display: block; margin-bottom: 3px;">Massa Total</span>
-                                        <strong style="font-size: 13px; color: #92400e;">${harvest.totalKg} Kg</strong>
+                                        <strong style="font-size: 13px; color: #92400e;">${harvest.totalKg || 0} Kg</strong>
                                     </div>
                                 </div>
                                 ${harvest.photos && harvest.photos.length > 0 ? `
@@ -1601,9 +1640,31 @@
             });
 
             htmlContent += `</div>`;
-            tempDiv.innerHTML = htmlContent;
+            return htmlContent;
+        }
 
-            // Configuração refinada do html2pdf
+        // GERAÇÃO DE PDF UNIFICADO
+        function downloadCompletePDF() {
+            // Filtrar apenas registos visíveis
+            const visibleInits = initialRecords.filter(r => r.isVisible !== false);
+            if (visibleInits.length === 0) {
+                showModalAlert('Falta de Dados', 'Não existem testes ativos ou visíveis para compilar no PDF. Clique no olho cinzento no painel para reativá-los.', 'warning');
+                return;
+            }
+
+            // Criar um contentor off-screen com estilos específicos de folha A4
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '-9999px';
+            tempDiv.style.width = '800px'; // largura ideal para conversão html2pdf
+            tempDiv.style.background = '#ffffff';
+            document.body.appendChild(tempDiv);
+
+            // Obter HTML estruturado e seguro
+            tempDiv.innerHTML = generateOffscreenContentHTML(visibleInits);
+
+            // Configuração do html2pdf
             const opt = {
                 margin:       [10, 10, 10, 10],
                 filename:     `Relatorio_Testes_Oasis_${new Date().toISOString().slice(0,10)}.pdf`,
@@ -1618,6 +1679,47 @@
             }).catch(err => {
                 console.error("Erro na geração do PDF: ", err);
                 showModalAlert('Erro', 'Ocorreu um erro ao converter o documento para formato PDF. Verifique se as imagens estão acessíveis.', 'error');
+                document.body.removeChild(tempDiv);
+            });
+        }
+
+        // GERAÇÃO DE IMAGEM JPG UNIFICADA (Para partilha rápida)
+        function downloadCompleteJPG() {
+            // Filtrar apenas registos visíveis
+            const visibleInits = initialRecords.filter(r => r.isVisible !== false);
+            if (visibleInits.length === 0) {
+                showModalAlert('Falta de Dados', 'Não existem testes ativos ou visíveis para compilar no JPG. Clique no olho cinzento no painel para reativá-los.', 'warning');
+                return;
+            }
+
+            // Criar um contentor off-screen com estilos específicos
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '-9999px';
+            tempDiv.style.width = '800px'; 
+            tempDiv.style.background = '#ffffff';
+            document.body.appendChild(tempDiv);
+
+            // Obter HTML estruturado e seguro
+            tempDiv.innerHTML = generateOffscreenContentHTML(visibleInits);
+
+            // Usar o html2canvas para renderizar a imagem contínua
+            html2canvas(tempDiv, {
+                useCORS: true,
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const link = document.createElement('a');
+                link.download = `Relatorio_Testes_Oasis_${new Date().toISOString().slice(0,10)}.jpg`;
+                link.href = imgData;
+                link.click();
+                document.body.removeChild(tempDiv);
+            }).catch(err => {
+                console.error("Erro na geração do JPG: ", err);
+                showModalAlert('Erro', 'Ocorreu um erro ao converter o documento para formato JPG.', 'error');
                 document.body.removeChild(tempDiv);
             });
         }
