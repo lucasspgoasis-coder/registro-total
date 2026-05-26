@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -272,19 +272,36 @@
                             </div>
                         </div>
 
-                        <!-- Campos autocompletados (bloqueados apenas para visualização) -->
-                        <div class="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Bloco</label>
-                                <div id="acomp-view-bloco" class="text-xs font-semibold text-slate-700 mt-0.5">-</div>
+                        <!-- Campos autocompletados (bloqueados apenas para visualização de forma fixa) -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block border-b border-slate-200 pb-1.5">Informações do Ciclo Vinculado (Fixo)</span>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Bloco</label>
+                                    <div id="acomp-view-bloco" class="text-xs font-bold text-emerald-800 mt-0.5">-</div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Cultura</label>
+                                    <div id="acomp-view-cultura" class="text-xs font-bold text-emerald-800 mt-0.5">-</div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Variedade</label>
+                                    <div id="acomp-view-variedade" class="text-xs font-bold text-emerald-800 mt-0.5">-</div>
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Cultura</label>
-                                <div id="acomp-view-cultura" class="text-xs font-semibold text-slate-700 mt-0.5">-</div>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Variedade</label>
-                                <div id="acomp-view-variedade" class="text-xs font-semibold text-slate-700 mt-0.5">-</div>
+                            <div class="grid grid-cols-3 gap-2 pt-1 border-t border-slate-100">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Produto</label>
+                                    <div id="acomp-view-produto" class="text-xs font-bold text-emerald-800 mt-0.5">-</div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Instaladas</label>
+                                    <div id="acomp-view-mudas-iniciais" class="text-xs font-bold text-emerald-800 mt-0.5">-</div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Canteiros</label>
+                                    <div id="acomp-view-canteiros" class="text-xs font-bold text-emerald-800 mt-0.5">-</div>
+                                </div>
                             </div>
                         </div>
 
@@ -445,11 +462,18 @@
             inicializarCampos();
             carregarDoLocalStorage();
             renderListaTestes();
+            carregarVinculosTeste(); // Carrega os vínculos logo no carregamento inicial
         });
 
         function inicializarCampos() {
             // Gerar lista de blocos (1 a 18)
             const blocoSelect = document.getElementById('inicial-bloco-select');
+            // Limpa opções antigas exceto a primeira "Selecione" e a última "Outros"
+            const length = blocoSelect.options.length;
+            for (let i = length - 2; i > 0; i--) {
+                blocoSelect.remove(i);
+            }
+            
             for (let i = 1; i <= 18; i++) {
                 const opt = document.createElement('option');
                 opt.value = i < 10 ? `Bloco 0${i}` : `Bloco ${i}`;
@@ -488,8 +512,10 @@
                 btnIni.className = "flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900";
                 formAco.classList.remove('hidden');
                 formIni.classList.add('hidden');
-                // Carregar dropdown de vínculos atualizado
-                carregarVinculosTeste();
+                
+                // Carrega dropdown selecionando o teste mais recente ou o que já estava ativo
+                const selectVal = document.getElementById('acomp-teste-vinculo').value;
+                carregarVinculosTeste(selectVal);
             }
         }
 
@@ -638,8 +664,8 @@
             const variedadeSelect = document.getElementById('inicial-variedade-select').value;
             const variedade = variedadeSelect === 'Outros' ? document.getElementById('inicial-variedade-outros').value : variedadeSelect;
 
-            const unidadeSelect = document.getElementById('inicial-unidade-select').value;
-            const unidade = unidadeSelect === 'Outros' ? document.getElementById('inicial-unidade-outros').value : unidadeSelect;
+            const unidadSelect = document.getElementById('inicial-unidade-select').value;
+            const unidade = unidadSelect === 'Outros' ? document.getElementById('inicial-unidade-outros').value : unidadSelect;
 
             if (fotosIniciaisCarregadas.length === 0) {
                 showToast("Erro de Fotos", "Adicione fotos de acompanhamento (no máximo 5) para iniciar.", "error");
@@ -676,6 +702,9 @@
             document.getElementById('inicial-preview-container').innerHTML = '';
             fotosIniciaisCarregadas = [];
             inicializarCampos();
+            
+            // Força a atualização imediata do dropdown de acompanhamento ativo SELECIONANDO o novo teste criado
+            carregarVinculosTeste(novoTeste.id);
         }
 
         // AUTO-PREENCHER CAMPOS DO TESTE VINCULADO (ABA 2)
@@ -684,11 +713,17 @@
             const blocoView = document.getElementById('acomp-view-bloco');
             const culturaView = document.getElementById('acomp-view-cultura');
             const variedadeView = document.getElementById('acomp-view-variedade');
+            const produtoView = document.getElementById('acomp-view-produto');
+            const mudasView = document.getElementById('acomp-view-mudas-iniciais');
+            const canteirosView = document.getElementById('acomp-view-canteiros');
 
             if (!vinculoId) {
                 blocoView.textContent = '-';
                 culturaView.textContent = '-';
                 variedadeView.textContent = '-';
+                produtoView.textContent = '-';
+                mudasView.textContent = '-';
+                canteirosView.textContent = '-';
                 return;
             }
 
@@ -697,22 +732,42 @@
                 blocoView.textContent = t.bloco;
                 culturaView.textContent = t.cultura;
                 variedadeView.textContent = t.variedade;
+                produtoView.textContent = `${t.produto} (${t.totalAplicado} ${t.unidade})`;
+                mudasView.textContent = `${t.totalMudas} un`;
+                canteirosView.textContent = `${t.totalCanteiros} un`;
             }
         }
 
         // CARREGAR DROPDOWN DE VÍNCULOS
-        function carregarVinculosTeste() {
+        function carregarVinculosTeste(preferredId) {
             const select = document.getElementById('acomp-teste-vinculo');
+            if (!select) return;
+
             select.innerHTML = '<option value="">Escolha um teste aberto no histórico...</option>';
 
-            // Listar testes ativos primeiro
             const ativos = testes.filter(x => x.status === 'Ativo');
+
+            // Determinar qual ID pré-selecionar por padrão
+            let idToSelect = preferredId || "";
+            if (!idToSelect && ativos.length > 0) {
+                idToSelect = ativos[0].id; // Pré-seleciona o teste mais recente por padrão
+            }
+
             ativos.forEach(t => {
                 const opt = document.createElement('option');
                 opt.value = t.id;
                 opt.textContent = `${t.bloco} - ${t.cultura} (${t.produto}) - ${t.semana}`;
+                if (t.id === idToSelect) {
+                    opt.selected = true;
+                }
                 select.appendChild(opt);
             });
+
+            // Força a atualização do elemento do formulário e dos blocos informativos fixos
+            if (idToSelect) {
+                select.value = idToSelect;
+            }
+            autoPreencherTesteAtivo();
         }
 
         // SALVAR ACOMPANHAMENTO SEMANAL (ABA 2)
@@ -779,11 +834,11 @@
 
         // APAGAR UM TESTE INTEIRO
         function apagarTeste(id) {
-            // Confirmando através de uma caixa customizada integrada ao fluxo
             if (confirm("Deseja realmente excluir este teste completo e todas as suas semanas de evolução? Esta ação é irreversível.")) {
                 testes = testes.filter(x => x.id !== id);
                 salvarNoLocalStorage();
                 renderListaTestes();
+                carregarVinculosTeste();
                 showToast("Excluído", "O registro do teste foi removido completamente do histórico.", "warning");
             }
         }
@@ -794,6 +849,7 @@
                 testes = [];
                 salvarNoLocalStorage();
                 renderListaTestes();
+                carregarVinculosTeste();
                 showToast("Painel Limpo", "Toda a memória do aplicativo foi reiniciada.", "error");
             }
         }
@@ -810,10 +866,12 @@
             document.getElementById('veredicto-modal').classList.remove('hidden');
         }
 
+        // FECHAR MODAL
         function fecharVeredicto() {
             document.getElementById('veredicto-modal').classList.add('hidden');
         }
 
+        // SALVAR VEREDITO
         function salvarVeredicto(e) {
             e.preventDefault();
             const id = document.getElementById('veredicto-id-teste').value;
@@ -822,10 +880,11 @@
 
             const idx = testes.findIndex(x => x.id === id);
             if (idx !== -1) {
-                testes[idx].veredicto = { status, observacoes };
+                testes[idx].veredicto = { status, observacoes: observacoes };
                 testes[idx].status = 'Concluído';
                 salvarNoLocalStorage();
                 renderListaTestes();
+                carregarVinculosTeste();
                 fecharVeredicto();
                 showToast("Sucesso!", "Veredito técnico salvo! O teste foi marcado como concluído.");
             }
@@ -857,8 +916,6 @@
                 let statusBadge = t.status === 'Concluído' 
                     ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase rounded-full border border-emerald-100 flex items-center gap-1"><i class="fa-solid fa-lock"></i> Concluído</span>`
                     : `<span class="px-2.5 py-1 bg-amber-50 text-amber-700 text-[10px] font-bold uppercase rounded-full border border-amber-100 flex items-center gap-1"><i class="fa-solid fa-arrows-spin animate-spin"></i> Em Curso</span>`;
-
-                const acompContagem = t.acompanhamentos.length;
 
                 card.innerHTML = `
                     <div class="p-5 border-b border-slate-50 flex items-center justify-between gap-4 bg-slate-50/50">
@@ -939,7 +996,7 @@
                         const timeline = document.createElement('div');
                         timeline.className = "relative border-l-2 border-slate-100 ml-3 pl-5 space-y-5 py-2";
 
-                        t.acompanhamentos.forEach((ac, acIdx) => {
+                        t.acompanhamentos.forEach((ac) => {
                             let colorBadge = "bg-emerald-50 text-emerald-700 border-emerald-100";
                             if (ac.avaliacao === "Regular") colorBadge = "bg-amber-50 text-amber-700 border-amber-100";
                             if (ac.avaliacao === "Insatisfatório") colorBadge = "bg-rose-50 text-rose-700 border-rose-100";
@@ -1085,7 +1142,7 @@
                             </div>
                             <div>
                                 <span class="text-slate-400 block uppercase font-bold text-[10px] tracking-wide">Mudas na Instalação</span>
-                                <span class="font-black text-slate-800">${t.totalMudas} mudas totais</span>
+                                <span class="font-black text-slate-800">${t.totalMudas} mudas totals</span>
                             </div>
                         </div>
                     </div>
@@ -1185,7 +1242,7 @@
                             </div>
                         </div>
 
-                        <!-- Assinatura Técnica -->
+                        <!-- Assinatura Técnico -->
                         <div class="grid grid-cols-2 gap-8 pt-32 text-center text-xs">
                             <div class="space-y-2">
                                 <div class="border-t border-slate-300 w-48 mx-auto"></div>
@@ -1220,4 +1277,4 @@
         }
     </script>
 </body>
-</html>     
+</html>
