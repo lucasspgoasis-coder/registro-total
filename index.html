@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -42,6 +43,16 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+       
+        /* Estilos de controle de quebra de página de impressão */
+        .pdf-page {
+            page-break-after: always;
+            position: relative;
+            box-sizing: border-box;
+        }
+        .pdf-page:last-child {
+            page-break-after: avoid;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased pb-12">
@@ -71,14 +82,18 @@
     <main class="max-w-7xl mx-auto px-4 mt-8">
        
         <!-- ABAS DE NAVEGAÇÃO DOS FORMULÁRIOS -->
-        <div class="flex border-b border-slate-200 mb-6 bg-white p-1 rounded-xl shadow-sm max-w-lg">
-            <button id="tab-initial-btn" onclick="switchTab('initial')" class="flex-1 py-2.5 px-4 text-center text-sm font-bold rounded-lg transition-all bg-oasis-700 text-white shadow-sm inline-flex items-center justify-center gap-2">
+        <div class="flex flex-wrap border-b border-slate-200 mb-6 bg-white p-1 rounded-xl shadow-sm max-w-2xl gap-1">
+            <button id="tab-initial-btn" onclick="switchTab('initial')" class="flex-1 min-w-[120px] py-2.5 px-3 text-center text-xs sm:text-sm font-bold rounded-lg transition-all bg-oasis-700 text-white shadow-sm inline-flex items-center justify-center gap-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 1. Dados Iniciais
             </button>
-            <button id="tab-weekly-btn" onclick="switchTab('weekly')" class="flex-1 py-2.5 px-4 text-center text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-800 hover:bg-slate-50 inline-flex items-center justify-center gap-2">
+            <button id="tab-weekly-btn" onclick="switchTab('weekly')" class="flex-1 min-w-[120px] py-2.5 px-3 text-center text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-800 hover:bg-slate-50 inline-flex items-center justify-center gap-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                2. Acompanhamento Semanal
+                2. Acompanhamento
+            </button>
+            <button id="tab-harvest-btn" onclick="switchTab('harvest')" class="flex-1 min-w-[120px] py-2.5 px-3 text-center text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-800 hover:bg-slate-50 inline-flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                3. Dados da Colheita
             </button>
         </div>
 
@@ -132,7 +147,7 @@
                             <div class="relative">
                                 <input type="time" id="init-time" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all">
                                 <button type="button" onclick="setInitTimeNow()" class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-oasis-700 hover:text-oasis-900 font-bold bg-oasis-50 px-2.5 py-1 rounded inline-flex items-center gap-1 border border-oasis-100">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"/></svg>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"/></svg>
                                     Agora
                                 </button>
                             </div>
@@ -302,10 +317,10 @@
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
                                 Como está a planta com a aplicação? (Observações)
                             </label>
-                            <textarea id="week-notes" required rows="5" placeholder="Descreva de forma geral o desenvolvimento atual, o vigor das folhas, reações percebidas, crescimento e estado fitossanitário..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all"></textarea>
+                            <textarea id="week-notes" required rows="5" placeholder="Descreva o desenvolvimento atual, vigor, folhas e estado fitossanitário..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all"></textarea>
                         </div>
 
-                        <!-- Fotos Semanais (Max 5) -->
+                        <!-- Fotos Semanais -->
                         <div>
                             <div class="flex justify-between items-center mb-1.5">
                                 <label class="block text-xs font-bold text-slate-500 uppercase flex items-center gap-1">
@@ -325,6 +340,87 @@
                         <button type="submit" id="week-submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all shadow inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
                             Salvar Acompanhamento
+                        </button>
+                    </form>
+                </section>
+
+                <!-- ABA 3: FORMULÁRIO DADOS DA COLHEITA -->
+                <section id="form-harvest-section" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 hidden">
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+                        <h2 id="harvest-form-title" class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <span class="p-1.5 bg-amber-100 text-amber-700 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                            </span>
+                            Dados de Rendimento e Colheita
+                        </h2>
+                        <button id="cancel-harvest-edit" onclick="cancelHarvestEdit()" class="hidden text-xs text-red-600 hover:underline font-semibold inline-flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Cancelar Edição
+                        </button>
+                    </div>
+
+                    <form id="harvest-form" onsubmit="saveHarvestRecord(event)" class="space-y-4">
+                        <input type="hidden" id="harvest-edit-id" value="">
+
+                        <!-- SELECIONAR TESTE INICIAL FIXADO -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                                Vincular ao Teste Inicial
+                            </label>
+                            <select id="harvest-test-parent" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 font-semibold text-slate-700">
+                                <option value="">Escolha qual teste deseja finalizar a colheita...</option>
+                                <!-- Alimentado via JS -->
+                            </select>
+                        </div>
+
+                        <!-- Média gm -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+                                Média (gm) por planta/cabeça
+                            </label>
+                            <input type="number" step="any" id="harvest-average-gm" required placeholder="Ex: 450.5" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
+                        </div>
+
+                        <!-- Total Colhido (Unidades) e Total kg -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                                    Total Colhido (Unidades)
+                                </label>
+                                <input type="number" id="harvest-total-harvested" required placeholder="Ex: 3800" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                    Total (Kg)
+                                </label>
+                                <input type="number" step="any" id="harvest-total-kg" required placeholder="Ex: 1710" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
+                            </div>
+                        </div>
+
+                        <!-- Fotos da Colheita -->
+                        <div>
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label class="block text-xs font-bold text-slate-500 uppercase flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    Fotos da Colheita (Opcional)
+                                </label>
+                                <span id="harvest-photo-count" class="text-xs font-bold text-slate-500">0 selecionadas</span>
+                            </div>
+                            <div class="relative border-2 border-dashed border-slate-200 rounded-xl p-4 bg-slate-50 text-center hover:border-amber-500 cursor-pointer transition-all">
+                                <input type="file" id="harvest-photos-input" multiple accept="image/*" onchange="handleHarvestPhotoUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                                <span class="text-xs text-slate-600 font-semibold block">Clique para enviar as fotos</span>
+                                <span class="text-[10px] text-slate-400">Anexe imagens para ilustrar a qualidade do produto final</span>
+                            </div>
+                            <div id="harvest-photos-preview" class="grid grid-cols-5 gap-2 mt-2"></div>
+                        </div>
+
+                        <button type="submit" id="harvest-submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 rounded-xl transition-all shadow inline-flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                            Salvar Dados da Colheita
                         </button>
                     </form>
                 </section>
@@ -354,11 +450,11 @@
                         </div>
                     </div>
                     <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Evoluções Sem.</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Testes Colhidos</span>
                         <div class="flex items-center justify-between">
-                            <span id="stat-weekly-total" class="text-2xl font-extrabold text-blue-700">0</span>
-                            <span class="p-1 bg-blue-50 text-blue-700 rounded">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                            <span id="stat-harvest-total" class="text-2xl font-extrabold text-amber-700">0</span>
+                            <span class="p-1 bg-amber-50 text-amber-700 rounded">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                             </span>
                         </div>
                     </div>
@@ -414,10 +510,12 @@
         // Bancos de dados locais (Sincronizados com o LocalStorage)
         let initialRecords = [];
         let weeklyRecords = [];
+        let harvestRecords = [];
 
         // Imagens em Base64 temporárias
         let tempInitialPhotos = [];
         let tempWeeklyPhotos = [];
+        let tempHarvestPhotos = [];
 
         // Inicialização
         window.addEventListener('DOMContentLoaded', () => {
@@ -425,6 +523,7 @@
             switchTab('initial');
             resetInitialForm();
             resetWeeklyForm();
+            resetHarvestForm();
             renderUnifiedHistory();
         });
 
@@ -432,6 +531,7 @@
         function loadStoredData() {
             const storedInit = localStorage.getItem('oasis_initial_records');
             const storedWeekly = localStorage.getItem('oasis_weekly_records');
+            const storedHarvest = localStorage.getItem('oasis_harvest_records');
            
             if (storedInit) {
                 try { initialRecords = JSON.parse(storedInit); } catch(e) { initialRecords = []; }
@@ -439,28 +539,43 @@
             if (storedWeekly) {
                 try { weeklyRecords = JSON.parse(storedWeekly); } catch(e) { weeklyRecords = []; }
             }
+            if (storedHarvest) {
+                try { harvestRecords = JSON.parse(storedHarvest); } catch(e) { harvestRecords = []; }
+            }
         }
 
         // Troca de Abas
         function switchTab(tab) {
             const tabInitBtn = document.getElementById('tab-initial-btn');
             const tabWeekBtn = document.getElementById('tab-weekly-btn');
+            const tabHarvBtn = document.getElementById('tab-harvest-btn');
+
             const secInit = document.getElementById('form-initial-section');
             const secWeek = document.getElementById('form-weekly-section');
+            const secHarv = document.getElementById('form-harvest-section');
+
+            // Reset tab styles
+            const inactiveClass = "flex-1 min-w-[120px] py-2.5 px-3 text-center text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-800 hover:bg-slate-50 inline-flex items-center justify-center gap-1.5";
+           
+            tabInitBtn.className = inactiveClass;
+            tabWeekBtn.className = inactiveClass;
+            tabHarvBtn.className = inactiveClass;
+
+            secInit.classList.add('hidden');
+            secWeek.classList.add('hidden');
+            secHarv.classList.add('hidden');
 
             if (tab === 'initial') {
-                tabInitBtn.className = "flex-1 py-2.5 px-4 text-center text-sm font-bold rounded-lg transition-all bg-oasis-700 text-white shadow-sm inline-flex items-center justify-center gap-2";
-                tabWeekBtn.className = "flex-1 py-2.5 px-4 text-center text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-800 hover:bg-slate-50 inline-flex items-center justify-center gap-2";
+                tabInitBtn.className = "flex-1 min-w-[120px] py-2.5 px-3 text-center text-xs sm:text-sm font-bold rounded-lg transition-all bg-oasis-700 text-white shadow-sm inline-flex items-center justify-center gap-1.5";
                 secInit.classList.remove('hidden');
-                secWeek.classList.add('hidden');
-            } else {
-                tabWeekBtn.className = "flex-1 py-2.5 px-4 text-center text-sm font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm inline-flex items-center justify-center gap-2";
-                tabInitBtn.className = "flex-1 py-2.5 px-4 text-center text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-800 hover:bg-slate-50 inline-flex items-center justify-center gap-2";
+            } else if (tab === 'weekly') {
+                tabWeekBtn.className = "flex-1 min-w-[120px] py-2.5 px-3 text-center text-xs sm:text-sm font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm inline-flex items-center justify-center gap-1.5";
                 secWeek.classList.remove('hidden');
-                secInit.classList.add('hidden');
-               
-                // Forçar atualização do dropdown de testes pai ao abrir aba de semanais
                 updateParentDropdown();
+            } else if (tab === 'harvest') {
+                tabHarvBtn.className = "flex-1 min-w-[120px] py-2.5 px-3 text-center text-xs sm:text-sm font-bold rounded-lg transition-all bg-amber-600 text-white shadow-sm inline-flex items-center justify-center gap-1.5";
+                secHarv.classList.remove('hidden');
+                updateHarvestParentDropdown();
             }
         }
 
@@ -560,6 +675,26 @@
             document.getElementById('cancel-weekly-edit').classList.add('hidden');
         }
 
+        function resetHarvestForm() {
+            document.getElementById('harvest-form').reset();
+            document.getElementById('harvest-edit-id').value = '';
+
+            tempHarvestPhotos = [];
+            updateHarvestPhotosDisplay();
+
+            document.getElementById('harvest-form-title').innerHTML = `
+                <span class="p-1.5 bg-amber-100 text-amber-700 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                </span>
+                Dados de Rendimento e Colheita
+            `;
+            document.getElementById('harvest-submit-btn').innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                Salvar Dados da Colheita
+            `;
+            document.getElementById('cancel-harvest-edit').classList.add('hidden');
+        }
+
         // CARREGAMENTO DE FOTOS INICIAIS
         function handleInitialPhotoUpload(event) {
             const files = event.target.files;
@@ -587,7 +722,7 @@
                 item.innerHTML = `
                     <img src="${photo}" class="w-full h-full object-cover">
                     <button type="button" onclick="removeInitialPhoto(${idx})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow shadow-black/50">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 `;
                 preview.appendChild(item);
@@ -634,7 +769,7 @@
                 item.innerHTML = `
                     <img src="${photo}" class="w-full h-full object-cover">
                     <button type="button" onclick="removeWeeklyPhoto(${idx})" class="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow shadow-black/50">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 `;
                 preview.appendChild(item);
@@ -648,29 +783,77 @@
             updateWeeklyPhotosDisplay();
         }
 
-        // ATUALIZAÇÃO DO DROPDOWN PARENT NO SEMANAL
+        // FOTOS DA COLHEITA
+        function handleHarvestPhotoUpload(event) {
+            const files = event.target.files;
+            if(!files) return;
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempHarvestPhotos.push(e.target.result);
+                    updateHarvestPhotosDisplay();
+                };
+                reader.readAsDataURL(file);
+            });
+            event.target.value = '';
+        }
+
+        function updateHarvestPhotosDisplay() {
+            const preview = document.getElementById('harvest-photos-preview');
+            const count = document.getElementById('harvest-photo-count');
+            preview.innerHTML = '';
+
+            tempHarvestPhotos.forEach((photo, idx) => {
+                const item = document.createElement('div');
+                item.className = 'relative aspect-square rounded-lg overflow-hidden bg-slate-100 border border-slate-200 group';
+                item.innerHTML = `
+                    <img src="${photo}" class="w-full h-full object-cover">
+                    <button type="button" onclick="removeHarvestPhoto(${idx})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow shadow-black/50">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                `;
+                preview.appendChild(item);
+            });
+
+            count.textContent = `${tempHarvestPhotos.length} selecionada(s)`;
+        }
+
+        function removeHarvestPhoto(idx) {
+            tempHarvestPhotos.splice(idx, 1);
+            updateHarvestPhotosDisplay();
+        }
+
+        // DROPDOWNS DE VINCULO
         function updateParentDropdown() {
             const dropdown = document.getElementById('weekly-test-parent');
-            const selectId = dropdown.value; // Guardar valor para não resetar se já estiver editando
-           
+            const selectId = dropdown.value;
             dropdown.innerHTML = '<option value="">Escolha qual teste está acompanhando...</option>';
-           
-            // Ordena os testes iniciais por data/bloco
             const sortedInits = [...initialRecords].sort((a,b) => b.date.localeCompare(a.date));
-
             sortedInits.forEach(record => {
                 const opt = document.createElement('option');
                 opt.value = record.id;
                 opt.textContent = `${formatDateBR(record.date)} - ${record.bloco} - ${record.culture} (${record.variety})`;
                 dropdown.appendChild(opt);
             });
-
-            if (selectId) {
-                dropdown.value = selectId;
-            }
+            if (selectId) dropdown.value = selectId;
         }
 
-        // SALVAR DADOS INICIAIS
+        function updateHarvestParentDropdown() {
+            const dropdown = document.getElementById('harvest-test-parent');
+            const selectId = dropdown.value;
+            dropdown.innerHTML = '<option value="">Escolha qual teste deseja finalizar a colheita...</option>';
+            const sortedInits = [...initialRecords].sort((a,b) => b.date.localeCompare(a.date));
+            sortedInits.forEach(record => {
+                const opt = document.createElement('option');
+                opt.value = record.id;
+                opt.textContent = `${formatDateBR(record.date)} - ${record.bloco} - ${record.culture} (${record.variety})`;
+                dropdown.appendChild(opt);
+            });
+            if (selectId) dropdown.value = selectId;
+        }
+
+        // SALVAR DADOS INICIAIS (Persistência Automática)
         function saveInitialRecord(event) {
             event.preventDefault();
 
@@ -688,7 +871,6 @@
             const unitSelect = document.getElementById('init-unit-select').value;
             const unitValue = unitSelect === 'Outros' ? document.getElementById('init-unit-custom').value : unitSelect;
 
-            // Se for novo registro, definimos visibilidade como padrão (true)
             const isVisible = editId ? (initialRecords.find(r => r.id === editId)?.isVisible ?? true) : true;
 
             const record = {
@@ -730,7 +912,7 @@
             renderUnifiedHistory();
         }
 
-        // SALVAR DADOS SEMANAIS
+        // SALVAR DADOS SEMANAIS (Persistência Automática)
         function saveWeeklyRecord(event) {
             event.preventDefault();
 
@@ -763,6 +945,49 @@
             renderUnifiedHistory();
         }
 
+        // SALVAR DADOS DA COLHEITA (Persistência Automática)
+        function saveHarvestRecord(event) {
+            event.preventDefault();
+
+            const parentId = document.getElementById('harvest-test-parent').value;
+            if (!parentId) {
+                showModalAlert('Sem Vínculo', 'Selecione a qual teste pertence esta colheita.', 'warning');
+                return;
+            }
+
+            const editId = document.getElementById('harvest-edit-id').value;
+
+            const record = {
+                id: editId ? editId : 'harvest_' + Date.now().toString(),
+                parentId: parentId,
+                averageGm: parseFloat(document.getElementById('harvest-average-gm').value),
+                totalHarvested: parseInt(document.getElementById('harvest-total-harvested').value),
+                totalKg: parseFloat(document.getElementById('harvest-total-kg').value),
+                photos: [...tempHarvestPhotos]
+            };
+
+            if (!editId) {
+                const alreadyHarvested = harvestRecords.some(h => h.parentId === parentId);
+                if (alreadyHarvested) {
+                    showModalAlert('Aviso', 'Este teste já possui dados de colheita cadastrados.', 'warning');
+                    return;
+                }
+            }
+
+            if (editId) {
+                const idx = harvestRecords.findIndex(r => r.id === editId);
+                if (idx !== -1) harvestRecords[idx] = record;
+                showModalAlert('Sucesso', 'Dados de colheita atualizados!', 'success');
+            } else {
+                harvestRecords.push(record);
+                showModalAlert('Sucesso', 'Colheita registrada com sucesso!', 'success');
+            }
+
+            localStorage.setItem('oasis_harvest_records', JSON.stringify(harvestRecords));
+            resetHarvestForm();
+            renderUnifiedHistory();
+        }
+
         // ALTERA VISIBILIDADE DE UM REGISTRO (Função Olho)
         function toggleVisibility(id) {
             const index = initialRecords.findIndex(r => r.id === id);
@@ -773,7 +998,7 @@
             }
         }
 
-        // RENDERIZAÇÃO DO HISTÓRICO ORGANIZADO (Agrupado por Teste Inicial e Ordenado)
+        // RENDERIZAÇÃO DO HISTÓRICO ORGANIZADO
         function renderUnifiedHistory() {
             const container = document.getElementById('unified-history-container');
             container.innerHTML = '';
@@ -790,7 +1015,6 @@
                 return;
             }
 
-            // Ordenar Testes Iniciais alfabeticamente pela Cultura e depois por Data Decrescente
             const sortedInitials = [...initialRecords].sort((a, b) => {
                 const cultureCompare = a.culture.localeCompare(b.culture);
                 if (cultureCompare !== 0) return cultureCompare;
@@ -801,12 +1025,10 @@
             sortedInitials.forEach(initRecord => {
                 totalMudas += (initRecord.seedlings || 0);
 
-                // Encontra acompanhamentos semanais deste teste
-                const relativeWeeklies = weeklyRecords
-                    .filter(w => w.parentId === initRecord.id);
+                const relativeWeeklies = weeklyRecords.filter(w => w.parentId === initRecord.id);
+                const harvest = harvestRecords.find(h => h.parentId === initRecord.id);
 
                 const card = document.createElement('div');
-               
                 const isHidden = initRecord.isVisible === false;
                 card.className = `p-6 bg-white border-b border-slate-100 space-y-4 transition-all duration-200 ${isHidden ? 'opacity-50 bg-slate-50 border-dashed border-red-200' : ''}`;
 
@@ -817,20 +1039,16 @@
                         initPhotosHTML += `<img src="${p}" class="w-11 h-11 object-cover rounded border border-slate-200">`;
                     });
                 } else {
-                    initPhotosHTML = `<span class="text-xs text-slate-400 italic flex items-center gap-1">
-                        <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        Nenhuma foto anexada no início
-                    </span>`;
+                    initPhotosHTML = `<span class="text-xs text-slate-400 italic flex items-center gap-1">Nenhuma foto anexada no início</span>`;
                 }
 
-                // Ícone do Olho (Ver / Ocultar)
                 const eyeIcon = isHidden ?
                     `<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>` :
                     `<svg class="w-5 h-5 text-oasis-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>`;
 
-                const eyeTitle = isHidden ? "Clique para reexibir no PDF e Painel" : "Clique para ocultar do PDF";
+                const eyeTitle = isHidden ? "Reexibir no PDF" : "Ocultar do PDF";
 
-                // HTML dos Acompanhamentos de Evolução agregados
+                // Histórico de acompanhamentos
                 let weeklyTimelineHTML = '';
                 if (relativeWeeklies.length > 0) {
                     relativeWeeklies.forEach((weekly, wIdx) => {
@@ -843,23 +1061,15 @@
 
                         weeklyTimelineHTML += `
                             <div class="relative pl-6 pb-4 border-l-2 border-slate-200 last:pb-0">
-                                <!-- Dot da linha de tempo -->
                                 <span class="absolute -left-[7px] top-1.5 w-3.5 h-3.5 rounded-full bg-blue-500 border-2 border-white"></span>
                                 <div class="bg-slate-50/75 rounded-lg p-3 border border-slate-100">
                                     <div class="flex justify-between items-center mb-1.5">
                                         <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md flex items-center gap-1">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                                             Atualização #${wIdx + 1}
                                         </span>
                                         <div class="flex gap-2.5">
-                                            <button onclick="startWeeklyEditing('${weekly.id}')" class="text-[10px] text-blue-600 hover:underline font-bold inline-flex items-center gap-0.5">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                                Editar
-                                            </button>
-                                            <button onclick="deleteWeeklyRecord('${weekly.id}')" class="text-[10px] text-red-500 hover:underline font-bold inline-flex items-center gap-0.5">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                                Excluir
-                                            </button>
+                                            <button onclick="startWeeklyEditing('${weekly.id}')" class="text-[10px] text-blue-600 hover:underline font-bold inline-flex items-center gap-0.5">Editar</button>
+                                            <button onclick="deleteWeeklyRecord('${weekly.id}')" class="text-[10px] text-red-500 hover:underline font-bold inline-flex items-center gap-0.5">Excluir</button>
                                         </div>
                                     </div>
                                     <p class="text-xs text-slate-700 leading-relaxed mb-2 bg-white p-2.5 rounded border border-slate-100">
@@ -873,28 +1083,73 @@
                         `;
                     });
                 } else {
-                    weeklyTimelineHTML = `
-                        <p class="text-xs text-slate-400 italic font-medium flex items-center gap-1">
-                            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            Nenhuma nota de acompanhamento lançada para este teste ainda.
-                        </p>
+                    weeklyTimelineHTML = `<p class="text-xs text-slate-400 italic">Sem notas semanais ainda.</p>`;
+                }
+
+                // Renderização da colheita se houver
+                let harvestHTML = '';
+                if (harvest) {
+                    let harvestPhotosHTML = '';
+                    if (harvest.photos && harvest.photos.length > 0) {
+                        harvest.photos.forEach(hp => {
+                            harvestPhotosHTML += `<img src="${hp}" class="w-10 h-10 object-cover rounded border border-slate-200">`;
+                        });
+                    } else {
+                        harvestPhotosHTML = `<span class="text-xs text-slate-400 italic">Sem fotos da colheita</span>`;
+                    }
+
+                    harvestHTML = `
+                        <div class="mt-4 bg-amber-50/60 border border-amber-200 rounded-xl p-4 space-y-3">
+                            <div class="flex justify-between items-center pb-2 border-b border-amber-100">
+                                <h5 class="text-xs font-bold text-amber-800 uppercase flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                                    Dados de Fechamento (Colheita)
+                                </h5>
+                                <div class="flex gap-2.5">
+                                    <button onclick="startHarvestEditing('${harvest.id}')" class="text-[10px] text-amber-700 hover:underline font-bold">Editar Colheita</button>
+                                    <button onclick="deleteHarvestRecord('${harvest.id}')" class="text-[10px] text-red-600 hover:underline font-bold">Remover</button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-xs">
+                                <div class="bg-white p-2 rounded border border-amber-100">
+                                    <span class="text-[10px] text-slate-400 block font-semibold uppercase">Média (gm)</span>
+                                    <strong class="text-amber-800 text-sm">${harvest.averageGm} gm</strong>
+                                </div>
+                                <div class="bg-white p-2 rounded border border-amber-100">
+                                    <span class="text-[10px] text-slate-400 block font-semibold uppercase">Total Colhido</span>
+                                    <strong class="text-amber-800 text-sm">${harvest.totalHarvested} und</strong>
+                                </div>
+                                <div class="bg-white p-2 rounded border border-amber-100">
+                                    <span class="text-[10px] text-slate-400 block font-semibold uppercase">Total Kg</span>
+                                    <strong class="text-amber-800 text-sm">${harvest.totalKg} Kg</strong>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Galeria da Colheita</span>
+                                <div class="flex gap-1.5 flex-wrap">${harvestPhotosHTML}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    harvestHTML = `
+                        <div class="mt-4 bg-slate-50 border border-slate-200 border-dashed rounded-xl p-4 text-center">
+                            <span class="text-xs text-slate-400 italic">Nenhum dado de colheita lançado para este teste ainda. Vá na aba "3. Dados da Colheita" para salvar.</span>
+                        </div>
                     `;
                 }
 
                 card.innerHTML = `
                     <div class="flex flex-col md:flex-row justify-between items-start gap-4">
-                        <div class="space-y-2 flex-1">
+                        <div class="space-y-2 flex-1 w-full">
                             <!-- Cabeçalho do teste inicial -->
                             <div class="flex flex-wrap gap-2 items-center">
                                 <span class="bg-oasis-100 text-oasis-900 font-bold text-xs px-2.5 py-1 rounded flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                                     ${initRecord.bloco}
                                 </span>
                                 <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                     Iniciado em ${formatDateBR(initRecord.date)} (${initRecord.week})
                                 </span>
-                                ${isHidden ? '<span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg> Ocultado do PDF</span>' : ''}
+                                ${isHidden ? '<span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1">Ocultado do PDF</span>' : ''}
                             </div>
 
                             <div>
@@ -909,241 +1164,4 @@
                                 </div>
                                 <div class="mt-2 text-xs bg-oasis-50/50 text-slate-700 border border-oasis-100 p-2.5 rounded-lg flex flex-col sm:flex-row gap-1 sm:gap-4 items-start sm:items-center">
                                     <span class="inline-flex items-center gap-1">
-                                        <svg class="w-4 h-4 text-oasis-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                                        <strong>Aplicação Inicial:</strong> ${initRecord.product}
-                                    </span>
-                                    <span class="inline-flex items-center gap-1">
-                                        <svg class="w-4 h-4 text-oasis-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                        <strong>Quantidade:</strong> ${initRecord.totalApplied} ${initRecord.unit}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Fotos Iniciais -->
-                            <div class="space-y-1">
-                                <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Fotos do Plantio / Inicial</span>
-                                <div class="flex gap-1.5 flex-wrap">${initPhotosHTML}</div>
-                            </div>
-                        </div>
-
-                        <!-- Ações do Teste Inicial -->
-                        <div class="flex items-center md:flex-col gap-2 w-full md:w-auto self-stretch md:self-auto justify-end">
-                            <!-- Botão do Olho (Visibilidade) -->
-                            <button onclick="toggleVisibility('${initRecord.id}')" title="${eyeTitle}" class="p-2 border border-slate-200 hover:bg-slate-100 rounded-lg transition-colors flex justify-center items-center" style="min-width: 40px; height: 38px;">
-                                ${eyeIcon}
-                            </button>
-                            <button onclick="startInitialEditing('${initRecord.id}')" class="flex-1 md:flex-none inline-flex items-center justify-center gap-1 text-xs text-oasis-700 hover:text-white border border-oasis-600 hover:bg-oasis-700 px-3 py-2 rounded-lg font-bold transition-all h-[38px]">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                Editar
-                            </button>
-                            <button onclick="deleteInitialRecord('${initRecord.id}')" class="flex-1 md:flex-none inline-flex items-center justify-center gap-1 text-xs text-red-600 hover:text-white border border-red-500 hover:bg-red-600 px-3 py-2 rounded-lg font-bold transition-all h-[38px]">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                Apagar
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Linha do Tempo de Acompanhamentos Semanais -->
-                    <div class="mt-4 border-t border-slate-100 pt-4 bg-slate-50/20 p-4 rounded-xl">
-                        <h5 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            Histórico de Visitas (Evolução)
-                        </h5>
-                        <div class="space-y-1">
-                            ${weeklyTimelineHTML}
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-
-            updateStatistics(initialRecords.length, totalMudas, weeklyRecords.length);
-        }
-
-        function updateStatistics(initCount, mudasCount, weeklyCount) {
-            document.getElementById('stat-init-total').textContent = initCount;
-            document.getElementById('stat-mudas').textContent = mudasCount;
-            document.getElementById('stat-weekly-total').textContent = weeklyCount;
-        }
-
-        // EDIÇÃO DADOS INICIAIS
-        function startInitialEditing(id) {
-            const record = initialRecords.find(r => r.id === id);
-            if(!record) return;
-
-            switchTab('initial');
-
-            document.getElementById('initial-edit-id').value = record.id;
-            document.getElementById('init-date').value = record.date;
-            document.getElementById('init-week').value = record.week;
-            document.getElementById('init-time').value = record.time;
-            document.getElementById('init-beds').value = record.beds;
-            document.getElementById('init-seedlings').value = record.seedlings;
-            document.getElementById('init-product').value = record.product;
-            document.getElementById('init-total-applied').value = record.totalApplied;
-
-            const blocoSelect = document.getElementById('init-bloco-select');
-            blocoSelect.value = record.blocoOriginal;
-            toggleCustom('init-bloco');
-            if(record.blocoOriginal === 'Outros') document.getElementById('init-bloco-custom').value = record.blocoCustomValue;
-
-            const cultureSelect = document.getElementById('init-culture-select');
-            cultureSelect.value = record.cultureOriginal;
-            toggleCustom('init-culture');
-            if(record.cultureOriginal === 'Outros') document.getElementById('init-culture-custom').value = record.cultureCustomValue;
-
-            const varietySelect = document.getElementById('init-variety-select');
-            varietySelect.value = record.varietyOriginal;
-            toggleCustom('init-variety');
-            if(record.varietyOriginal === 'Outros') document.getElementById('init-variety-custom').value = record.varietyCustomValue;
-
-            const unitSelect = document.getElementById('init-unit-select');
-            unitSelect.value = record.unitOriginal;
-            toggleCustom('init-unit');
-            if(record.unitOriginal === 'Outros') document.getElementById('init-unit-custom').value = record.unitCustomValue;
-
-            tempInitialPhotos = record.photos ? [...record.photos] : [];
-            updateInitialPhotosDisplay();
-
-            document.getElementById('initial-form-title').innerHTML = `
-                <span class="p-1.5 bg-yellow-100 text-yellow-800 rounded-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                </span>
-                Editando Dados Iniciais
-            `;
-            document.getElementById('init-submit-btn').innerHTML = `
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                Salvar Alterações
-            `;
-            document.getElementById('cancel-initial-edit').classList.remove('hidden');
-
-            document.getElementById('initial-form-title').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function cancelInitialEdit() {
-            resetInitialForm();
-        }
-
-        // EDIÇÃO DADOS SEMANAIS
-        function startWeeklyEditing(id) {
-            const record = weeklyRecords.find(r => r.id === id);
-            if(!record) return;
-
-            switchTab('weekly');
-
-            document.getElementById('weekly-edit-id').value = record.id;
-           
-            // Força a montagem e seleciona o teste pai correspondente
-            updateParentDropdown();
-            document.getElementById('weekly-test-parent').value = record.parentId;
-            document.getElementById('week-notes').value = record.notes;
-
-            tempWeeklyPhotos = record.photos ? [...record.photos] : [];
-            updateWeeklyPhotosDisplay();
-
-            document.getElementById('weekly-form-title').innerHTML = `
-                <span class="p-1.5 bg-yellow-100 text-yellow-800 rounded-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                </span>
-                Editando Registro Semanal
-            `;
-            document.getElementById('week-submit-btn').innerHTML = `
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                Salvar Alterações
-            `;
-            document.getElementById('cancel-weekly-edit').classList.remove('hidden');
-
-            document.getElementById('weekly-form-title').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function cancelWeeklyEdit() {
-            resetWeeklyForm();
-        }
-
-        // EXCLUSÕES
-        function deleteInitialRecord(id) {
-            showConfirmModal('Excluir Teste?', 'A exclusão deste teste inicial apagará também todos os registros semanais acoplados a ele de forma permanente.', () => {
-                initialRecords = initialRecords.filter(r => r.id !== id);
-                weeklyRecords = weeklyRecords.filter(w => w.parentId !== id);
-               
-                localStorage.setItem('oasis_initial_records', JSON.stringify(initialRecords));
-                localStorage.setItem('oasis_weekly_records', JSON.stringify(weeklyRecords));
-               
-                renderUnifiedHistory();
-                showModalAlert('Excluído', 'Teste inicial e evoluções semanais removidos.', 'success');
-            });
-        }
-
-        function deleteWeeklyRecord(id) {
-            showConfirmModal('Remover Acompanhamento?', 'Tem certeza de que quer apagar este registro semanal?', () => {
-                weeklyRecords = weeklyRecords.filter(r => r.id !== id);
-                localStorage.setItem('oasis_weekly_records', JSON.stringify(weeklyRecords));
-               
-                renderUnifiedHistory();
-                showModalAlert('Removido', 'Registro semanal excluído com sucesso.', 'success');
-            });
-        }
-
-        function clearSystemData() {
-            showConfirmModal('Redefinir Sistema?', 'Esta ação apagará todos os testes e acompanhamentos deste navegador permanentemente.', () => {
-                initialRecords = [];
-                weeklyRecords = [];
-                localStorage.removeItem('oasis_initial_records');
-                localStorage.removeItem('oasis_weekly_records');
-               
-                renderUnifiedHistory();
-                resetInitialForm();
-                resetWeeklyForm();
-                showModalAlert('Limpo', 'Banco de dados restaurado.', 'success');
-            });
-        }
-
-        // MODAL HANDLERS
-        let modalOnConfirm = null;
-
-        function showModalAlert(title, desc, type = 'info') {
-            const modal = document.getElementById('custom-modal');
-            document.getElementById('modal-header').textContent = title;
-            document.getElementById('modal-desc').textContent = desc;
-
-            const icon = document.getElementById('modal-icon');
-            const cancelBtn = document.getElementById('modal-cancel-action');
-            const confirmBtn = document.getElementById('modal-confirm-action');
-
-            cancelBtn.classList.add('hidden');
-            confirmBtn.className = 'bg-oasis-700 hover:bg-oasis-800 text-white font-semibold px-5 py-2 rounded-xl text-sm transition-colors inline-flex items-center gap-1';
-            confirmBtn.innerHTML = `
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                Ok
-            `;
-
-            if(type === 'success') {
-                icon.className = 'w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-green-100 text-green-700';
-                icon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
-            } else if(type === 'warning') {
-                icon.className = 'w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-amber-100 text-amber-700';
-                icon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
-            } else {
-                icon.className = 'w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-blue-100 text-blue-700';
-                icon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
-            }
-
-            modalOnConfirm = null;
-            modal.classList.remove('hidden');
-        }
-
-        function showConfirmModal(title, desc, onConfirm) {
-            const modal = document.getElementById('custom-modal');
-            document.getElementById('modal-header').textContent = title;
-            document.getElementById('modal-desc').textContent = desc;
-
-            const icon = document.getElementById('modal-icon');
-            const cancelBtn = document.getElementById('modal-cancel-action');
-            const confirmBtn = document.getElementById('modal-confirm-action');
-
-            icon.className = 'w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-red-100 text-red-700';
-            icon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>`;
-
-            cancelBtn.classList.remove('hidden');
-            cancelBt
 ...
