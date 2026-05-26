@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Acompanhamento de Teste - Fazenda Oásis</title>
+    <title>Registo de Acompanhamento de Testes - Fazenda Oásis</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- html2pdf.js -->
@@ -42,16 +42,6 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
-       
-        /* Estilos de controle de quebra de página de impressão */
-        .pdf-page {
-            page-break-after: always;
-            position: relative;
-            box-sizing: border-box;
-        }
-        .pdf-page:last-child {
-            page-break-after: avoid;
-        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased pb-12">
@@ -64,7 +54,7 @@
                     <img id="logo-preview" src="https://i.imgur.com/wEozr34.png" alt="Logo Fazenda Oásis" class="max-w-full max-h-full object-contain" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
                 </div>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-oasis-900 tracking-tight">Registro de Acompanhamento de Teste</h1>
+                    <h1 class="text-xl sm:text-2xl font-bold text-oasis-900 tracking-tight">Registo de Acompanhamento de Testes</h1>
                     <p class="text-sm font-semibold text-oasis-600 tracking-wide uppercase">Fazenda Oásis</p>
                 </div>
             </div>
@@ -72,7 +62,7 @@
             <div class="flex gap-2">
                 <button onclick="downloadCompletePDF()" class="inline-flex items-center gap-2 bg-oasis-700 hover:bg-oasis-800 text-white font-semibold px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    Baixar PDF Unificado
+                    Descarregar PDF Unificado
                 </button>
             </div>
         </div>
@@ -92,13 +82,13 @@
             </button>
             <button id="tab-harvest-btn" onclick="switchTab('harvest')" class="flex-1 min-w-[120px] py-2.5 px-3 text-center text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-800 hover:bg-slate-50 inline-flex items-center justify-center gap-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                3. Dados da Colheita
+                3. Dados de Colheita
             </button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
            
-            <!-- COLUNA FORMULÁRIOS (Lado Esquerdo - 45%) -->
+            <!-- COLUNA FORMULÁRIOS (Lado Esquerdo - 40%) -->
             <div class="lg:col-span-5 space-y-6">
                
                 <!-- ABA 1: FORMULÁRIO DADOS INICIAIS -->
@@ -108,7 +98,7 @@
                             <span class="p-1.5 bg-oasis-100 text-oasis-700 rounded-lg">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </span>
-                            Cadastro de Dados Iniciais
+                            Registo de Dados Iniciais
                         </h2>
                         <button id="cancel-initial-edit" onclick="cancelInitialEdit()" class="hidden text-xs text-red-600 hover:underline font-semibold inline-flex items-center gap-1">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -141,7 +131,7 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                Horário do Registro
+                                Horário do Registo
                             </label>
                             <div class="relative">
                                 <input type="time" id="init-time" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all">
@@ -160,12 +150,24 @@
                             </label>
                             <select id="init-bloco-select" required onchange="toggleCustom('init-bloco')" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 transition-all text-slate-700 font-medium">
                                 <option value="">Selecione o Bloco</option>
-                                <script>
-                                    for(let i=1; i<=18; i++) {
-                                        const num = String(i).padStart(2, '0');
-                                        document.write(`<option value="Bloco ${num}">Bloco ${num}</option>`);
-                                    }
-                                </script>
+                                <option value="Bloco 01">Bloco 01</option>
+                                <option value="Bloco 02">Bloco 02</option>
+                                <option value="Bloco 03">Bloco 03</option>
+                                <option value="Bloco 04">Bloco 04</option>
+                                <option value="Bloco 05">Bloco 05</option>
+                                <option value="Bloco 06">Bloco 06</option>
+                                <option value="Bloco 07">Bloco 07</option>
+                                <option value="Bloco 08">Bloco 08</option>
+                                <option value="Bloco 09">Bloco 09</option>
+                                <option value="Bloco 10">Bloco 10</option>
+                                <option value="Bloco 11">Bloco 11</option>
+                                <option value="Bloco 12">Bloco 12</option>
+                                <option value="Bloco 13">Bloco 13</option>
+                                <option value="Bloco 14">Bloco 14</option>
+                                <option value="Bloco 15">Bloco 15</option>
+                                <option value="Bloco 16">Bloco 16</option>
+                                <option value="Bloco 17">Bloco 17</option>
+                                <option value="Bloco 18">Bloco 18</option>
                                 <option value="Outros">Outros (digitar...)</option>
                             </select>
                             <input type="text" id="init-bloco-custom" placeholder="Digite o nome do bloco" class="hidden mt-2 w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
@@ -275,7 +277,7 @@
 
                         <button type="submit" id="init-submit-btn" class="w-full bg-oasis-700 hover:bg-oasis-800 text-white font-semibold py-3 rounded-xl transition-all shadow inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-                            Salvar Dados Iniciais
+                            Guardar Dados Iniciais
                         </button>
                     </form>
                 </section>
@@ -306,7 +308,6 @@
                             </label>
                             <select id="weekly-test-parent" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 font-semibold text-slate-700">
                                 <option value="">Escolha qual teste está acompanhando...</option>
-                                <!-- Alimentado via JS -->
                             </select>
                         </div>
 
@@ -314,7 +315,7 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
-                                Como está a planta com a aplicação? (Observações)
+                                Observações do Desenvolvimento
                             </label>
                             <textarea id="week-notes" required rows="5" placeholder="Descreva o desenvolvimento atual, vigor, folhas e estado fitossanitário..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all"></textarea>
                         </div>
@@ -338,7 +339,7 @@
 
                         <button type="submit" id="week-submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all shadow inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-                            Salvar Acompanhamento
+                            Guardar Acompanhamento
                         </button>
                     </form>
                 </section>
@@ -369,7 +370,6 @@
                             </label>
                             <select id="harvest-test-parent" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 font-semibold text-slate-700">
                                 <option value="">Escolha qual teste deseja finalizar a colheita...</option>
-                                <!-- Alimentado via JS -->
                             </select>
                         </div>
 
@@ -394,7 +394,7 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                     <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                                    Total (Kg)
+                                    Massa Total (Kg)
                                 </label>
                                 <input type="number" step="any" id="harvest-total-kg" required placeholder="Ex: 1710" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
                             </div>
@@ -412,20 +412,20 @@
                             <div class="relative border-2 border-dashed border-slate-200 rounded-xl p-4 bg-slate-50 text-center hover:border-amber-500 cursor-pointer transition-all">
                                 <input type="file" id="harvest-photos-input" multiple accept="image/*" onchange="handleHarvestPhotoUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
                                 <span class="text-xs text-slate-600 font-semibold block">Clique para enviar as fotos</span>
-                                <span class="text-[10px] text-slate-400">Anexe imagens para ilustrar a qualidade do produto final</span>
+                                <span class="text-[10px] text-slate-400">Anexe imagens para ilustrar o produto colhido</span>
                             </div>
                             <div id="harvest-photos-preview" class="grid grid-cols-5 gap-2 mt-2"></div>
                         </div>
 
                         <button type="submit" id="harvest-submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 rounded-xl transition-all shadow inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-                            Salvar Dados da Colheita
+                            Guardar Dados de Colheita
                         </button>
                     </form>
                 </section>
             </div>
 
-            <!-- TABELA & HISTÓRICO GERAL (Lado Direito - 55%) -->
+            <!-- TABELA & HISTÓRICO GERAL (Lado Direito - 60%) -->
             <div class="lg:col-span-7 space-y-6">
                
                 <!-- CARD DE RESUMOS -->
@@ -464,7 +464,7 @@
                     <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
                         <div>
                             <h3 class="text-lg font-bold text-slate-900">Painel Geral de Ciclos e Evoluções</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Seus testes estão listados em ordem alfabética. Testes ocultados pelo olho não saem no PDF.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Os testes estão em ordem alfabética. Testes com olho cinzento/riscado serão ocultados do PDF.</p>
                         </div>
                         <button onclick="clearSystemData()" class="text-xs text-red-600 hover:text-red-800 font-bold border border-red-200 hover:bg-red-50 px-3 py-2 rounded-lg transition-all inline-flex items-center gap-1.5">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -481,9 +481,6 @@
             </div>
         </div>
     </main>
-
-    <!-- CONTAINER SECRETO DO PDF -->
-    <div id="pdf-rendering-area" class="hidden"></div>
 
     <!-- MODAL DE DIÁLOGO CUSTOMIZADO -->
     <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -553,7 +550,6 @@
             const secWeek = document.getElementById('form-weekly-section');
             const secHarv = document.getElementById('form-harvest-section');
 
-            // Reset tab styles
             const inactiveClass = "flex-1 min-w-[120px] py-2.5 px-3 text-center text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-800 hover:bg-slate-50 inline-flex items-center justify-center gap-1.5";
            
             tabInitBtn.className = inactiveClass;
@@ -578,7 +574,7 @@
             }
         }
 
-        // Converter datas para o formato de exibição brasileiro
+        // Converter datas para o formato de exibição português/brasileiro
         function formatDateBR(dateString) {
             if (!dateString) return '';
             const parts = dateString.split('-');
@@ -586,7 +582,7 @@
             return `${parts[2]}/${parts[1]}/${parts[0]}`;
         }
 
-        // Cálculo inteligente da semana do ano
+        // Cálculo da semana do ano
         function calculateWeekNumber(dateString) {
             if (!dateString) return '';
             const date = new Date(dateString);
@@ -635,7 +631,6 @@
             tempInitialPhotos = [];
             updateInitialPhotosDisplay();
 
-            // Esconder campos custom
             document.getElementById('init-bloco-custom').classList.add('hidden');
             document.getElementById('init-culture-custom').classList.add('hidden');
             document.getElementById('init-variety-custom').classList.add('hidden');
@@ -645,11 +640,11 @@
                 <span class="p-1.5 bg-oasis-100 text-oasis-700 rounded-lg">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </span>
-                Cadastro de Dados Iniciais
+                Registo de Dados Iniciais
             `;
             document.getElementById('init-submit-btn').innerHTML = `
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-                Salvar Dados Iniciais
+                Guardar Dados Iniciais
             `;
             document.getElementById('cancel-initial-edit').classList.add('hidden');
         }
@@ -669,7 +664,7 @@
             `;
             document.getElementById('week-submit-btn').innerHTML = `
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-                Salvar Acompanhamento
+                Guardar Acompanhamento
             `;
             document.getElementById('cancel-weekly-edit').classList.add('hidden');
         }
@@ -689,7 +684,7 @@
             `;
             document.getElementById('harvest-submit-btn').innerHTML = `
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-                Salvar Dados da Colheita
+                Guardar Dados da Colheita
             `;
             document.getElementById('cancel-harvest-edit').classList.add('hidden');
         }
@@ -741,7 +736,7 @@
             if(!files) return;
 
             if (tempWeeklyPhotos.length + files.length > 5) {
-                showModalAlert('Limite de Fotos', 'Você só pode carregar no máximo 5 fotos de acompanhamento semanal.', 'warning');
+                showModalAlert('Limite de Fotos', 'Pode carregar no máximo 5 fotos de acompanhamento semanal por registo.', 'warning');
                 event.target.value = '';
                 return;
             }
@@ -823,7 +818,7 @@
             updateHarvestPhotosDisplay();
         }
 
-        // DROPDOWNS DE VINCULO
+        // DROPDOWNS DE VÍNCULO
         function updateParentDropdown() {
             const dropdown = document.getElementById('weekly-test-parent');
             const selectId = dropdown.value;
@@ -852,7 +847,7 @@
             if (selectId) dropdown.value = selectId;
         }
 
-        // SALVAR DADOS INICIAIS (Persistência Automática)
+        // SALVAR DADOS INICIAIS
         function saveInitialRecord(event) {
             event.preventDefault();
 
@@ -900,10 +895,10 @@
             if (editId) {
                 const idx = initialRecords.findIndex(r => r.id === editId);
                 if (idx !== -1) initialRecords[idx] = record;
-                showModalAlert('Sucesso', 'Registro inicial editado com sucesso!', 'success');
+                showModalAlert('Sucesso', 'Registo inicial editado com sucesso!', 'success');
             } else {
                 initialRecords.push(record);
-                showModalAlert('Sucesso', 'Dados iniciais salvos no histórico!', 'success');
+                showModalAlert('Sucesso', 'Dados iniciais guardados no histórico!', 'success');
             }
 
             localStorage.setItem('oasis_initial_records', JSON.stringify(initialRecords));
@@ -911,13 +906,13 @@
             renderUnifiedHistory();
         }
 
-        // SALVAR DADOS SEMANAIS (Persistência Automática)
+        // SALVAR DADOS SEMANAIS
         function saveWeeklyRecord(event) {
             event.preventDefault();
 
             const parentId = document.getElementById('weekly-test-parent').value;
             if (!parentId) {
-                showModalAlert('Sem Vínculo', 'Selecione a qual registro inicial este acompanhamento pertence.', 'warning');
+                showModalAlert('Sem Vínculo', 'Selecione a qual registo inicial este acompanhamento pertence.', 'warning');
                 return;
             }
 
@@ -936,7 +931,7 @@
                 showModalAlert('Sucesso', 'Acompanhamento semanal atualizado!', 'success');
             } else {
                 weeklyRecords.push(record);
-                showModalAlert('Sucesso', 'Evolução registrada!', 'success');
+                showModalAlert('Sucesso', 'Evolução registada!', 'success');
             }
 
             localStorage.setItem('oasis_weekly_records', JSON.stringify(weeklyRecords));
@@ -944,7 +939,7 @@
             renderUnifiedHistory();
         }
 
-        // SALVAR DADOS DA COLHEITA (Persistência Automática)
+        // SALVAR DADOS DA COLHEITA
         function saveHarvestRecord(event) {
             event.preventDefault();
 
@@ -979,7 +974,7 @@
                 showModalAlert('Sucesso', 'Dados de colheita atualizados!', 'success');
             } else {
                 harvestRecords.push(record);
-                showModalAlert('Sucesso', 'Colheita registrada com sucesso!', 'success');
+                showModalAlert('Sucesso', 'Colheita registada com sucesso!', 'success');
             }
 
             localStorage.setItem('oasis_harvest_records', JSON.stringify(harvestRecords));
@@ -995,6 +990,203 @@
                 localStorage.setItem('oasis_initial_records', JSON.stringify(initialRecords));
                 renderUnifiedHistory();
             }
+        }
+
+        // CONTROLO DE EDIÇÃO E RE-CONSTRUÇÃO DO ESTADO NOS FORMULÁRIOS
+        function startInitialEditing(id) {
+            const record = initialRecords.find(r => r.id === id);
+            if (!record) return;
+
+            switchTab('initial');
+
+            document.getElementById('initial-edit-id').value = record.id;
+            document.getElementById('init-date').value = record.date;
+            document.getElementById('init-week').value = record.week;
+            document.getElementById('init-time').value = record.time;
+
+            const blocoSelect = document.getElementById('init-bloco-select');
+            blocoSelect.value = record.blocoOriginal;
+            toggleCustom('init-bloco');
+            if (record.blocoOriginal === 'Outros') {
+                document.getElementById('init-bloco-custom').value = record.blocoCustomValue;
+            }
+
+            const cultureSelect = document.getElementById('init-culture-select');
+            cultureSelect.value = record.cultureOriginal;
+            toggleCustom('init-culture');
+            if (record.cultureOriginal === 'Outros') {
+                document.getElementById('init-culture-custom').value = record.cultureCustomValue;
+            }
+
+            const varietySelect = document.getElementById('init-variety-select');
+            varietySelect.value = record.varietyOriginal;
+            toggleCustom('init-variety');
+            if (record.varietyOriginal === 'Outros') {
+                document.getElementById('init-variety-custom').value = record.varietyCustomValue;
+            }
+
+            document.getElementById('init-beds').value = record.beds;
+            document.getElementById('init-seedlings').value = record.seedlings;
+            document.getElementById('init-product').value = record.product;
+            document.getElementById('init-total-applied').value = record.totalApplied;
+
+            const unitSelect = document.getElementById('init-unit-select');
+            unitSelect.value = record.unitOriginal;
+            toggleCustom('init-unit');
+            if (record.unitOriginal === 'Outros') {
+                document.getElementById('init-unit-custom').value = record.unitCustomValue;
+            }
+
+            tempInitialPhotos = [...record.photos];
+            updateInitialPhotosDisplay();
+
+            document.getElementById('initial-form-title').innerHTML = `
+                <span class="p-1.5 bg-yellow-100 text-yellow-800 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                </span>
+                A Editar Registo Inicial
+            `;
+            document.getElementById('init-submit-btn').innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"/></svg>
+                Atualizar Registo Inicial
+            `;
+            document.getElementById('cancel-initial-edit').classList.remove('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelInitialEdit() {
+            resetInitialForm();
+            showModalAlert('Cancelado', 'Edição de dados iniciais cancelada.', 'info');
+        }
+
+        function startWeeklyEditing(id) {
+            const record = weeklyRecords.find(w => w.id === id);
+            if (!record) return;
+
+            switchTab('weekly');
+
+            document.getElementById('weekly-edit-id').value = record.id;
+            document.getElementById('weekly-test-parent').value = record.parentId;
+            document.getElementById('week-notes').value = record.notes;
+
+            tempWeeklyPhotos = [...record.photos];
+            updateWeeklyPhotosDisplay();
+
+            document.getElementById('weekly-form-title').innerHTML = `
+                <span class="p-1.5 bg-yellow-100 text-yellow-800 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                </span>
+                A Editar Acompanhamento
+            `;
+            document.getElementById('week-submit-btn').innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"/></svg>
+                Atualizar Acompanhamento
+            `;
+            document.getElementById('cancel-weekly-edit').classList.remove('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelWeeklyEdit() {
+            resetWeeklyForm();
+            showModalAlert('Cancelado', 'Edição de acompanhamento cancelada.', 'info');
+        }
+
+        function startHarvestEditing(id) {
+            const record = harvestRecords.find(h => h.id === id);
+            if (!record) return;
+
+            switchTab('harvest');
+
+            document.getElementById('harvest-edit-id').value = record.id;
+            document.getElementById('harvest-test-parent').value = record.parentId;
+            document.getElementById('harvest-average-gm').value = record.averageGm;
+            document.getElementById('harvest-total-harvested').value = record.totalHarvested;
+            document.getElementById('harvest-total-kg').value = record.totalKg;
+
+            tempHarvestPhotos = [...record.photos];
+            updateHarvestPhotosDisplay();
+
+            document.getElementById('harvest-form-title').innerHTML = `
+                <span class="p-1.5 bg-yellow-100 text-yellow-800 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                </span>
+                A Editar Colheita
+            `;
+            document.getElementById('harvest-submit-btn').innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"/></svg>
+                Atualizar Colheita
+            `;
+            document.getElementById('cancel-harvest-edit').classList.remove('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelHarvestEdit() {
+            resetHarvestForm();
+            showModalAlert('Cancelado', 'Edição de colheita cancelada.', 'info');
+        }
+
+        // APAGAR REGISTROS
+        function deleteInitialRecord(id) {
+            showModalConfirm('Confirmar Remoção', 'Ao apagar este registo inicial, todos os acompanhamentos e dados de colheita vinculados também serão removidos permanentemente. Deseja continuar?', () => {
+                initialRecords = initialRecords.filter(r => r.id !== id);
+                weeklyRecords = weeklyRecords.filter(w => w.parentId !== id);
+                harvestRecords = harvestRecords.filter(h => h.parentId !== id);
+
+                localStorage.setItem('oasis_initial_records', JSON.stringify(initialRecords));
+                localStorage.setItem('oasis_weekly_records', JSON.stringify(weeklyRecords));
+                localStorage.setItem('oasis_harvest_records', JSON.stringify(harvestRecords));
+
+                renderUnifiedHistory();
+                showModalAlert('Removido', 'O registo do teste e os seus dados associados foram apagados com sucesso.', 'success');
+            });
+        }
+
+        function deleteWeeklyRecord(id) {
+            showModalConfirm('Confirmar Remoção', 'Deseja realmente apagar esta nota de acompanhamento evolutivo?', () => {
+                weeklyRecords = weeklyRecords.filter(w => w.id !== id);
+                localStorage.setItem('oasis_weekly_records', JSON.stringify(weeklyRecords));
+                renderUnifiedHistory();
+                showModalAlert('Removido', 'Evolução apagada com sucesso.', 'success');
+            });
+        }
+
+        function deleteHarvestRecord(id) {
+            showModalConfirm('Confirmar Remoção', 'Deseja realmente remover os dados de fecho de colheita para este teste?', () => {
+                harvestRecords = harvestRecords.filter(h => h.id !== id);
+                localStorage.setItem('oasis_harvest_records', JSON.stringify(harvestRecords));
+                renderUnifiedHistory();
+                showModalAlert('Removido', 'Os dados de colheita foram removidos.', 'success');
+            });
+        }
+
+        // LIMPAR TUDO
+        function clearSystemData() {
+            showModalConfirm('Limpeza Completa', 'Atenção! Esta ação limpará absolutamente todos os registos de testes do seu histórico local permanentemente. Deseja prosseguir?', () => {
+                localStorage.removeItem('oasis_initial_records');
+                localStorage.removeItem('oasis_weekly_records');
+                localStorage.removeItem('oasis_harvest_records');
+
+                initialRecords = [];
+                weeklyRecords = [];
+                harvestRecords = [];
+
+                resetInitialForm();
+                resetWeeklyForm();
+                resetHarvestForm();
+                renderUnifiedHistory();
+
+                showModalAlert('Limpeza Concluída', 'Todos os registos e históricos do sistema foram limpos.', 'success');
+            });
+        }
+
+        // ESTATÍSTICAS DO PAINEL
+        function updateStatistics(initCount, seedlingsTotal, harvestCount) {
+            document.getElementById('stat-init-total').textContent = initCount;
+            document.getElementById('stat-mudas').textContent = seedlingsTotal.toLocaleString('pt-PT');
+            document.getElementById('stat-harvest-total').textContent = harvestCount;
         }
 
         // RENDERIZAÇÃO DO HISTÓRICO ORGANIZADO
@@ -1014,6 +1206,7 @@
                 return;
             }
 
+            // Ordem Alfabética de Cultura e depois por Data Decrescente
             const sortedInitials = [...initialRecords].sort((a, b) => {
                 const cultureCompare = a.culture.localeCompare(b.culture);
                 if (cultureCompare !== 0) return cultureCompare;
@@ -1021,6 +1214,8 @@
             });
 
             let totalMudas = 0;
+            let totalColhidos = harvestRecords.length;
+
             sortedInitials.forEach(initRecord => {
                 totalMudas += (initRecord.seedlings || 0);
 
@@ -1035,10 +1230,10 @@
                 let initPhotosHTML = '';
                 if (initRecord.photos && initRecord.photos.length > 0) {
                     initRecord.photos.forEach(p => {
-                        initPhotosHTML += `<img src="${p}" class="w-11 h-11 object-cover rounded border border-slate-200">`;
+                        initPhotosHTML += `<img src="${p}" class="w-11 h-11 object-cover rounded border border-slate-200 shadow-sm">`;
                     });
                 } else {
-                    initPhotosHTML = `<span class="text-xs text-slate-400 italic flex items-center gap-1">Nenhuma foto anexada no início</span>`;
+                    initPhotosHTML = `<span class="text-xs text-slate-400 italic">Sem fotografias iniciais</span>`;
                 }
 
                 const eyeIcon = isHidden ?
@@ -1047,14 +1242,14 @@
 
                 const eyeTitle = isHidden ? "Reexibir no PDF" : "Ocultar do PDF";
 
-                // Histórico de acompanhamentos
+                // Histórico de acompanhamentos semanais
                 let weeklyTimelineHTML = '';
                 if (relativeWeeklies.length > 0) {
                     relativeWeeklies.forEach((weekly, wIdx) => {
                         let weeklyPhotosHTML = '';
                         if (weekly.photos && weekly.photos.length > 0) {
                             weekly.photos.forEach(wp => {
-                                weeklyPhotosHTML += `<img src="${wp}" class="w-9 h-9 object-cover rounded border border-slate-100">`;
+                                weeklyPhotosHTML += `<img src="${wp}" class="w-9 h-9 object-cover rounded border border-slate-100 shadow-sm">`;
                             });
                         }
 
@@ -1064,17 +1259,17 @@
                                 <div class="bg-slate-50/75 rounded-lg p-3 border border-slate-100">
                                     <div class="flex justify-between items-center mb-1.5">
                                         <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md flex items-center gap-1">
-                                            Atualização #${wIdx + 1}
+                                            Evolução #${wIdx + 1}
                                         </span>
                                         <div class="flex gap-2.5">
                                             <button onclick="startWeeklyEditing('${weekly.id}')" class="text-[10px] text-blue-600 hover:underline font-bold inline-flex items-center gap-0.5">Editar</button>
                                             <button onclick="deleteWeeklyRecord('${weekly.id}')" class="text-[10px] text-red-500 hover:underline font-bold inline-flex items-center gap-0.5">Excluir</button>
                                         </div>
                                     </div>
-                                    <p class="text-xs text-slate-700 leading-relaxed mb-2 bg-white p-2.5 rounded border border-slate-100">
+                                    <p class="text-xs text-slate-700 leading-relaxed mb-2 bg-white p-2.5 rounded border border-slate-100 shadow-inner">
                                         "${weekly.notes}"
                                     </p>
-                                    <div class="flex gap-1.5">
+                                    <div class="flex gap-1.5 flex-wrap">
                                         ${weeklyPhotosHTML}
                                     </div>
                                 </div>
@@ -1082,16 +1277,16 @@
                         `;
                     });
                 } else {
-                    weeklyTimelineHTML = `<p class="text-xs text-slate-400 italic">Sem notas semanais ainda.</p>`;
+                    weeklyTimelineHTML = `<p class="text-xs text-slate-400 italic">Sem notas semanais de evolução.</p>`;
                 }
 
-                // Renderização da colheita se houver
+                // Renderização de dados da colheita se houver
                 let harvestHTML = '';
                 if (harvest) {
                     let harvestPhotosHTML = '';
                     if (harvest.photos && harvest.photos.length > 0) {
                         harvest.photos.forEach(hp => {
-                            harvestPhotosHTML += `<img src="${hp}" class="w-10 h-10 object-cover rounded border border-slate-200">`;
+                            harvestPhotosHTML += `<img src="${hp}" class="w-10 h-10 object-cover rounded border border-slate-200 shadow-sm">`;
                         });
                     } else {
                         harvestPhotosHTML = `<span class="text-xs text-slate-400 italic">Sem fotos da colheita</span>`;
@@ -1102,7 +1297,7 @@
                             <div class="flex justify-between items-center pb-2 border-b border-amber-100">
                                 <h5 class="text-xs font-bold text-amber-800 uppercase flex items-center gap-1.5">
                                     <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                                    Dados de Fechamento (Colheita)
+                                    Fecho de Colheita e Rendimento
                                 </h5>
                                 <div class="flex gap-2.5">
                                     <button onclick="startHarvestEditing('${harvest.id}')" class="text-[10px] text-amber-700 hover:underline font-bold">Editar Colheita</button>
@@ -1111,7 +1306,7 @@
                             </div>
                             <div class="grid grid-cols-3 gap-2 text-xs">
                                 <div class="bg-white p-2 rounded border border-amber-100">
-                                    <span class="text-[10px] text-slate-400 block font-semibold uppercase">Média (gm)</span>
+                                    <span class="text-[10px] text-slate-400 block font-semibold uppercase">Média Unitária</span>
                                     <strong class="text-amber-800 text-sm">${harvest.averageGm} gm</strong>
                                 </div>
                                 <div class="bg-white p-2 rounded border border-amber-100">
@@ -1119,7 +1314,7 @@
                                     <strong class="text-amber-800 text-sm">${harvest.totalHarvested} und</strong>
                                 </div>
                                 <div class="bg-white p-2 rounded border border-amber-100">
-                                    <span class="text-[10px] text-slate-400 block font-semibold uppercase">Total Kg</span>
+                                    <span class="text-[10px] text-slate-400 block font-semibold uppercase font-bold">Massa Total</span>
                                     <strong class="text-amber-800 text-sm">${harvest.totalKg} Kg</strong>
                                 </div>
                             </div>
@@ -1132,7 +1327,7 @@
                 } else {
                     harvestHTML = `
                         <div class="mt-4 bg-slate-50 border border-slate-200 border-dashed rounded-xl p-4 text-center">
-                            <span class="text-xs text-slate-400 italic">Nenhum dado de colheita lançado para este teste ainda. Vá na aba "3. Dados da Colheita" para salvar.</span>
+                            <span class="text-xs text-slate-400 italic">Nenhum dado de colheita lançado para este teste ainda. Vá na aba "3. Dados de Colheita" para salvar.</span>
                         </div>
                     `;
                 }
@@ -1156,11 +1351,276 @@
                                     <span class="w-2.5 h-2.5 rounded-full bg-oasis-600"></span>
                                     Cultura: <span class="text-oasis-700">${initRecord.culture}</span> - ${initRecord.variety}
                                 </h4>
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2 bg-slate-50 p-2.5 rounded-lg text-xs text-slate-600 border border-slate-100">
+                                <div class="grid grid-cols-3 gap-2 mt-2 bg-slate-50 p-2.5 rounded-lg text-xs text-slate-600 border border-slate-100">
                                     <div><strong>Canteiros:</strong> ${initRecord.beds}</div>
                                     <div><strong>Mudas:</strong> ${initRecord.seedlings}</div>
-                                    <div><strong>Hora Cad:</strong> ${initRecord.time}</div>
+                                    <div><strong>Registo:</strong> ${initRecord.time}</div>
                                 </div>
                                 <div class="mt-2 text-xs bg-oasis-50/50 text-slate-700 border border-oasis-100 p-2.5 rounded-lg flex flex-col sm:flex-row gap-1 sm:gap-4 items-start sm:items-center">
-                                    <span class="inline-flex items-center gap-1
-...
+                                    <span class="inline-flex items-center gap-1 text-oasis-900 font-bold text-[11px] uppercase tracking-wider">
+                                        <svg class="w-4 h-4 text-oasis-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                                        Tratamento:
+                                    </span>
+                                    <span class="font-semibold text-slate-800">${initRecord.product} (${initRecord.totalApplied} ${initRecord.unit})</span>
+                                </div>
+                                <div class="mt-3 space-y-1">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Registo Fotográfico Inicial</span>
+                                    <div class="flex gap-1.5 flex-wrap">${initPhotosHTML}</div>
+                                </div>
+                            </div>
+
+                            <!-- TIMELINE INTEGRADA DE ACOMPANHAMENTOS -->
+                            <div class="mt-4 pt-4 border-t border-slate-100">
+                                <h5 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Evoluções Registadas</h5>
+                                ${weeklyTimelineHTML}
+                            </div>
+
+                            <!-- DADOS DA COLHEITA -->
+                            ${harvestHTML}
+
+                        </div>
+
+                        <!-- ACÇÕES DO CARTÃO DE REGISTRO (Lado Direito/Topo em mobile) -->
+                        <div class="flex md:flex-col justify-end w-full md:w-auto items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+                            <button onclick="toggleVisibility('${initRecord.id}')" title="${eyeTitle}" class="p-2 border border-slate-200 hover:border-slate-300 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600">
+                                ${eyeIcon}
+                            </button>
+                            <button onclick="startInitialEditing('${initRecord.id}')" title="Editar Teste Inicial" class="p-2 border border-slate-200 hover:border-slate-300 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600">
+                                <svg class="w-5 h-5 text-slate-500 hover:text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            </button>
+                            <button onclick="deleteInitialRecord('${initRecord.id}')" title="Eliminar Teste por Completo" class="p-2 border border-red-200 hover:border-red-300 rounded-lg bg-red-50 hover:bg-red-100 transition-colors text-red-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            updateStatistics(initialRecords.length, totalMudas, totalColhidos);
+        }
+
+        // DIÁLOGOS CUSTOMIZADOS (SEM ALERTS NATIVOS DO BROWSER)
+        let modalOnConfirm = null;
+
+        function showModalAlert(title, text, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const iconContainer = document.getElementById('modal-icon');
+            const header = document.getElementById('modal-header');
+            const desc = document.getElementById('modal-desc');
+            const cancelBtn = document.getElementById('modal-cancel-action');
+            const confirmBtn = document.getElementById('modal-confirm-action');
+
+            header.textContent = title;
+            desc.textContent = text;
+            cancelBtn.classList.add('hidden');
+            modalOnConfirm = null;
+
+            iconContainer.className = "w-12 h-12 rounded-full flex items-center justify-center mb-4 ";
+            confirmBtn.className = "text-white font-semibold px-5 py-2 rounded-xl text-sm transition-colors inline-flex items-center gap-1 ";
+
+            if (type === 'success') {
+                iconContainer.classList.add('bg-green-100', 'text-green-700');
+                iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+                confirmBtn.classList.add('bg-green-700', 'hover:bg-green-800');
+            } else if (type === 'warning') {
+                iconContainer.classList.add('bg-amber-100', 'text-amber-700');
+                iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+                confirmBtn.classList.add('bg-amber-600', 'hover:bg-amber-700');
+            } else if (type === 'error') {
+                iconContainer.classList.add('bg-red-100', 'text-red-700');
+                iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+                confirmBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+            } else {
+                iconContainer.classList.add('bg-blue-100', 'text-blue-700');
+                iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+                confirmBtn.classList.add('bg-oasis-700', 'hover:bg-oasis-800');
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function showModalConfirm(title, text, confirmCallback) {
+            showModalAlert(title, text, 'warning');
+            const cancelBtn = document.getElementById('modal-cancel-action');
+            cancelBtn.classList.remove('hidden');
+            modalOnConfirm = confirmCallback;
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+            if (modalOnConfirm) {
+                const action = modalOnConfirm;
+                modalOnConfirm = null;
+                action();
+            }
+        }
+
+        // GERAÇÃO CORRIGIDA DE PDF UNIFICADO (Com renderizador offscreen dedicado)
+        function downloadCompletePDF() {
+            // Filtrar apenas registos visíveis
+            const visibleInits = initialRecords.filter(r => r.isVisible !== false);
+            if (visibleInits.length === 0) {
+                showModalAlert('Falta de Dados', 'Não existem testes ativos ou visíveis para compilar no PDF. Clique no olho cinzento no painel para reativá-los.', 'warning');
+                return;
+            }
+
+            // Criar um contentor off-screen com estilos específicos de folha A4
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '-9999px';
+            tempDiv.style.width = '800px'; // largura ideal para conversão html2pdf
+            tempDiv.style.background = '#ffffff';
+            document.body.appendChild(tempDiv);
+
+            // Construção do layout limpo do PDF
+            let htmlContent = `
+                <div style="font-family: Arial, sans-serif; color: #1e293b; padding: 25px;">
+                    <!-- Cabeçalho Principal -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2.5px solid #16a34a; padding-bottom: 15px; margin-bottom: 30px;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <img src="https://i.imgur.com/wEozr34.png" style="width: 55px; height: 55px; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
+                            <div>
+                                <h1 style="font-size: 20px; font-weight: bold; color: #14532d; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Fazenda Oásis</h1>
+                                <p style="font-size: 13px; color: #16a34a; margin: 2px 0 0 0; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Acompanhamento Geral de Testes</p>
+                            </div>
+                        </div>
+                        <div style="text-align: right; font-size: 10px; color: #64748b;">
+                            <p style="margin: 0;"><strong>Emitido em:</strong> ${new Date().toLocaleDateString('pt-PT')} às ${new Date().toLocaleTimeString('pt-PT')}</p>
+                            <p style="margin: 3px 0 0 0;"><strong>Total de Testes Incluídos:</strong> ${visibleInits.length}</p>
+                        </div>
+                    </div>
+            `;
+
+            // Ordenar por Cultura e por Data (mesmo ordenamento do ecrã)
+            const sortedVisible = [...visibleInits].sort((a, b) => {
+                const cultureCompare = a.culture.localeCompare(b.culture);
+                if (cultureCompare !== 0) return cultureCompare;
+                return b.date.localeCompare(a.date);
+            });
+
+            // Gerar o documento de cada teste individualmente
+            sortedVisible.forEach((initRecord, index) => {
+                const relativeWeeklies = weeklyRecords.filter(w => w.parentId === initRecord.id);
+                const harvest = harvestRecords.find(h => h.parentId === initRecord.id);
+
+                // Forçar quebra de página se não for o primeiro item, mantendo o PDF super organizado
+                const pageBreakStyle = index > 0 ? 'page-break-before: always; padding-top: 15px;' : '';
+
+                htmlContent += `
+                    <div style="${pageBreakStyle} margin-bottom: 35px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 25px; page-break-inside: avoid;">
+                        
+                        <!-- Barra de Título do Teste -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px;">
+                            <h3 style="margin: 0; font-size: 15px; color: #14532d; font-weight: bold; text-transform: uppercase;">
+                                ${initRecord.bloco} &mdash; ${initRecord.culture} (${initRecord.variety})
+                            </h3>
+                            <span style="font-size: 11px; background-color: #dcfce7; color: #14532d; padding: 4px 8px; border-radius: 5px; font-weight: bold;">
+                                Início: ${formatDateBR(initRecord.date)} (${initRecord.week})
+                            </span>
+                        </div>
+
+                        <!-- Grelha de Dados Iniciais -->
+                        <div style="display: flex; gap: 10px; width: 100%; margin-bottom: 15px;">
+                            <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center;">
+                                <span style="font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 4px;">Canteiros</span>
+                                <strong style="font-size: 14px; color: #1e293b;">${initRecord.beds}</strong>
+                            </div>
+                            <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center;">
+                                <span style="font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 4px;">Mudas Totais</span>
+                                <strong style="font-size: 14px; color: #1e293b;">${initRecord.seedlings.toLocaleString('pt-PT')}</strong>
+                            </div>
+                            <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center;">
+                                <span style="font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 4px;">Tratamento</span>
+                                <strong style="font-size: 12px; color: #15803d; word-break: break-all;">${initRecord.product}</strong>
+                            </div>
+                            <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center;">
+                                <span style="font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 4px;">Qtd Aplicada</span>
+                                <strong style="font-size: 14px; color: #1e293b;">${initRecord.totalApplied} ${initRecord.unit}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Fotos Iniciais -->
+                        ${initRecord.photos && initRecord.photos.length > 0 ? `
+                            <div style="margin-bottom: 18px;">
+                                <h4 style="margin: 0 0 6px 0; font-size: 10px; text-transform: uppercase; color: #475569; font-weight: bold; tracking-spacing: 0.5px;">Imagens Iniciais do Plantio:</h4>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    ${initRecord.photos.map(p => `<img src="${p}" style="width: 75px; height: 75px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1;">`).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <!-- Histórico de Acompanhamento -->
+                        <div style="margin-top: 15px; margin-bottom: 18px;">
+                            <h4 style="margin: 0 0 8px 0; font-size: 10px; text-transform: uppercase; color: #475569; font-weight: bold; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; tracking-spacing: 0.5px;">Evoluções Semanais:</h4>
+                            ${relativeWeeklies.length > 0 ? relativeWeeklies.map((w, wIdx) => `
+                                <div style="margin-bottom: 12px; background: #f8fafc; border-left: 3px solid #3b82f6; padding: 10px 12px; border-radius: 0 6px 6px 0;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                        <span style="font-size: 9px; font-weight: bold; color: #1d4ed8;">Atualização #${wIdx + 1}</span>
+                                    </div>
+                                    <p style="margin: 0 0 6px 0; font-size: 11px; color: #334155; font-style: italic; line-height: 1.4;">"${w.notes}"</p>
+                                    ${w.photos && w.photos.length > 0 ? `
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                            ${w.photos.map(wp => `<img src="${wp}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 3px; border: 1px solid #cbd5e1;">`).join('')}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `).join('') : '<p style="font-size: 11px; color: #94a3b8; font-style: italic; margin: 0;">Nenhum acompanhamento semanal lançado.</p>'}
+                        </div>
+
+                        <!-- Secção de Colheita (Se aplicável) -->
+                        ${harvest ? `
+                            <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; margin-top: 15px;">
+                                <h4 style="margin: 0 0 8px 0; font-size: 10px; text-transform: uppercase; color: #b45309; font-weight: bold; tracking-spacing: 0.5px;">Dados Finais da Colheita:</h4>
+                                <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                                    <div style="flex: 1; background: #ffffff; border: 1px solid #fde68a; padding: 8px; border-radius: 4px; text-align: center;">
+                                        <span style="font-size: 8px; text-transform: uppercase; color: #78350f; font-weight: bold; display: block; margin-bottom: 3px;">Média p/ Planta</span>
+                                        <strong style="font-size: 13px; color: #92400e;">${harvest.averageGm} gm</strong>
+                                    </div>
+                                    <div style="flex: 1; background: #ffffff; border: 1px solid #fde68a; padding: 8px; border-radius: 4px; text-align: center;">
+                                        <span style="font-size: 8px; text-transform: uppercase; color: #78350f; font-weight: bold; display: block; margin-bottom: 3px;">Unidades Colhidas</span>
+                                        <strong style="font-size: 13px; color: #92400e;">${harvest.totalHarvested} und</strong>
+                                    </div>
+                                    <div style="flex: 1; background: #ffffff; border: 1px solid #fde68a; padding: 8px; border-radius: 4px; text-align: center;">
+                                        <span style="font-size: 8px; text-transform: uppercase; color: #78350f; font-weight: bold; display: block; margin-bottom: 3px;">Massa Total</span>
+                                        <strong style="font-size: 13px; color: #92400e;">${harvest.totalKg} Kg</strong>
+                                    </div>
+                                </div>
+                                ${harvest.photos && harvest.photos.length > 0 ? `
+                                    <div style="margin-top: 8px;">
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                            ${harvest.photos.map(hp => `<img src="${hp}" style="width: 55px; height: 55px; object-fit: cover; border-radius: 3px; border: 1px solid #fde68a;">`).join('')}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            htmlContent += `</div>`;
+            tempDiv.innerHTML = htmlContent;
+
+            // Configuração refinada do html2pdf
+            const opt = {
+                margin:       [10, 10, 10, 10],
+                filename:     `Relatorio_Testes_Oasis_${new Date().toISOString().slice(0,10)}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Processar e remover o elemento de apoio temporário
+            html2pdf().from(tempDiv).set(opt).save().then(() => {
+                document.body.removeChild(tempDiv);
+            }).catch(err => {
+                console.error("Erro na geração do PDF: ", err);
+                showModalAlert('Erro', 'Ocorreu um erro ao converter o documento para formato PDF. Verifique se as imagens estão acessíveis.', 'error');
+                document.body.removeChild(tempDiv);
+            });
+        }
+    </script>
+</body>
+</html>
