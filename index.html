@@ -6,7 +6,7 @@
     <title>Registo de Acompanhamento de Testes - Fazenda Oásis</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- html2pdf.js -->
+    <!-- html2pdf.js para exportação em PDF individual -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- html2canvas para exportação em JPG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -63,14 +63,9 @@
            
             <div class="flex flex-wrap gap-2 justify-center">
                 <!-- Botão JPG -->
-                <button onclick="downloadCompleteJPG()" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm">
+                <button onclick="downloadCompleteJPG()" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    Descarregar JPG
-                </button>
-                <!-- Botão PDF -->
-                <button onclick="downloadCompletePDF()" class="inline-flex items-center gap-2 bg-oasis-700 hover:bg-oasis-800 text-white font-semibold px-4 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    Descarregar PDF Unificado
+                    Descarregar JPG Geral
                 </button>
             </div>
         </div>
@@ -490,7 +485,7 @@
                     <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
                         <div>
                             <h3 class="text-lg font-bold text-slate-900">Painel Geral de Ciclos e Evoluções</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Os testes estão em ordem alfabética. Testes com o ícone do olho desmarcado (riscado) serão ocultados do PDF/JPG.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Os testes estão em ordem alfabética. Testes com o ícone do olho desmarcado (riscado) serão ocultados do JPG.</p>
                         </div>
                         <button onclick="clearSystemData()" class="text-xs text-red-600 hover:text-red-800 font-bold border border-red-200 hover:bg-red-50 px-3 py-2 rounded-lg transition-all inline-flex items-center gap-1.5 flex-shrink-0">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -735,6 +730,7 @@
             event.target.value = '';
         }
 
+        // MOSTRAR FOTOS INICIAIS NA UI
         function updateInitialPhotosDisplay() {
             const preview = document.getElementById('init-photos-preview');
             const count = document.getElementById('init-photo-count');
@@ -1182,6 +1178,7 @@
             });
         }
 
+        // APAGAR SEMANAL
         function deleteWeeklyRecord(id) {
             showModalConfirm('Confirmar Remoção', 'Deseja realmente apagar esta nota de acompanhamento evolutivo?', () => {
                 weeklyRecords = weeklyRecords.filter(w => w.id !== id);
@@ -1191,6 +1188,7 @@
             });
         }
 
+        // APAGAR COLHEITA
         function deleteHarvestRecord(id) {
             showModalConfirm('Confirmar Remoção', 'Deseja realmente remover os dados de fecho de colheita para este teste?', () => {
                 harvestRecords = harvestRecords.filter(h => h.id !== id);
@@ -1278,7 +1276,7 @@
                     `<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>` :
                     `<svg class="w-5 h-5 text-oasis-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>`;
 
-                const eyeTitle = isHidden ? "Reexibir no PDF/JPG" : "Ocultar do PDF/JPG";
+                const eyeTitle = isHidden ? "Reexibir no JPG" : "Ocultar do JPG";
 
                 // Histórico de acompanhamentos semanais
                 let weeklyTimelineHTML = '';
@@ -1383,7 +1381,7 @@
                                 <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded flex items-center gap-1">
                                     Iniciado em ${formatDatePT(initRecord.date)} (${initRecord.week})
                                 </span>
-                                ${isHidden ? '<span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1">Ocultado do PDF/JPG</span>' : ''}
+                                ${isHidden ? '<span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1">Ocultado do JPG</span>' : ''}
                             </div>
 
                             <div>
@@ -1420,8 +1418,12 @@
 
                         </div>
 
-                        <!-- ACÇÕES DO CARTÃO DE REGISTRO -->
+                        <!-- ACÇÕES DO CARTÃO DE REGISTRO (Adicionado botão para exportação em PDF por registo individual) -->
                         <div class="flex md:flex-col justify-end w-full md:w-auto items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+                            <!-- Descarregar PDF Individual -->
+                            <button onclick="downloadIndividualPDF('${initRecord.id}')" title="Descarregar PDF Individual deste Teste" class="p-2 border border-emerald-200 hover:border-emerald-300 rounded-lg bg-emerald-50 hover:bg-emerald-100 transition-colors text-emerald-700">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </button>
                             <button onclick="toggleVisibility('${initRecord.id}')" title="${eyeTitle}" class="p-2 border border-slate-200 hover:border-slate-300 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600">
                                 ${eyeIcon}
                             </button>
@@ -1496,25 +1498,10 @@
             }
         }
 
-        // FUNÇÃO CENTRAL PARA GERAR O HTML DO RELATÓRIO DO HISTÓRICO (PARTILHADO ENTRE PDF E JPG)
+        // FUNÇÃO CENTRAL PARA GERAR O HTML DO RELATÓRIO DO HISTÓRICO COM TEXTOS MAIORES E FOTOS AUMENTADAS
+        // Implementa a paginação de 4 em 4 registos de evolução semanal
         function generateOffscreenContentHTML(visibleInits) {
-            let htmlContent = `
-                <div style="font-family: Arial, sans-serif; color: #1e293b; padding: 25px; background: #ffffff;">
-                    <!-- Cabeçalho Principal -->
-                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2.5px solid #16a34a; padding-bottom: 15px; margin-bottom: 30px;">
-                        <div style="display: flex; align-items: center; gap: 15px;">
-                            <img src="https://i.imgur.com/wEozr34.png" style="width: 55px; height: 55px; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
-                            <div>
-                                <h1 style="font-size: 20px; font-weight: bold; color: #14532d; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Fazenda Oásis</h1>
-                                <p style="font-size: 13px; color: #16a34a; margin: 2px 0 0 0; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Acompanhamento Geral de Testes</p>
-                            </div>
-                        </div>
-                        <div style="text-align: right; font-size: 10px; color: #64748b;">
-                            <p style="margin: 0;"><strong>Emitido em:</strong> ${new Date().toLocaleDateString('pt-PT')} às ${new Date().toLocaleTimeString('pt-PT')}</p>
-                            <p style="margin: 3px 0 0 0;"><strong>Total de Testes Incluídos:</strong> ${visibleInits.length}</p>
-                        </div>
-                    </div>
-            `;
+            let htmlContent = '';
 
             // Ordenar por Cultura e por Data (mesmo ordenamento do ecrã)
             const sortedVisible = [...visibleInits].sort((a, b) => {
@@ -1523,15 +1510,12 @@
                 return (b.date || "").localeCompare(a.date || "");
             });
 
-            // Gerar o documento de cada teste individualmente
+            // Cada Teste gera um bloco visual contínuo separado por quebras lógicas.
             sortedVisible.forEach((initRecord, index) => {
                 const relativeWeeklies = weeklyRecords.filter(w => w.parentId === initRecord.id);
                 const harvest = harvestRecords.find(h => h.parentId === initRecord.id);
 
-                // Forçar quebra de página se não for o primeiro item, mantendo o PDF super organizado
-                const pageBreakStyle = index > 0 ? 'page-break-before: always; padding-top: 15px;' : '';
-
-                // Formatar segunra de campos indefinidos
+                // Formatar dados do Teste Inicial
                 const blocoDisplay = initRecord.bloco || 'Sem Bloco';
                 const nBlocoDisplay = initRecord.nBloco ? ` - Nº ${initRecord.nBloco}` : '';
                 const cultureDisplay = initRecord.culture || 'Sem Cultura';
@@ -1544,184 +1528,265 @@
                 const dateDisplay = initRecord.date ? formatDatePT(initRecord.date) : '';
                 const weekDisplay = initRecord.week || '';
 
-                htmlContent += `
-                    <div style="${pageBreakStyle} margin-bottom: 35px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 25px; page-break-inside: avoid;">
-                        
-                        <!-- Barra de Título do Teste -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px;">
-                            <h3 style="margin: 0; font-size: 15px; color: #14532d; font-weight: bold; text-transform: uppercase;">
-                                ${blocoDisplay}${nBlocoDisplay} &mdash; ${cultureDisplay} (${varietyDisplay})
-                            </h3>
-                            <span style="font-size: 11px; background-color: #dcfce7; color: #14532d; padding: 4px 8px; border-radius: 5px; font-weight: bold;">
-                                Início: ${dateDisplay} (${weekDisplay})
-                            </span>
-                        </div>
+                // Agrupamos os acompanhamentos semanais em grupos de no máximo 4 por página simulada
+                const weeklyGroups = [];
+                if (relativeWeeklies.length > 0) {
+                    for (let i = 0; i < relativeWeeklies.length; i += 4) {
+                        weeklyGroups.push(relativeWeeklies.slice(i, i + 4));
+                    }
+                } else {
+                    weeklyGroups.push([]); // Pelo menos um grupo (mesmo que vazio) para renderizar a folha inicial
+                }
 
-                        <!-- Grelha de Dados Iniciais -->
-                        <div style="display: flex; gap: 10px; width: 100%; margin-bottom: 15px;">
-                            <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center;">
-                                <span style="font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 4px;">Canteiros</span>
-                                <strong style="font-size: 14px; color: #1e293b;">${bedsDisplay}</strong>
-                            </div>
-                            <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center;">
-                                <span style="font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 4px;">Mudas Totais</span>
-                                <strong style="font-size: 14px; color: #1e293b;">${seedlingsDisplay}</strong>
-                            </div>
-                            <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center;">
-                                <span style="font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 4px;">Tratamento</span>
-                                <strong style="font-size: 12px; color: #15803d; word-break: break-all;">${productDisplay}</strong>
-                            </div>
-                            <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center;">
-                                <span style="font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 4px;">Qtd Aplicada</span>
-                                <strong style="font-size: 14px; color: #1e293b;">${totalAppliedDisplay} ${unitDisplay}</strong>
-                            </div>
-                        </div>
-
-                        <!-- Fotos Iniciais -->
-                        ${initRecord.photos && initRecord.photos.length > 0 ? `
-                            <div style="margin-bottom: 18px;">
-                                <h4 style="margin: 0 0 6px 0; font-size: 10px; text-transform: uppercase; color: #475569; font-weight: bold; letter-spacing: 0.5px;">Imagens Iniciais do Plantio:</h4>
-                                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                    ${initRecord.photos.map(p => `<img src="${p}" style="width: 75px; height: 75px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1;">`).join('')}
+                // Renderização das Páginas do Teste
+                weeklyGroups.forEach((group, groupIdx) => {
+                    // Cada grupo vira uma página física perfeitamente delimitada no JPG
+                    htmlContent += `
+                        <div style="width: 1000px; padding: 45px; background: #ffffff; margin-bottom: 25px; border: 1.5px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative;">
+                            
+                            <!-- Cabeçalho Principal -->
+                            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 4px solid #16a34a; padding-bottom: 18px; margin-bottom: 30px;">
+                                <div style="display: flex; align-items: center; gap: 20px;">
+                                    <img src="https://i.imgur.com/wEozr34.png" style="width: 70px; height: 70px; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
+                                    <div>
+                                        <h1 style="font-size: 26px; font-weight: bold; color: #14532d; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Fazenda Oásis</h1>
+                                        <p style="font-size: 15px; color: #16a34a; margin: 4px 0 0 0; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Acompanhamento Geral de Testes</p>
+                                    </div>
+                                </div>
+                                <div style="text-align: right; font-size: 13px; color: #64748b; line-height: 1.5;">
+                                    <p style="margin: 0;"><strong>Emitido em:</strong> ${new Date().toLocaleDateString('pt-PT')} às ${new Date().toLocaleTimeString('pt-PT')}</p>
+                                    <p style="margin: 3px 0 0 0;"><strong>Teste:</strong> ${index + 1} de ${sortedVisible.length} (Pág. ${groupIdx + 1} de ${weeklyGroups.length})</p>
                                 </div>
                             </div>
-                        ` : ''}
 
-                        <!-- Histórico de Acompanhamento -->
-                        <div style="margin-top: 15px; margin-bottom: 18px;">
-                            <h4 style="margin: 0 0 8px 0; font-size: 10px; text-transform: uppercase; color: #475569; font-weight: bold; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; letter-spacing: 0.5px;">Evoluções Semanais:</h4>
-                            ${relativeWeeklies.length > 0 ? relativeWeeklies.map((w, wIdx) => {
-                                const mDate = w.date ? formatDatePT(w.date) : 'Sem data';
-                                return `
-                                    <div style="margin-bottom: 12px; background: #f8fafc; border-left: 3px solid #3b82f6; padding: 10px 12px; border-radius: 0 6px 6px 0;">
-                                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                                            <span style="font-size: 9px; font-weight: bold; color: #1d4ed8;">Atualização #${wIdx + 1} (${mDate})</span>
+                            <!-- Dados do Bloco / Identificação do Teste -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; background-color: #f0fdf4; border: 1.5px solid #bbf7d0; padding: 18px 24px; border-radius: 12px; margin-bottom: 25px;">
+                                <h3 style="margin: 0; font-size: 21px; color: #14532d; font-weight: bold; text-transform: uppercase;">
+                                    ${blocoDisplay}${nBlocoDisplay} &mdash; ${cultureDisplay} (${varietyDisplay})
+                                </h3>
+                                <span style="font-size: 14px; background-color: #dcfce7; color: #14532d; padding: 6px 12px; border-radius: 6px; font-weight: bold;">
+                                    Início: ${dateDisplay} (${weekDisplay})
+                                </span>
+                            </div>
+                    `;
+
+                    // Se for a PRIMEIRA página deste teste, incluímos os Dados Iniciais e as Fotos Iniciais do Plantio
+                    if (groupIdx === 0) {
+                        htmlContent += `
+                            <!-- Grelha de Dados Iniciais -->
+                            <div style="display: flex; gap: 15px; width: 100%; margin-bottom: 25px;">
+                                <div style="flex: 1; background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 14px; border-radius: 10px; text-align: center;">
+                                    <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 6px;">Canteiros</span>
+                                    <strong style="font-size: 19px; color: #1e293b;">${bedsDisplay}</strong>
+                                </div>
+                                <div style="flex: 1; background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 14px; border-radius: 10px; text-align: center;">
+                                    <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 6px;">Mudas Totais</span>
+                                    <strong style="font-size: 19px; color: #1e293b;">${seedlingsDisplay}</strong>
+                                </div>
+                                <div style="flex: 1; background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 14px; border-radius: 10px; text-align: center;">
+                                    <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 6px;">Tratamento</span>
+                                    <strong style="font-size: 15px; color: #15803d; word-break: break-all;">${productDisplay}</strong>
+                                </div>
+                                <div style="flex: 1; background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 14px; border-radius: 10px; text-align: center;">
+                                    <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; margin-bottom: 6px;">Qtd Aplicada</span>
+                                    <strong style="font-size: 19px; color: #1e293b;">${totalAppliedDisplay} ${unitDisplay}</strong>
+                                </div>
+                            </div>
+
+                            <!-- Fotos Iniciais (Aumentadas para 140px) -->
+                            ${initRecord.photos && initRecord.photos.length > 0 ? `
+                                <div style="margin-bottom: 25px;">
+                                    <h4 style="margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; color: #475569; font-weight: bold; letter-spacing: 0.5px;">Imagens Iniciais do Plantio:</h4>
+                                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                        ${initRecord.photos.map(p => `<img src="${p}" style="width: 140px; height: 140px; object-fit: cover; border-radius: 8px; border: 1.5px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">`).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        `;
+                    }
+
+                    // Acompanhamentos Semanais deste Grupo (Limite de 4 registros por página)
+                    htmlContent += `
+                        <div style="margin-top: 15px; margin-bottom: 25px;">
+                            <h4 style="margin: 0 0 12px 0; font-size: 13px; text-transform: uppercase; color: #475569; font-weight: bold; border-bottom: 2px solid #cbd5e1; padding-bottom: 6px; letter-spacing: 0.5px;">
+                                Evoluções Semanais ${weeklyGroups.length > 1 ? `(Parte ${groupIdx + 1} de ${weeklyGroups.length})` : ''}:
+                            </h4>
+                    `;
+
+                    if (group.length > 0) {
+                        group.forEach((w, wIdx) => {
+                            const absoluteIndex = (groupIdx * 4) + wIdx + 1;
+                            const mDate = w.date ? formatDatePT(w.date) : 'Sem data';
+
+                            htmlContent += `
+                                <div style="margin-bottom: 18px; background: #f8fafc; border-left: 5px solid #3b82f6; padding: 16px 20px; border-radius: 0 10px 10px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                        <span style="font-size: 13px; font-weight: bold; color: #1d4ed8; background-color: #eff6ff; padding: 3px 8px; border-radius: 4px;">Atualização #${absoluteIndex} (${mDate})</span>
+                                    </div>
+                                    <p style="margin: 0 0 10px 0; font-size: 14px; color: #334155; font-style: italic; line-height: 1.5; white-space: pre-wrap;">"${w.notes || ''}"</p>
+                                    
+                                    <!-- Fotos Semanais aumentadas para 120px -->
+                                    ${w.photos && w.photos.length > 0 ? `
+                                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+                                            ${w.photos.map(wp => `<img src="${wp}" style="width: 120px; height: 120px; object-fit: cover; border-radius: 6px; border: 1.5px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">`).join('')}
                                         </div>
-                                        <p style="margin: 0 0 6px 0; font-size: 11px; color: #334155; font-style: italic; line-height: 1.4; white-space: pre-wrap;">"${w.notes || ''}"</p>
-                                        ${w.photos && w.photos.length > 0 ? `
-                                            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;">
-                                                ${w.photos.map(wp => `<img src="${wp}" style="width: 55px; height: 55px; object-fit: cover; border-radius: 3px; border: 1px solid #cbd5e1;">`).join('')}
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                `;
-                            }).join('') : '<p style="font-size: 11px; color: #94a3b8; font-style: italic; margin: 0;">Nenhum acompanhamento semanal lançado.</p>'}
-                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        });
+                    } else {
+                        htmlContent += `<p style="font-size: 14px; color: #94a3b8; font-style: italic; margin: 0;">Nenhum acompanhamento semanal lançado.</p>`;
+                    }
 
-                        <!-- Secção de Colheita (Se aplicável) -->
-                        ${harvest ? `
-                            <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; margin-top: 15px;">
-                                <h4 style="margin: 0 0 8px 0; font-size: 10px; text-transform: uppercase; color: #b45309; font-weight: bold; letter-spacing: 0.5px;">Dados Finais da Colheita:</h4>
-                                <div style="display: flex; gap: 10px; margin-bottom: 8px;">
-                                    <div style="flex: 1; background: #ffffff; border: 1px solid #fde68a; padding: 8px; border-radius: 4px; text-align: center;">
-                                        <span style="font-size: 8px; text-transform: uppercase; color: #78350f; font-weight: bold; display: block; margin-bottom: 3px;">Média p/ Planta</span>
-                                        <strong style="font-size: 13px; color: #92400e;">${harvest.averageGm || 0} g</strong>
+                    htmlContent += `</div>`; // Fim da seção de Evoluções
+
+                    // Se for a ÚLTIMA página deste teste, incluímos os Dados Finais da Colheita se existirem
+                    if (groupIdx === weeklyGroups.length - 1 && harvest) {
+                        htmlContent += `
+                            <!-- Secção de Colheita -->
+                            <div style="background-color: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 18px; margin-top: 25px;">
+                                <h4 style="margin: 0 0 12px 0; font-size: 13px; text-transform: uppercase; color: #b45309; font-weight: bold; letter-spacing: 0.5px;">Dados Finais da Colheita:</h4>
+                                <div style="display: flex; gap: 15px; margin-bottom: 12px;">
+                                    <div style="flex: 1; background: #ffffff; border: 1.5px solid #fde68a; padding: 12px; border-radius: 8px; text-align: center;">
+                                        <span style="font-size: 11px; text-transform: uppercase; color: #78350f; font-weight: bold; display: block; margin-bottom: 5px;">Média p/ Planta</span>
+                                        <strong style="font-size: 18px; color: #92400e;">${harvest.averageGm || 0} g</strong>
                                     </div>
-                                    <div style="flex: 1; background: #ffffff; border: 1px solid #fde68a; padding: 8px; border-radius: 4px; text-align: center;">
-                                        <span style="font-size: 8px; text-transform: uppercase; color: #78350f; font-weight: bold; display: block; margin-bottom: 3px;">Unidades Colhidas</span>
-                                        <strong style="font-size: 13px; color: #92400e;">${harvest.totalHarvested || 0} und</strong>
+                                    <div style="flex: 1; background: #ffffff; border: 1.5px solid #fde68a; padding: 12px; border-radius: 8px; text-align: center;">
+                                        <span style="font-size: 11px; text-transform: uppercase; color: #78350f; font-weight: bold; display: block; margin-bottom: 5px;">Unidades Colhidas</span>
+                                        <strong style="font-size: 18px; color: #92400e;">${harvest.totalHarvested || 0} und</strong>
                                     </div>
-                                    <div style="flex: 1; background: #ffffff; border: 1px solid #fde68a; padding: 8px; border-radius: 4px; text-align: center;">
-                                        <span style="font-size: 8px; text-transform: uppercase; color: #78350f; font-weight: bold; display: block; margin-bottom: 3px;">Massa Total</span>
-                                        <strong style="font-size: 13px; color: #92400e;">${harvest.totalKg || 0} Kg</strong>
+                                    <div style="flex: 1; background: #ffffff; border: 1.5px solid #fde68a; padding: 12px; border-radius: 8px; text-align: center;">
+                                        <span style="font-size: 11px; text-transform: uppercase; color: #78350f; font-weight: bold; display: block; margin-bottom: 5px;">Massa Total</span>
+                                        <strong style="font-size: 18px; color: #92400e;">${harvest.totalKg || 0} Kg</strong>
                                     </div>
                                 </div>
                                 ${harvest.photos && harvest.photos.length > 0 ? `
-                                    <div style="margin-top: 8px;">
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                            ${harvest.photos.map(hp => `<img src="${hp}" style="width: 55px; height: 55px; object-fit: cover; border-radius: 3px; border: 1px solid #fde68a;">`).join('')}
+                                    <div style="margin-top: 12px;">
+                                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                            ${harvest.photos.map(hp => `<img src="${hp}" style="width: 120px; height: 120px; object-fit: cover; border-radius: 6px; border: 1.5px solid #fde68a; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">`).join('')}
                                         </div>
                                     </div>
                                 ` : ''}
                             </div>
-                        ` : ''}
-                    </div>
-                `;
+                        `;
+                    }
+
+                    // Rodapé da Folha Simulada no JPG
+                    htmlContent += `
+                            <div style="position: absolute; bottom: 15px; left: 45px; right: 45px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 10px; font-size: 11px; color: #94a3b8;">
+                                <span>Fazenda Oásis &copy; Todos os Direitos Reservados</span>
+                                <span>Pág. ${groupIdx + 1} de ${weeklyGroups.length}</span>
+                            </div>
+                        </div>
+                    `;
+                });
             });
 
-            htmlContent += `</div>`;
             return htmlContent;
         }
 
-        // GERAÇÃO DE PDF UNIFICADO
-        function downloadCompletePDF() {
-            // Filtrar apenas registos visíveis
+        // GERAÇÃO DE IMAGEM JPG UNIFICADA (Com correções completas de não carregamento / tela branca)
+        function downloadCompleteJPG() {
             const visibleInits = initialRecords.filter(r => r.isVisible !== false);
             if (visibleInits.length === 0) {
-                showModalAlert('Falta de Dados', 'Não existem testes ativos ou visíveis para compilar no PDF. Clique no olho cinzento no painel para reativá-los.', 'warning');
+                showModalAlert('Falta de Dados', 'Não existem testes ativos ou visíveis para compilar no JPG.', 'warning');
                 return;
             }
 
-            // Criar um contentor off-screen com estilos específicos de folha A4
+            // Exibir aviso de processamento
+            showModalAlert('Gerando JPG', 'A processar imagens e a paginar os registos. Por favor, aguarde alguns segundos...', 'info');
+
+            // Criar um contentor temporário que é anexado de forma visível ao DOM, mas movido estrategicamente fora da área visível (CORS e Base64 requerem isto)
             const tempDiv = document.createElement('div');
             tempDiv.style.position = 'absolute';
-            tempDiv.style.left = '-9999px';
-            tempDiv.style.top = '-9999px';
-            tempDiv.style.width = '800px'; // largura ideal para conversão html2pdf
+            tempDiv.style.left = '0';
+            tempDiv.style.top = '0';
+            tempDiv.style.transform = 'translate(-150%, -150%)'; // Fora de tela, mas com fluxo ativo e renderização do navegador funcional
+            tempDiv.style.width = '1000px'; 
+            tempDiv.style.background = '#e2e8f0';
+            document.body.appendChild(tempDiv);
+
+            // Inserir os dados paginados e as imagens
+            tempDiv.innerHTML = generateOffscreenContentHTML(visibleInits);
+
+            // Forçar atraso tático para garantir que o navegador desenhou e carregou de forma assíncrona todas as fotos Base64
+            setTimeout(() => {
+                html2canvas(tempDiv, {
+                    useCORS: true,
+                    scale: 1.5, // Resolução premium ideal para partilha
+                    backgroundColor: '#e2e8f0',
+                    logging: false,
+                    allowTaint: true
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/jpeg', 0.90);
+                    const link = document.createElement('a');
+                    link.download = `Relatorio_Testes_Oasis_${new Date().toISOString().slice(0,10)}.jpg`;
+                    link.href = imgData;
+                    link.click();
+                    
+                    // Limpar recursos
+                    document.body.removeChild(tempDiv);
+                    closeModal();
+                    
+                    setTimeout(() => {
+                        showModalAlert('Concluído', 'O seu ficheiro JPG unificado e paginado de 4 em 4 foi descarregado com sucesso!', 'success');
+                    }, 400);
+                }).catch(err => {
+                    console.error("Erro na geração do JPG: ", err);
+                    document.body.removeChild(tempDiv);
+                    closeModal();
+                    showModalAlert('Erro', 'Ocorreu um erro ao converter o documento para formato JPG.', 'error');
+                });
+            }, 1800); // 1.8 segundos dá o tempo ideal de processamento
+        }
+
+        // NOVO: DESCARREGAR PDF INDIVIDUAL DE UM TESTE ESPECÍFICO
+        function downloadIndividualPDF(testId) {
+            const testRecord = initialRecords.find(r => r.id === testId);
+            if (!testRecord) {
+                showModalAlert('Erro', 'O registo do teste não foi localizado.', 'error');
+                return;
+            }
+
+            showModalAlert('Gerando PDF', 'A preparar o PDF individual deste teste. Por favor, aguarde...', 'info');
+
+            // Criar um recipiente temporário para renderização do PDF
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '0';
+            tempDiv.style.top = '0';
+            tempDiv.style.transform = 'translate(-150%, -150%)';
+            tempDiv.style.width = '1000px'; 
             tempDiv.style.background = '#ffffff';
             document.body.appendChild(tempDiv);
 
-            // Obter HTML estruturado e seguro
-            tempDiv.innerHTML = generateOffscreenContentHTML(visibleInits);
+            // Gerar HTML de apenas UM teste específico para o PDF
+            tempDiv.innerHTML = generateOffscreenContentHTML([testRecord]);
 
-            // Configuração do html2pdf
+            // Configurar opções para geração do html2pdf.js individual
             const opt = {
                 margin:       [10, 10, 10, 10],
-                filename:     `Relatorio_Testes_Oasis_${new Date().toISOString().slice(0,10)}.pdf`,
+                filename:     `Teste_Fazenda_Oasis_${testRecord.bloco || 'Bloco'}_${testRecord.culture || 'Cultura'}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true, allowTaint: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            // Processar e remover o elemento de apoio temporário
-            html2pdf().from(tempDiv).set(opt).save().then(() => {
-                document.body.removeChild(tempDiv);
-            }).catch(err => {
-                console.error("Erro na geração do PDF: ", err);
-                showModalAlert('Erro', 'Ocorreu um erro ao converter o documento para formato PDF. Verifique se as imagens estão acessíveis.', 'error');
-                document.body.removeChild(tempDiv);
-            });
-        }
-
-        // GERAÇÃO DE IMAGEM JPG UNIFICADA (Para partilha rápida)
-        function downloadCompleteJPG() {
-            // Filtrar apenas registos visíveis
-            const visibleInits = initialRecords.filter(r => r.isVisible !== false);
-            if (visibleInits.length === 0) {
-                showModalAlert('Falta de Dados', 'Não existem testes ativos ou visíveis para compilar no JPG. Clique no olho cinzento no painel para reativá-los.', 'warning');
-                return;
-            }
-
-            // Criar um contentor off-screen com estilos específicos
-            const tempDiv = document.createElement('div');
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.left = '-9999px';
-            tempDiv.style.top = '-9999px';
-            tempDiv.style.width = '800px'; 
-            tempDiv.style.background = '#ffffff';
-            document.body.appendChild(tempDiv);
-
-            // Obter HTML estruturado e seguro
-            tempDiv.innerHTML = generateOffscreenContentHTML(visibleInits);
-
-            // Usar o html2canvas para renderizar a imagem contínua
-            html2canvas(tempDiv, {
-                useCORS: true,
-                scale: 2,
-                backgroundColor: '#ffffff',
-                logging: false
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                const link = document.createElement('a');
-                link.download = `Relatorio_Testes_Oasis_${new Date().toISOString().slice(0,10)}.jpg`;
-                link.href = imgData;
-                link.click();
-                document.body.removeChild(tempDiv);
-            }).catch(err => {
-                console.error("Erro na geração do JPG: ", err);
-                showModalAlert('Erro', 'Ocorreu um erro ao converter o documento para formato JPG.', 'error');
-                document.body.removeChild(tempDiv);
-            });
+            // Processar a conversão de forma limpa e remover o elemento do DOM
+            setTimeout(() => {
+                html2pdf().from(tempDiv).set(opt).save().then(() => {
+                    document.body.removeChild(tempDiv);
+                    closeModal();
+                    setTimeout(() => {
+                        showModalAlert('PDF Pronto', 'O PDF individual foi gerado e descarregado com sucesso!', 'success');
+                    }, 400);
+                }).catch(err => {
+                    console.error("Erro na geração do PDF: ", err);
+                    document.body.removeChild(tempDiv);
+                    closeModal();
+                    showModalAlert('Erro', 'Ocorreu um erro de renderização ao gerar o PDF deste registo.', 'error');
+                });
+            }, 1000);
         }
     </script>
 </body>
