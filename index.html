@@ -112,36 +112,44 @@
                     <form id="initial-form" onsubmit="saveInitialRecord(event)" class="space-y-4">
                         <input type="hidden" id="initial-edit-id" value="">
                        
-                        <!-- Data e Semana -->
+                        <!-- Data do Plantio e Data de Início do Teste -->
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                    Data de Início
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+                                    Data de Plantio
                                 </label>
-                                <input type="date" id="init-date" required onchange="calculateInitialWeek(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all">
+                                <input type="date" id="plant-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                    Semana Auto.
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    Início do Teste
                                 </label>
-                                <input type="text" id="init-week" readonly class="w-full bg-slate-100 border border-slate-200 text-slate-600 rounded-xl px-3 py-2 text-sm font-semibold cursor-not-allowed">
+                                <input type="date" id="init-date" required onchange="calculateInitialWeek(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all">
                             </div>
                         </div>
 
-                        <!-- Horário do Registo -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                Horário do Registo
-                            </label>
-                            <div class="relative">
-                                <input type="time" id="init-time" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all">
-                                <button type="button" onclick="setInitTimeNow()" class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-oasis-700 hover:text-oasis-900 font-bold bg-oasis-50 px-2.5 py-1 rounded inline-flex items-center gap-1 border border-oasis-100">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"/></svg>
-                                    Agora
-                                </button>
+                        <!-- Semana Auto e Horário do Registo -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    Semana Auto. (Início)
+                                </label>
+                                <input type="text" id="init-week" readonly class="w-full bg-slate-100 border border-slate-200 text-slate-600 rounded-xl px-3 py-2 text-sm font-semibold cursor-not-allowed">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    Horário do Registo
+                                </label>
+                                <div class="relative">
+                                    <input type="time" id="init-time" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all">
+                                    <button type="button" onclick="setInitTimeNow()" class="absolute right-1 top-1/2 -translate-y-1/2 text-[9px] text-oasis-700 hover:text-oasis-900 font-bold bg-oasis-50 px-1.5 py-0.5 rounded inline-flex items-center border border-oasis-100">
+                                        Agora
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -612,15 +620,17 @@
             return `${parts[2]}/${parts[1]}/${parts[0]}`;
         }
 
-        // Calcula a quantidade de dias entre duas datas
+        // Calcula a quantidade de dias entre duas datas (com validação robusta)
         function getDaysBetween(date1Str, date2Str) {
             if (!date1Str || !date2Str) return 0;
             const d1 = new Date(date1Str);
             const d2 = new Date(date2Str);
             d1.setHours(0,0,0,0);
             d2.setHours(0,0,0,0);
-            const diffTime = Math.abs(d2 - d1);
-            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            // Permite cálculo negativo se data 2 for anterior ao plantio (embora logicamente não deva ocorrer)
+            const diffTime = d2.getTime() - d1.getTime();
+            return Math.round(diffTime / (1000 * 60 * 60 * 24));
         }
 
         // Cálculo da semana do ano
@@ -666,6 +676,7 @@
             const now = new Date();
             const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
             document.getElementById('init-date').value = dateStr;
+            document.getElementById('plant-date').value = dateStr;
             calculateInitialWeek(dateStr);
             setInitTimeNow();
 
@@ -923,6 +934,7 @@
 
             const record = {
                 id: editId ? editId : 'init_' + Date.now().toString(),
+                plantDate: document.getElementById('plant-date').value || document.getElementById('init-date').value,
                 date: document.getElementById('init-date').value,
                 week: document.getElementById('init-week').value,
                 time: document.getElementById('init-time').value,
@@ -1057,6 +1069,7 @@
             switchTab('initial');
 
             document.getElementById('initial-edit-id').value = record.id;
+            document.getElementById('plant-date').value = record.plantDate || record.date;
             document.getElementById('init-date').value = record.date;
             document.getElementById('init-week').value = record.week;
             document.getElementById('init-time').value = record.time;
@@ -1147,63 +1160,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function cancelWeeklyEdit() {
-            resetWeeklyForm();
-            showModalAlert('Cancelado', 'Edição de acompanhamento cancelada.', 'info');
-        }
-
-        function startHarvestEditing(id) {
-            const record = harvestRecords.find(h => h.id === id);
-            if (!record) return;
-
-            switchTab('harvest');
-
-            document.getElementById('harvest-edit-id').value = record.id;
-            document.getElementById('harvest-test-parent').value = record.parentId;
-            document.getElementById('harvest-date').value = record.date || '';
-            document.getElementById('harvest-average-gm').value = record.averageGm;
-            document.getElementById('harvest-total-harvested').value = record.totalHarvested;
-            document.getElementById('harvest-total-kg').value = record.totalKg;
-
-            tempHarvestPhotos = [...record.photos];
-            updateHarvestPhotosDisplay();
-
-            document.getElementById('harvest-form-title').innerHTML = `
-                <span class="p-1.5 bg-yellow-100 text-yellow-800 rounded-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                </span>
-                A Editar Colheita
-            `;
-            document.getElementById('harvest-submit-btn').innerHTML = `
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"/></svg>
-                Atualizar Colheita
-            `;
-            document.getElementById('cancel-harvest-edit').classList.remove('hidden');
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function cancelHarvestEdit() {
-            resetHarvestForm();
-            showModalAlert('Cancelado', 'Edição de colheita cancelada.', 'info');
-        }
-
-        // APAGAR REGISTROS
-        function deleteInitialRecord(id) {
-            showModalConfirm('Confirmar Remoção', 'Ao apagar este registo inicial, todos os acompanhamentos e dados de colheita vinculados também serão removidos permanentemente. Deseja continuar?', () => {
-                initialRecords = initialRecords.filter(r => r.id !== id);
-                weeklyRecords = weeklyRecords.filter(w => w.parentId !== id);
-                harvestRecords = harvestRecords.filter(h => h.parentId !== id);
-
-                localStorage.setItem('oasis_initial_records', JSON.stringify(initialRecords));
-                localStorage.setItem('oasis_weekly_records', JSON.stringify(weeklyRecords));
-                localStorage.setItem('oasis_harvest_records', JSON.stringify(harvestRecords));
-
-                renderUnifiedHistory();
-                showModalAlert('Removido', 'O registo do teste e os seus dados associados foram apagados com sucesso.', 'success');
-            });
-        }
-
         // APAGAR SEMANAL
         function deleteWeeklyRecord(id) {
             showModalConfirm('Confirmar Remoção', 'Deseja realmente apagar esta nota de acompanhamento evolutivo?', () => {
@@ -1253,7 +1209,9 @@
 
         // GERAÇÃO DE GRÁFICO DE BARRAS DINÂMICO VETORIAL (SVG) COM LINHA DE TENDÊNCIA E RÓTULOS
         function generateDynamicChartSVG(initRecord, relativeWeeklies, harvest) {
-            // Coleta de pontos cronológicos
+            const refDate = initRecord.plantDate || initRecord.date;
+            
+            // Coleta de pontos cronológicos calculados em relação ao PLANTIO (Ref Date)
             const points = [];
             points.push({
                 label: 'Plantio',
@@ -1261,9 +1219,19 @@
                 displayValue: 'Dia 0'
             });
 
+            // Se o início do teste for diferente da data de plantio, inserimos na cronologia
+            const initDelay = getDaysBetween(refDate, initRecord.date);
+            if (initDelay !== 0) {
+                points.push({
+                    label: 'Início Teste',
+                    value: initDelay,
+                    displayValue: `Dia ${initDelay}`
+                });
+            }
+
             const sortedWeeklies = [...relativeWeeklies].sort((a,b) => a.date.localeCompare(b.date));
             sortedWeeklies.forEach((w, idx) => {
-                const days = getDaysBetween(initRecord.date, w.date);
+                const days = getDaysBetween(refDate, w.date);
                 points.push({
                     label: `Evol. ${idx + 1}`,
                     value: days,
@@ -1272,13 +1240,16 @@
             });
 
             if (harvest) {
-                const days = getDaysBetween(initRecord.date, harvest.date);
+                const days = getDaysBetween(refDate, harvest.date);
                 points.push({
                     label: 'Colheita 🌾',
                     value: days,
                     displayValue: `Dia ${days}`
                 });
             }
+
+            // Ordenar pontos cronologicamente pelo valor de dias
+            points.sort((a,b) => a.value - b.value);
 
             const svgWidth = 850;
             const svgHeight = 230;
@@ -1321,7 +1292,7 @@
                     <!-- Rótulo de Dados em cima da barra -->
                     <text x="${x}" y="${y - 12}" fill="#15803d" font-size="12" font-weight="bold" text-anchor="middle">${p.displayValue}</text>
                     <!-- Legenda do Eixo X -->
-                    <text x="${x}" y="${svgHeight - 15}" fill="#475569" font-size="11" font-weight="bold" text-anchor="middle">${p.label}</text>
+                    <text x="${x}" y="${svgHeight - 15}" fill="#475569" font-size="10" font-weight="bold" text-anchor="middle">${p.label}</text>
                 `;
             });
 
@@ -1341,7 +1312,7 @@
 
             return `
                 <div class="w-full mt-4">
-                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Gráfico Cronológico do Ciclo (Linha de Tendência)</span>
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Gráfico Cronológico do Ciclo (A partir do Plantio)</span>
                     <svg viewBox="0 0 ${svgWidth} ${svgHeight}" class="w-full h-auto" style="background: #f8fafc; border-radius: 12px; border: 1.5px solid #cbd5e1; box-sizing: border-box;">
                         <defs>
                             <linearGradient id="oasisGradient" x1="0" y1="0" x2="0" y2="1">
@@ -1395,6 +1366,7 @@
 
                 const relativeWeeklies = weeklyRecords.filter(w => w.parentId === initRecord.id);
                 const harvest = harvestRecords.find(h => h.parentId === initRecord.id);
+                const refDate = initRecord.plantDate || initRecord.date; // Data de plantio de referência
 
                 const card = document.createElement('div');
                 const isHidden = initRecord.isVisible === false;
@@ -1415,7 +1387,6 @@
                 if (harvest) {
                     statusBadgeHTML = `
                         <div class="inline-flex items-center gap-1.5 bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-full text-xs font-bold shadow-sm animate-bounce">
-                            <!-- SVG do Mascote Gatinho Celebrando -->
                             <svg class="w-5 h-5 text-green-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M12 21c-2.3 0-4.5-.5-6.5-1.5.3-.6.6-1.1 1.1-1.5s1.2-.7 1.9-.7h7c.7 0 1.4.3 1.9.7s.8.9 1.1 1.5c-2 1-4.2 1.5-6.5 1.5z" />
                                 <path d="M16 11.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-5 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
@@ -1442,7 +1413,7 @@
 
                 const eyeTitle = isHidden ? "Reexibir no JPG" : "Ocultar do JPG";
 
-                // LINHA DO TEMPO CRONOLÓGICA (TIMELINE DO INÍCIO AO FIM)
+                // LINHA DO TEMPO CRONOLÓGICA (TIMELINE DO INÍCIO AO FIM, com base na data de plantio)
                 let timelineHTML = `
                     <div class="relative pl-6 border-l-2 border-emerald-500 space-y-6">
                         <!-- Ponto 1: Plantio Inicial -->
@@ -1450,20 +1421,35 @@
                             <span class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-emerald-600 border-4 border-white shadow-sm"></span>
                             <div class="bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">
                                 <div class="flex justify-between items-center flex-wrap gap-1">
-                                    <span class="text-xs font-extrabold text-emerald-800 uppercase">Plantio Inicial (Dia 0)</span>
-                                    <span class="text-[11px] text-slate-500 font-bold">${formatDatePT(initRecord.date)}</span>
+                                    <span class="text-xs font-extrabold text-emerald-800 uppercase">Plantio das Mudas (Dia 0)</span>
+                                    <span class="text-[11px] text-slate-500 font-bold">${formatDatePT(refDate)}</span>
                                 </div>
-                                <p class="text-xs text-slate-600 mt-1">Cultura iniciada com ${initRecord.seedlings} mudas distribuídas em ${initRecord.beds} canteiros.</p>
-                                <p class="text-[11px] text-emerald-700 font-semibold mt-1">Tratamento aplicado: ${initRecord.product} (${initRecord.totalApplied} ${initRecord.unit})</p>
+                                <p class="text-xs text-slate-600 mt-1">Cultura plantada com ${initRecord.seedlings} mudas distribuídas em ${initRecord.beds} canteiros.</p>
                             </div>
                         </div>
                 `;
 
-                // Adicionando os acompanhamentos semanais organizados na Timeline com os dias decorridos
+                // Ponto 2: Início Real do Teste / Tratamento (Se houver delay do plantio)
+                const startTestDelay = getDaysBetween(refDate, initRecord.date);
+                timelineHTML += `
+                    <!-- Ponto de Início de Testes -->
+                    <div class="relative">
+                        <span class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-oasis-700 border-4 border-white shadow-sm"></span>
+                        <div class="bg-oasis-50/50 p-3 rounded-lg border border-oasis-100">
+                            <div class="flex justify-between items-center flex-wrap gap-1">
+                                <span class="text-xs font-extrabold text-oasis-900 uppercase">Início de Aplicação do Teste (Dia ${startTestDelay})</span>
+                                <span class="text-[11px] text-slate-500 font-bold">${formatDatePT(initRecord.date)}</span>
+                            </div>
+                            <p class="text-xs text-slate-700 mt-1">Tratamento ativo com o produto: <strong class="text-oasis-800">${initRecord.product}</strong> (${initRecord.totalApplied} ${initRecord.unit})</p>
+                        </div>
+                    </div>
+                `;
+
+                // Adicionando os acompanhamentos semanais organizados na Timeline com os dias decorridos desde o plantio
                 if (relativeWeeklies.length > 0) {
                     const sortedWeeklies = [...relativeWeeklies].sort((a,b) => a.date.localeCompare(b.date));
                     sortedWeeklies.forEach((weekly, wIdx) => {
-                        const daysElapsed = getDaysBetween(initRecord.date, weekly.date);
+                        const daysElapsed = getDaysBetween(refDate, weekly.date);
                         let weeklyPhotosHTML = '';
                         if (weekly.photos && weekly.photos.length > 0) {
                             weekly.photos.forEach(wp => {
@@ -1494,7 +1480,7 @@
 
                 // Ponto de Colheita na Linha do Tempo (Se finalizado)
                 if (harvest) {
-                    const cycleDays = getDaysBetween(initRecord.date, harvest.date);
+                    const cycleDays = getDaysBetween(refDate, harvest.date);
                     let harvestPhotosHTML = '';
                     if (harvest.photos && harvest.photos.length > 0) {
                         harvest.photos.forEach(hp => {
@@ -1553,7 +1539,10 @@
                                         ${initRecord.bloco}${nBlocoDisplay}
                                     </span>
                                     <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded flex items-center gap-1">
-                                        Iniciado em ${formatDatePT(initRecord.date)} (${initRecord.week})
+                                        Plantio: ${formatDatePT(refDate)}
+                                    </span>
+                                    <span class="bg-oasis-50 text-oasis-800 text-xs font-bold px-2.5 py-1 rounded flex items-center gap-1 border border-oasis-100">
+                                        Início Teste: ${formatDatePT(initRecord.date)} (${initRecord.week})
                                     </span>
                                     ${isHidden ? '<span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1">Ocultado do JPG</span>' : ''}
                                 </div>
@@ -1566,16 +1555,17 @@
                                     Cultura: <span class="text-oasis-700">${initRecord.culture}</span> &mdash; ${initRecord.variety}
                                 </h4>
                                 
-                                <div class="grid grid-cols-3 gap-2 mt-3 bg-slate-50 p-2.5 rounded-lg text-xs text-slate-600 border border-slate-100">
+                                <div class="grid grid-cols-4 gap-2 mt-3 bg-slate-50 p-2.5 rounded-lg text-xs text-slate-600 border border-slate-100">
+                                    <div><strong>Plantio:</strong> ${formatDatePT(refDate)}</div>
                                     <div><strong>Canteiros:</strong> ${initRecord.beds}</div>
                                     <div><strong>Mudas:</strong> ${initRecord.seedlings}</div>
-                                    <div><strong>Registo Inicial:</strong> ${initRecord.time}</div>
+                                    <div><strong>Hora Registo:</strong> ${initRecord.time}</div>
                                 </div>
                                 
                                 <div class="mt-2 text-xs bg-oasis-50/50 text-slate-700 border border-oasis-100 p-2.5 rounded-lg flex flex-col sm:flex-row gap-1 sm:gap-4 items-start sm:items-center">
                                     <span class="inline-flex items-center gap-1 text-oasis-900 font-bold text-[11px] uppercase tracking-wider">
                                         <svg class="w-4 h-4 text-oasis-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                                        Tratamento:
+                                        Tratamento Inicial:
                                     </span>
                                     <span class="font-semibold text-slate-800">${initRecord.product} (${initRecord.totalApplied} ${initRecord.unit})</span>
                                 </div>
@@ -1607,7 +1597,7 @@
                                 ${eyeIcon}
                             </button>
                             <button onclick="startInitialEditing('${initRecord.id}')" title="Editar Teste Inicial" class="p-2 border border-slate-200 hover:border-slate-300 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                <svg class="w-5 h-5 text-slate-500 hover:text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                             </button>
                             <button onclick="deleteInitialRecord('${initRecord.id}')" title="Eliminar Teste por Completo" class="p-2 border border-red-200 hover:border-red-300 rounded-lg bg-red-50 hover:bg-red-100 transition-colors text-red-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -1691,6 +1681,7 @@
             sortedVisible.forEach((initRecord, index) => {
                 const relativeWeeklies = weeklyRecords.filter(w => w.parentId === initRecord.id);
                 const harvest = harvestRecords.find(h => h.parentId === initRecord.id);
+                const refDate = initRecord.plantDate || initRecord.date;
 
                 const blocoDisplay = initRecord.bloco || 'Sem Bloco';
                 const nBlocoDisplay = initRecord.nBloco ? ` - Nº ${initRecord.nBloco}` : '';
@@ -1702,6 +1693,7 @@
                 const totalAppliedDisplay = initRecord.totalApplied || 0;
                 const unitDisplay = initRecord.unit || '';
                 const dateDisplay = initRecord.date ? formatDatePT(initRecord.date) : '';
+                const plantDateDisplay = formatDatePT(refDate);
                 const weekDisplay = initRecord.week || '';
 
                 // Paginação de 3 em 3 evoluções para que os blocos de fotos de 130px fiquem perfeitos e as fontes grandes
@@ -1741,7 +1733,10 @@
                                 </h3>
                                 <div style="display: flex; align-items: center; gap: 14px;">
                                     <span style="font-size: 15px; background-color: #dcfce7; color: #14532d; padding: 10px 20px; border-radius: 10px; font-weight: bold; border: 1.5px solid #bbf7d0;">
-                                        Início: ${dateDisplay} (${weekDisplay})
+                                        Plantio: ${plantDateDisplay}
+                                    </span>
+                                    <span style="font-size: 15px; background-color: #dcfce7; color: #14532d; padding: 10px 20px; border-radius: 10px; font-weight: bold; border: 1.5px solid #bbf7d0;">
+                                        Início Teste: ${dateDisplay} (${weekDisplay})
                                     </span>
                                     ${harvest && groupIdx === weeklyGroups.length - 1 ? `
                                         <span style="font-size: 15px; background-color: #fef3c7; color: #92400e; padding: 10px 20px; border-radius: 10px; font-weight: bold; border: 1.5px solid #fde68a;">
@@ -1752,9 +1747,8 @@
                             </div>
                     `;
 
-                    // Se for a PRIMEIRA página deste teste, incluímos os Dados Iniciais e o Novo Gráfico Vetorial
+                    // Se for a PRIMEIRA página deste teste, incluímos os Dados Iniciais e o Gráfico Vetorial
                     if (groupIdx === 0) {
-                        // Geração da representação em barras e tendência SVG
                         const svgGraphHTML = generateDynamicChartSVG(initRecord, relativeWeeklies, harvest);
 
                         htmlContent += `
@@ -1807,7 +1801,7 @@
                         group.forEach((w, wIdx) => {
                             const absoluteIndex = (groupIdx * 3) + wIdx + 1;
                             const mDate = w.date ? formatDatePT(w.date) : 'Sem data';
-                            const daysElapsed = getDaysBetween(initRecord.date, w.date);
+                            const daysElapsed = getDaysBetween(refDate, w.date);
 
                             htmlContent += `
                                 <div style="margin-bottom: 28px; background: #f8fafc; border-left: 6px solid #2563eb; padding: 22px 26px; border-radius: 0 14px 14px 0; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; box-shadow: 0 3px 6px rgba(0,0,0,0.02); box-sizing: border-box;">
@@ -1834,7 +1828,7 @@
 
                     // Se for a ÚLTIMA página deste teste, incluímos os Dados Finais da Colheita se existirem
                     if (groupIdx === weeklyGroups.length - 1 && harvest) {
-                        const cycleFinalDays = getDaysBetween(initRecord.date, harvest.date);
+                        const cycleFinalDays = getDaysBetween(refDate, harvest.date);
                         htmlContent += `
                             <!-- Secção de Colheita com gatinho comemorativo -->
                             <div style="background-color: #fffbeb; border: 2.5px solid #fde68a; border-radius: 18px; padding: 26px; margin-top: 40px;">
