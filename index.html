@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registo de Acompanhamento de Testes - Fazenda Oásis</title>
+    <title>Registo de Acompanhamento de Teste - Fazenda Oásis</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- html2pdf.js para exportação em PDF individual -->
@@ -323,7 +323,7 @@
                         <!-- Selecionar Teste Inicial Fixado -->
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 112-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                                 Selecione o Teste Inicial (Fixo)
                             </label>
                             <select id="weekly-test-parent" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 font-semibold text-slate-700 font-medium">
@@ -478,7 +478,7 @@
                         </div>
                     </div>
                     <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Mudas Totais</span>
+                        <span class="text-xs font-bold text-oasis-700 select-all block mb-1">Mudas Totais</span>
                         <div class="flex items-center justify-between">
                             <span id="stat-mudas" class="text-2xl font-extrabold text-oasis-700">0</span>
                             <span class="p-1 bg-oasis-50 text-oasis-700 rounded">
@@ -1131,6 +1131,16 @@
             showModalAlert('Cancelado', 'Edição de dados iniciais cancelada.', 'info');
         }
 
+        function cancelWeeklyEdit() {
+            resetWeeklyForm();
+            showModalAlert('Cancelado', 'Edição de acompanhamento cancelada.', 'info');
+        }
+
+        function cancelHarvestEdit() {
+            resetHarvestForm();
+            showModalAlert('Cancelado', 'Edição de dados da colheita cancelada.', 'info');
+        }
+
         function startWeeklyEditing(id) {
             const record = weeklyRecords.find(w => w.id === id);
             if (!record) return;
@@ -1158,6 +1168,51 @@
             document.getElementById('cancel-weekly-edit').classList.remove('hidden');
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startHarvestEditing(id) {
+            const record = harvestRecords.find(h => h.id === id);
+            if (!record) return;
+
+            switchTab('harvest');
+
+            document.getElementById('harvest-edit-id').value = record.id;
+            document.getElementById('harvest-test-parent').value = record.parentId;
+            document.getElementById('harvest-date').value = record.date || '';
+            document.getElementById('harvest-average-gm').value = record.averageGm || '';
+            document.getElementById('harvest-total-harvested').value = record.totalHarvested || '';
+            document.getElementById('harvest-total-kg').value = record.totalKg || '';
+
+            tempHarvestPhotos = [...record.photos];
+            updateHarvestPhotosDisplay();
+
+            document.getElementById('harvest-form-title').innerHTML = `
+                <span class="p-1.5 bg-yellow-100 text-yellow-800 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                </span>
+                A Editar Dados da Colheita
+            `;
+            document.getElementById('harvest-submit-btn').innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"/></svg>
+                Atualizar Dados de Colheita
+            `;
+            document.getElementById('cancel-harvest-edit').classList.remove('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // DELETAR INICIAL
+        function deleteInitialRecord(id) {
+            showModalConfirm('Confirmar Remoção', 'Deseja realmente eliminar este teste inicial e todas as suas evoluções correspondentes?', () => {
+                initialRecords = initialRecords.filter(r => r.id !== id);
+                weeklyRecords = weeklyRecords.filter(w => w.parentId !== id);
+                harvestRecords = harvestRecords.filter(h => h.parentId !== id);
+                localStorage.setItem('oasis_initial_records', JSON.stringify(initialRecords));
+                localStorage.setItem('oasis_weekly_records', JSON.stringify(weeklyRecords));
+                localStorage.setItem('oasis_harvest_records', JSON.stringify(harvestRecords));
+                renderUnifiedHistory();
+                showModalAlert('Removido', 'Registo removido com sucesso.', 'success');
+            });
         }
 
         // APAGAR SEMANAL
@@ -1571,7 +1626,7 @@
                                 </div>
                                 
                                 <div class="mt-3 space-y-1">
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Registo Fotográfico Inicial</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block font-semibold">Imagens iniciais do teste:</span>
                                     <div class="flex gap-2 flex-wrap">${initPhotosHTML}</div>
                                 </div>
                             </div>
@@ -1651,6 +1706,7 @@
             modal.classList.remove('hidden');
         }
 
+        // CONFIRMAÇÃO DE MODAL
         function showModalConfirm(title, text, confirmCallback) {
             showModalAlert(title, text, 'warning');
             const cancelBtn = document.getElementById('modal-cancel-action');
@@ -1668,7 +1724,7 @@
         }
 
         // FUNÇÃO CENTRAL PARA GERAR O HTML DO RELATÓRIO DO HISTÓRICO COM TEXTOS SEGUROS E MEDIDAS LARGAS
-        // Corrige o corte de dados longos em "Variedade" e "Tratamento" removendo restrições de white-space/ellipsis
+        // Altera permanentemente "Imagens Iniciais do Plantio:" para "Imagens iniciais do teste:" na geração de JPEG
         function generateOffscreenContentHTML(visibleInits) {
             let htmlContent = '';
 
@@ -1777,10 +1833,10 @@
                                 ${svgGraphHTML}
                             </div>
 
-                            <!-- Fotos Iniciais (Espaçamento robusto e nítido de 150px) -->
+                            <!-- Fotos Iniciais (Espaçamento de 150px com o título correto: Imagens iniciais do teste:) -->
                             ${initRecord.photos && initRecord.photos.length > 0 ? `
                                 <div style="margin-bottom: 35px;">
-                                    <h4 style="margin: 0 0 15px 0; font-size: 15px; text-transform: uppercase; color: #475569; font-weight: 700; letter-spacing: 0.5px;">Imagens Iniciais do Plantio:</h4>
+                                    <h4 style="margin: 0 0 15px 0; font-size: 15px; text-transform: uppercase; color: #475569; font-weight: 700; letter-spacing: 0.5px;">Imagens iniciais do teste:</h4>
                                     <div style="display: flex; gap: 18px; flex-wrap: wrap;">
                                         ${initRecord.photos.map(p => `<img src="${p}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 12px; border: 2.5px solid #cbd5e1; box-shadow: 0 4px 8px rgba(0,0,0,0.06);">`).join('')}
                                     </div>
