@@ -1932,7 +1932,7 @@
                                 <div style="margin-bottom: 45px; background: #f8fafc; padding: 30px; border-radius: 16px; border: 2px solid #e2e8f0;">
                                     <h4 style="margin: 0 0 24px 0; font-size: 20px; text-transform: uppercase; color: #475569; font-weight: 800; letter-spacing: 0.5px; border-bottom: 2px solid #cbd5e1; padding-bottom: 12px;">Imagens Iniciais do Teste:</h4>
                                     <div style="display: flex; gap: 32px; flex-wrap: wrap;">
-                                        ${initRecord.photos.map(p => `<img src="${p}" style="width: 180px; height: 180px; object-fit: cover; border-radius: 14px; border: 3px solid #cbd5e1; box-shadow: 0 6px 12px rgba(0,0,0,0.1);">`).join('')}
+                                        ${initRecord.photos.map(p => `<img src="${p}" style="width: 320px; height: 240px; object-fit: cover; border-radius: 14px; border: 3px solid #cbd5e1; box-shadow: 0 6px 12px rgba(0,0,0,0.1);">`).join('')}
                                     </div>
                                 </div>
                             ` : ''}
@@ -1962,7 +1962,7 @@
                                     
                                     ${w.photos && w.photos.length > 0 ? `
                                         <div style="display: flex; gap: 28px; flex-wrap: wrap; margin-top: 24px; padding-top: 20px; border-top: 2px dashed #cbd5e1;">
-                                            ${w.photos.map(wp => `<img src="${wp}" style="width: 160px; height: 160px; object-fit: cover; border-radius: 14px; border: 3px solid #cbd5e1; box-shadow: 0 4px 8px rgba(0,0,0,0.08);">`).join('')}
+                                            ${w.photos.map(wp => `<img src="${wp}" style="width: 280px; height: 210px; object-fit: cover; border-radius: 14px; border: 3px solid #cbd5e1; box-shadow: 0 4px 8px rgba(0,0,0,0.08);">`).join('')}
                                         </div>
                                     ` : ''}
                                 </div>
@@ -1984,7 +1984,7 @@
                                 <div style="margin-top: 35px; background: #ffffff; padding: 25px 35px; border-radius: 18px; border: 2px solid #fde68a;">
                                     <h4 style="margin: 0 0 16px 0; font-size: 22px; text-transform: uppercase; color: #92400e; font-weight: 800;">📷 Imagens Comprobatórias da Colheita:</h4>
                                     <div style="display: flex; gap: 28px; flex-wrap: wrap;">
-                                        ${harvest.photos.map(hp => `<img src="${hp}" style="width: 175px; height: 175px; object-fit: cover; border-radius: 14px; border: 3px solid #fde68a; box-shadow: 0 5px 10px rgba(0,0,0,0.08);">`).join('')}
+                                        ${harvest.photos.map(hp => `<img src="${hp}" style="width: 320px; height: 240px; object-fit: cover; border-radius: 14px; border: 3px solid #fde68a; box-shadow: 0 5px 10px rgba(0,0,0,0.08);">`).join('')}
                                     </div>
                                 </div>
                             `;
