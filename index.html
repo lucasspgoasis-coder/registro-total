@@ -1238,7 +1238,7 @@
         }
 
         // ==========================================
-        // GERAÇÃO DE GRÁFICO SVG - MELHORADO E ELEGANTE
+        // GERAÇÃO DE GRÁFICO SVG CRONOLÓGICO DE BARRAS
         // ==========================================
         function generateDynamicChartSVG(initRecord, relativeWeeklies, harvest) {
             const refDate = initRecord.plantDate || initRecord.date;
@@ -1280,7 +1280,6 @@
 
             points.sort((a,b) => a.value - b.value);
 
-            // Medidas mais largas para maior clareza visual e elegância
             const svgWidth = 1000;
             const svgHeight = 340;
             const paddingLeft = 80;
@@ -1294,7 +1293,6 @@
             const maxVal = Math.max(...points.map(p => p.value)) || 1;
 
             let gridHTML = '';
-            // Desenhar linhas de grade horizontais sutis para dar mais profissionalismo
             for(let i = 0; i <= 4; i++) {
                 let gridY = paddingTop + (chartHeight * (i/4));
                 gridHTML += `<line x1="${paddingLeft - 20}" y1="${gridY}" x2="${svgWidth - paddingRight + 20}" y2="${gridY}" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 6" />`;
@@ -1318,19 +1316,16 @@
 
                 trendPoints.push({ x: x, y: y });
 
-                // Barras mais grossas e arredondadas com gradiente luxuoso
                 barsHTML += `
                     <rect x="${x - 24}" y="${y}" width="48" height="${scaledHeight}" fill="url(#oasisGradientModern)" rx="8" ry="8" />
                 `;
 
-                // Rótulos de dados maiores
                 labelsHTML += `
                     <text x="${x}" y="${y - 18}" fill="#064e3b" font-size="18" font-weight="800" text-anchor="middle" font-family="sans-serif">${p.displayValue}</text>
                     <text x="${x}" y="${svgHeight - 20}" fill="#475569" font-size="16" font-weight="700" text-anchor="middle" font-family="sans-serif">${p.label}</text>
                 `;
             });
 
-            // Linha de tendência mais chamativa e grossa
             let trendLineHTML = '';
             if (trendPoints.length > 1) {
                 let pathD = `M ${trendPoints[0].x} ${trendPoints[0].y}`;
@@ -1343,7 +1338,6 @@
                 `;
             }
 
-            // Removido style de box-sizing para compatibilidade limpa no html2canvas
             return `
                 <div style="width: 100%; margin-top: 24px;">
                     <span style="font-size: 16px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px; font-family: sans-serif;">Gráfico Cronológico do Ciclo (A partir do Plantio)</span>
@@ -1354,11 +1348,8 @@
                                 <stop offset="100%" stop-color="#047857" />
                             </linearGradient>
                         </defs>
-                        <!-- Grelha Fundo -->
                         ${gridHTML}
-                        <!-- Linha Base do Eixo Principal -->
                         <line x1="${paddingLeft - 20}" y1="${svgHeight - paddingBottom}" x2="${svgWidth - paddingRight + 20}" y2="${svgHeight - paddingBottom}" stroke="#94a3b8" stroke-width="3" />
-                        <!-- Barras, Tendência e Rótulos -->
                         ${barsHTML}
                         ${trendLineHTML}
                         ${labelsHTML}
@@ -1367,6 +1358,169 @@
             `;
         }
 
+        // ==========================================
+        // NOVO: GRÁFICO DE PIZZA & ANÁLISE DE RENDIMENTO
+        // ==========================================
+        function generateYieldAnalysisHTML(initRecord, harvest, isExport = false) {
+            let seedlings = initRecord.seedlings > 0 ? initRecord.seedlings : 1; 
+            let harvested = harvest.totalHarvested || 0;
+            const averageGm = harvest.averageGm || 0;
+            const totalKg = harvest.totalKg || 0;
+            const product = initRecord.product || 'Nenhum';
+
+            const yieldPercent = Math.min(100, (harvested / seedlings) * 100);
+            const lossPercent = Math.max(0, 100 - yieldPercent);
+            const lostUnits = Math.max(0, seedlings - harvested);
+
+            // Algoritmo profissional para o Parecer Agronômico
+            let avaliacao = '';
+            if(yieldPercent >= 85 && averageGm >= 400) {
+                avaliacao = 'um excelente incremento no volume produtivo, indicando que a aplicação melhorou significativamente a formação, compactação e o peso da cabeça';
+            } else if(yieldPercent >= 80) {
+                avaliacao = 'uma ótima taxa de sobrevivência, apontando que o tratamento auxiliou positivamente no desenvolvimento saudável e na viabilidade comercial das cabeças';
+            } else if(yieldPercent >= 60) {
+                avaliacao = 'um desenvolvimento vegetativo satisfatório; a aplicação demonstrou efeitos práticos na cultura, embora ainda haja potencial para otimização do estande e redução de quebras';
+            } else {
+                avaliacao = 'um rendimento geral abaixo do ideal, sugerindo a necessidade de revisão do protocolo adotado para evitar perdas ou estresse fisiológico e melhoria efetiva da cabeça';
+            }
+
+            let vigor = averageGm >= 450 ? 'Alto Vigor Comercial (Pesado)' : (averageGm >= 300 ? 'Padrão Comercial Médio' : 'Calibre de Menor Escala');
+
+            // Parâmetros do Gráfico de Pizza Perfeito (usando cálculo de stroke-dasharray)
+            const size = isExport ? 260 : 120;
+            const r = isExport ? 65 : 30; // Raio
+            const cx = size / 2;
+            const cy = size / 2;
+            const strokeW = isExport ? 130 : 60; // Largura do traço preenche o centro, formando uma pizza real
+            const circ = 2 * Math.PI * r;
+            const dash = (yieldPercent * circ) / 100;
+
+            const colorYield = "#10b981"; // Sucesso (Verde)
+            const colorLoss = "#f43f5e";  // Perda (Vermelho)
+
+            const pieSvg = `
+                <svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" style="border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transform: rotate(-90deg); background: ${colorLoss}; display: block;">
+                    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${colorYield}" stroke-width="${strokeW}" stroke-dasharray="${dash} ${circ}" />
+                </svg>
+            `;
+
+            if (isExport) {
+                return `
+                    <div style="background-color: #fffbeb; border: 3px solid #fde68a; border-radius: 24px; padding: 40px; margin-top: 50px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #fde68a; padding-bottom: 18px; margin-bottom: 30px;">
+                            <h4 style="margin: 0; font-size: 28px; text-transform: uppercase; color: #b45309; font-weight: 900; display: flex; align-items: center; gap: 12px;">
+                                📊 Análise de Rendimento e Eficácia da Colheita
+                            </h4>
+                            <span style="font-size: 18px; background-color: #fef3c7; color: #92400e; padding: 10px 20px; border-radius: 12px; font-weight: bold;">
+                                😸 Teste Finalizado! 🎉
+                            </span>
+                        </div>
+
+                        <div style="display: flex; gap: 50px; align-items: center; margin-bottom: 35px;">
+                            <!-- Gráfico de Pizza -->
+                            <div style="flex-shrink: 0; position: relative;">
+                                ${pieSvg}
+                            </div>
+
+                            <!-- Legendas e Caixas de Dados -->
+                            <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+                                <!-- Legenda do Gráfico -->
+                                <div style="display: flex; gap: 30px; margin-bottom: 10px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div style="width: 24px; height: 24px; background-color: ${colorYield}; border-radius: 6px; border: 1.5px solid #047857;"></div>
+                                        <span style="font-size: 20px; color: #334155; font-weight: 800;">Colhido: ${yieldPercent.toFixed(1)}%</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div style="width: 24px; height: 24px; background-color: ${colorLoss}; border-radius: 6px; border: 1.5px solid #be123c;"></div>
+                                        <span style="font-size: 20px; color: #334155; font-weight: 800;">Perdas: ${lossPercent.toFixed(1)}%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Caixas de Resumo -->
+                                <div style="display: flex; gap: 20px;">
+                                    <div style="flex: 1; background: #ffffff; border: 2px solid #fde68a; padding: 20px; border-radius: 16px; text-align: center;">
+                                        <span style="font-size: 15px; text-transform: uppercase; color: #78350f; font-weight: 800; display: block; margin-bottom: 8px;">Média p/ Cabeça</span>
+                                        <strong style="font-size: 26px; color: #92400e;">${averageGm} g</strong>
+                                    </div>
+                                    <div style="flex: 1; background: #ffffff; border: 2px solid #fde68a; padding: 20px; border-radius: 16px; text-align: center;">
+                                        <span style="font-size: 15px; text-transform: uppercase; color: #78350f; font-weight: 800; display: block; margin-bottom: 8px;">Total Colhido</span>
+                                        <strong style="font-size: 26px; color: #92400e;">${harvested} und</strong>
+                                    </div>
+                                    <div style="flex: 1; background: #ffffff; border: 2px solid #fde68a; padding: 20px; border-radius: 16px; text-align: center;">
+                                        <span style="font-size: 15px; text-transform: uppercase; color: #78350f; font-weight: 800; display: block; margin-bottom: 8px;">Massa Total</span>
+                                        <strong style="font-size: 26px; color: #92400e;">${totalKg} Kg</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Texto de Análise Profissional -->
+                        <div style="background: #ffffff; border-left: 8px solid #f59e0b; padding: 26px 32px; border-radius: 0 16px 16px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                            <strong style="font-size: 20px; color: #b45309; display: block; margin-bottom: 12px; text-transform: uppercase; font-weight: 900;">Conclusão e Parecer Agronômico:</strong>
+                            <p style="margin: 0; font-size: 20px; color: #78350f; line-height: 1.6; text-align: justify;">
+                                O acompanhamento evidenciou que a aplicação do produto <strong>"${product}"</strong> nas mudas culminou num rendimento produtivo prático de <strong>${yieldPercent.toFixed(1)}%</strong> relativo ao total estabelecido no plantio (${seedlings} mudas). 
+                                Com uma massa total apurada de <strong>${totalKg} Kg</strong> e uma média por cabeça finalizada em <strong>${averageGm}g</strong>, conclui-se <strong>${avaliacao}</strong>.
+                                O lote apresenta <strong>${vigor}</strong> para fins de despache comercial.
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Web Version HTML (UI Padrão)
+            return `
+                <div class="bg-amber-50/60 border border-amber-200 rounded-xl p-5 mt-5 shadow-sm">
+                    <h5 class="text-sm font-extrabold text-amber-900 uppercase mb-4 flex items-center gap-2 border-b border-amber-100 pb-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
+                        Análise de Rendimento e Eficácia da Colheita
+                    </h5>
+                    
+                    <div class="flex flex-col md:flex-row gap-6 items-center mb-5">
+                        <div class="flex-shrink-0 relative">
+                            ${pieSvg}
+                        </div>
+                        <div class="flex-1 w-full space-y-4">
+                            <div class="flex flex-wrap gap-4 text-xs font-bold text-slate-700 bg-white p-3 rounded-lg border border-amber-100">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded bg-emerald-500 shadow-sm border border-emerald-700"></span>
+                                    Colhido (Sucesso): ${yieldPercent.toFixed(1)}%
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded bg-rose-500 shadow-sm border border-rose-700"></span>
+                                    Quebras (Perda): ${lossPercent.toFixed(1)}%
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3">
+                                <div class="bg-white p-3 rounded-lg border border-amber-100 shadow-sm text-center">
+                                    <span class="text-[10px] text-amber-700 font-extrabold uppercase block mb-1">Média p/ Cabeça</span>
+                                    <strong class="text-amber-900 text-lg">${averageGm} g</strong>
+                                </div>
+                                <div class="bg-white p-3 rounded-lg border border-amber-100 shadow-sm text-center">
+                                    <span class="text-[10px] text-amber-700 font-extrabold uppercase block mb-1">Total Colhido</span>
+                                    <strong class="text-amber-900 text-lg">${harvested} und</strong>
+                                </div>
+                                <div class="bg-white p-3 rounded-lg border border-amber-100 shadow-sm text-center">
+                                    <span class="text-[10px] text-amber-700 font-extrabold uppercase block mb-1">Massa Total</span>
+                                    <strong class="text-amber-900 text-lg">${totalKg} Kg</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg border border-amber-100 shadow-inner">
+                        <strong class="text-[11px] font-extrabold text-amber-800 uppercase block mb-2">Conclusão e Parecer Agronômico:</strong>
+                        <p class="text-xs text-amber-900 leading-relaxed text-justify">
+                            A aplicação do produto <strong class="text-amber-950">"${product}"</strong> nas mudas culminou num rendimento prático de <strong>${yieldPercent.toFixed(1)}%</strong> em relação ao estande original (${seedlings} mudas). Com a massa final consolidada em <strong>${totalKg} Kg</strong> e peso unitário de <strong>${averageGm}g por cabeça</strong>, constata-se <strong>${avaliacao}</strong>. Em suma, o volume colhido apresenta <strong>${vigor}</strong>.
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // ATUALIZAÇÃO DA RENDERIZAÇÃO DA UI (WEB)
+        // ==========================================
         function renderUnifiedHistory() {
             const container = document.getElementById('unified-history-container');
             container.innerHTML = '';
@@ -1510,30 +1664,20 @@
                         });
                     }
 
+                    // APLICANDO O NOVO COMPONENTE DE ANÁLISE DE RENDIMENTO NA INTERFACE
                     timelineHTML += `
                         <div class="relative">
                             <span class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-amber-500 border-4 border-white shadow-sm"></span>
-                            <div class="bg-amber-50/50 p-3 rounded-lg border border-amber-200">
-                                <div class="flex justify-between items-center flex-wrap gap-1">
-                                    <span class="text-xs font-extrabold text-amber-800 uppercase">Colheita Final & Fecho (Dia ${cycleDays}) 🌾</span>
-                                    <span class="text-[11px] text-slate-500 font-bold">${formatDatePT(harvest.date)}</span>
+                            <div class="bg-white p-3 rounded-lg border border-amber-300 shadow-sm">
+                                <div class="flex justify-between items-center flex-wrap gap-1 bg-amber-100/50 p-2.5 rounded-lg border border-amber-200">
+                                    <span class="text-xs font-extrabold text-amber-800 uppercase">Colheita Final & Fecho (Ciclo: ${cycleDays} dias) 🌾</span>
+                                    <span class="text-[11px] text-amber-700 font-bold bg-amber-200 px-2 py-0.5 rounded">${formatDatePT(harvest.date)}</span>
                                 </div>
-                                <div class="grid grid-cols-3 gap-2 mt-2 text-xs">
-                                    <div class="bg-white p-2 rounded border border-amber-100">
-                                        <span class="text-[9px] text-slate-400 block font-semibold uppercase">Média Unitária</span>
-                                        <strong class="text-amber-800 text-sm">${harvest.averageGm} g</strong>
-                                    </div>
-                                    <div class="bg-white p-2 rounded border border-amber-100">
-                                        <span class="text-[9px] text-slate-400 block font-semibold uppercase">Total Colhido</span>
-                                        <strong class="text-amber-800 text-sm">${harvest.totalHarvested} und</strong>
-                                    </div>
-                                    <div class="bg-white p-2 rounded border border-amber-100">
-                                        <span class="text-[9px] text-slate-400 block font-semibold uppercase">Massa Total</span>
-                                        <strong class="text-amber-800 text-sm">${harvest.totalKg} Kg</strong>
-                                    </div>
-                                </div>
-                                ${harvestPhotosHTML ? `<div class="flex gap-2 flex-wrap mt-2">${harvestPhotosHTML}</div>` : ''}
-                                <div class="flex gap-2.5 mt-2 justify-end">
+                                
+                                ${generateYieldAnalysisHTML(initRecord, harvest, false)}
+
+                                ${harvestPhotosHTML ? `<div class="flex gap-2 flex-wrap mt-4">${harvestPhotosHTML}</div>` : ''}
+                                <div class="flex gap-2.5 mt-4 justify-end border-t border-amber-100 pt-3">
                                     <button onclick="startHarvestEditing('${harvest.id}')" class="text-[10px] text-amber-700 hover:underline font-bold">Editar Colheita</button>
                                     <button onclick="deleteHarvestRecord('${harvest.id}')" class="text-[10px] text-red-600 hover:underline font-bold">Remover</button>
                                 </div>
@@ -1679,7 +1823,7 @@
         }
 
         // =========================================================
-        // GERAÇÃO DE RELATÓRIOS PARA JPG E PDF - TAMANHOS MAXIMIZADOS
+        // GERAÇÃO DE RELATÓRIOS PARA JPG E PDF
         // =========================================================
         function generateOffscreenContentHTML(visibleInits) {
             let htmlContent = '';
@@ -1718,7 +1862,6 @@
                 }
 
                 weeklyGroups.forEach((group, groupIdx) => {
-                    // Largura robusta mantida, mas com proporção baseada na altura para manter coerência visual A4
                     htmlContent += `
                         <div style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
                             
@@ -1737,7 +1880,7 @@
                                 </div>
                             </div>
 
-                            <!-- Dados do Bloco / Identificação do Teste (Textos Aumentados) -->
+                            <!-- Dados do Bloco / Identificação do Teste -->
                             <div style="display: flex; justify-content: space-between; align-items: center; background-color: #f0fdf4; border: 3px solid #bbf7d0; padding: 30px 40px; border-radius: 20px; margin-bottom: 40px;">
                                 <h3 style="margin: 0; font-size: 32px; color: #14532d; font-weight: 800; text-transform: uppercase;">
                                     ${blocoDisplay}${nBlocoDisplay} &mdash; ${cultureDisplay}
@@ -1762,7 +1905,6 @@
                         const svgGraphHTML = generateDynamicChartSVG(initRecord, relativeWeeklies, harvest);
 
                         htmlContent += `
-                            <!-- Grelha de Dados Iniciais Otimizada (Textos Maiores) -->
                             <div style="display: flex; gap: 28px; width: 100%; margin-bottom: 40px;">
                                 <div style="flex: 1; background: #f8fafc; border: 2px solid #cbd5e1; padding: 26px 18px; border-radius: 16px; text-align: center; box-sizing: border-box;">
                                     <span style="font-size: 16px; text-transform: uppercase; color: #64748b; font-weight: 800; display: block; margin-bottom: 12px;">Total Canteiros</span>
@@ -1782,12 +1924,10 @@
                                 </div>
                             </div>
 
-                            <!-- Gráfico SVG Premium -->
                             <div style="margin-bottom: 45px;">
                                 ${svgGraphHTML}
                             </div>
 
-                            <!-- Fotos Iniciais (Tamanho maior e com Margens bem separadas) -->
                             ${initRecord.photos && initRecord.photos.length > 0 ? `
                                 <div style="margin-bottom: 45px; background: #f8fafc; padding: 30px; border-radius: 16px; border: 2px solid #e2e8f0;">
                                     <h4 style="margin: 0 0 24px 0; font-size: 20px; text-transform: uppercase; color: #475569; font-weight: 800; letter-spacing: 0.5px; border-bottom: 2px solid #cbd5e1; padding-bottom: 12px;">Imagens Iniciais do Teste:</h4>
@@ -1820,7 +1960,6 @@
                                     </div>
                                     <p style="margin: 0 0 24px 0; font-size: 20px; color: #334155; font-style: italic; line-height: 1.8; white-space: pre-wrap;">"${w.notes || ''}"</p>
                                     
-                                    <!-- Fotos Semanais aumentadas e mais espaçadas -->
                                     ${w.photos && w.photos.length > 0 ? `
                                         <div style="display: flex; gap: 28px; flex-wrap: wrap; margin-top: 24px; padding-top: 20px; border-top: 2px dashed #cbd5e1;">
                                             ${w.photos.map(wp => `<img src="${wp}" style="width: 160px; height: 160px; object-fit: cover; border-radius: 14px; border: 3px solid #cbd5e1; box-shadow: 0 4px 8px rgba(0,0,0,0.08);">`).join('')}
@@ -1836,42 +1975,20 @@
                     htmlContent += `</div>`;
 
                     if (groupIdx === weeklyGroups.length - 1 && harvest) {
-                        const cycleFinalDays = getDaysBetween(refDate, harvest.date);
-                        htmlContent += `
-                            <!-- Secção de Colheita (Textos e Imagens Aumentados) -->
-                            <div style="background-color: #fffbeb; border: 3px solid #fde68a; border-radius: 24px; padding: 36px; margin-top: 50px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; border-bottom: 2px solid #fde68a; padding-bottom: 18px;">
-                                    <h4 style="margin: 0; font-size: 26px; text-transform: uppercase; color: #b45309; font-weight: 800; display: flex; align-items: center; gap: 12px;">
-                                        🌾 Dados Finais da Colheita (Ciclo Completo: ${cycleFinalDays} Dias)
-                                    </h4>
-                                    <span style="font-size: 18px; background-color: #fef3c7; color: #92400e; padding: 10px 20px; border-radius: 12px; font-weight: bold;">
-                                        😸 Teste Finalizado com Sucesso! 🎉
-                                    </span>
-                                </div>
-                                <div style="display: flex; gap: 32px; margin-bottom: 28px;">
-                                    <div style="flex: 1; background: #ffffff; border: 2px solid #fde68a; padding: 26px; border-radius: 18px; text-align: center;">
-                                        <span style="font-size: 16px; text-transform: uppercase; color: #78350f; font-weight: 800; display: block; margin-bottom: 12px;">Média p/ Planta</span>
-                                        <strong style="font-size: 28px; color: #92400e;">${harvest.averageGm || 0} g</strong>
-                                    </div>
-                                    <div style="flex: 1; background: #ffffff; border: 2px solid #fde68a; padding: 26px; border-radius: 18px; text-align: center;">
-                                        <span style="font-size: 16px; text-transform: uppercase; color: #78350f; font-weight: 800; display: block; margin-bottom: 12px;">Total Colhido</span>
-                                        <strong style="font-size: 28px; color: #92400e;">${harvest.totalHarvested || 0} und</strong>
-                                    </div>
-                                    <div style="flex: 1; background: #ffffff; border: 2px solid #fde68a; padding: 26px; border-radius: 18px; text-align: center;">
-                                        <span style="font-size: 16px; text-transform: uppercase; color: #78350f; font-weight: 800; display: block; margin-bottom: 12px;">Massa Total</span>
-                                        <strong style="font-size: 28px; color: #92400e;">${harvest.totalKg || 0} Kg</strong>
+                        
+                        // INJEÇÃO DA NOVA ANÁLISE DE RENDIMENTO NO PDF E JPG COM GRÁFICO DE PIZZA
+                        htmlContent += generateYieldAnalysisHTML(initRecord, harvest, true);
+
+                        if(harvest.photos && harvest.photos.length > 0) {
+                            htmlContent += `
+                                <div style="margin-top: 35px; background: #ffffff; padding: 25px 35px; border-radius: 18px; border: 2px solid #fde68a;">
+                                    <h4 style="margin: 0 0 16px 0; font-size: 22px; text-transform: uppercase; color: #92400e; font-weight: 800;">📷 Imagens Comprobatórias da Colheita:</h4>
+                                    <div style="display: flex; gap: 28px; flex-wrap: wrap;">
+                                        ${harvest.photos.map(hp => `<img src="${hp}" style="width: 175px; height: 175px; object-fit: cover; border-radius: 14px; border: 3px solid #fde68a; box-shadow: 0 5px 10px rgba(0,0,0,0.08);">`).join('')}
                                     </div>
                                 </div>
-                                ${harvest.photos && harvest.photos.length > 0 ? `
-                                    <div style="margin-top: 28px;">
-                                        <h4 style="margin: 0 0 16px 0; font-size: 18px; text-transform: uppercase; color: #92400e; font-weight: 700;">Imagens da Colheita:</h4>
-                                        <div style="display: flex; gap: 28px; flex-wrap: wrap;">
-                                            ${harvest.photos.map(hp => `<img src="${hp}" style="width: 170px; height: 170px; object-fit: cover; border-radius: 14px; border: 3px solid #fde68a; box-shadow: 0 5px 10px rgba(0,0,0,0.08);">`).join('')}
-                                        </div>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        `;
+                            `;
+                        }
                     }
 
                     htmlContent += `
