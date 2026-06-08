@@ -326,7 +326,7 @@
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 112-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                                 Selecione o Teste Inicial (Fixo)
                             </label>
-                            <select id="weekly-test-parent" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 font-semibold text-slate-700 font-medium">
+                            <select id="weekly-test-parent" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 font-semibold text-slate-700">
                                 <option value="">Escolha qual teste está acompanhando...</option>
                             </select>
                         </div>
@@ -344,8 +344,9 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
-                                Observações do Desenvolvimento
+                                Observações do Desenvolvimento (Análise Inteligente de Índice)
                             </label>
+                            <p class="text-[10px] text-slate-400 mb-1">Palavras boas (vigoroso, ótimo, saudável, etc.) aumentam o gráfico de tendência. Palavras ruins (amarelo, murcho, praga, etc.) o reduzem.</p>
                             <textarea id="week-notes" required rows="5" placeholder="Descreva o desenvolvimento atual, vigor, folhas e estado fitossanitário..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all"></textarea>
                         </div>
 
@@ -397,7 +398,7 @@
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                                 Vincular ao Teste Inicial
                             </label>
-                            <select id="harvest-test-parent" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 font-semibold text-slate-700 font-medium">
+                            <select id="harvest-test-parent" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 font-semibold text-slate-700">
                                 <option value="">Escolha qual teste deseja finalizar a colheita...</option>
                             </select>
                         </div>
@@ -478,7 +479,7 @@
                         </div>
                     </div>
                     <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-bold text-oasis-700 select-all block mb-1">Mudas Totais</span>
+                        <span class="text-xs font-bold text-oasis-700 block mb-1">Mudas Totais</span>
                         <div class="flex items-center justify-between">
                             <span id="stat-mudas" class="text-2xl font-extrabold text-oasis-700">0</span>
                             <span class="p-1 bg-oasis-50 text-oasis-700 rounded">
@@ -511,7 +512,7 @@
                     </div>
 
                     <!-- Container Dinâmico dos Registos -->
-                    <div id="unified-history-container" class="divide-y divide-slate-100 max-h-[800px] overflow-y-auto">
+                    <div id="unified-history-container" class="divide-y divide-slate-100 max-h-[900px] overflow-y-auto">
                         <!-- Gerado dinamicamente no JS -->
                     </div>
                 </div>
@@ -539,6 +540,49 @@
         </div>
     </div>
 
+    <!-- Modal de Exportação JPG Multipalhas -->
+    <div id="jpg-export-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-5">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <span class="p-1.5 bg-blue-100 text-blue-700 rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </span>
+                    Exportar Imagens do Relatório
+                </h3>
+                <button onclick="closeJpgModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <!-- Estado do Processamento -->
+            <div id="jpg-processing-status" class="space-y-3">
+                <div class="flex justify-between text-sm font-semibold text-slate-600">
+                    <span id="jpg-progress-text">A processar páginas...</span>
+                    <span id="jpg-progress-percent">0%</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div id="jpg-progress-bar" class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <p class="text-xs text-slate-400">Convertendo cada folha do relatório em uma imagem JPG independente e legível de alta definição.</p>
+            </div>
+
+            <!-- Lista de Páginas Prontas -->
+            <div id="jpg-pages-list-container" class="hidden space-y-4">
+                <div class="flex justify-between items-center bg-blue-50/50 p-3.5 rounded-xl border border-blue-100">
+                    <span class="text-xs font-bold text-blue-900">Todas as páginas foram geradas!</span>
+                    <button onclick="downloadAllJpgPages()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5 shadow transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Baixar Todas as Páginas
+                    </button>
+                </div>
+                <div id="jpg-pages-grid" class="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto p-1">
+                    <!-- Cards das folhas do relatório geradas dinamicamente no JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Script do Sistema -->
     <script>
         // Bancos de dados locais (Sincronizados com o LocalStorage)
@@ -550,6 +594,9 @@
         let tempInitialPhotos = [];
         let tempWeeklyPhotos = [];
         let tempHarvestPhotos = [];
+
+        // Lista de páginas JPG compiladas temporariamente
+        let compiledJpgPages = [];
 
         // Inicialização
         window.addEventListener('DOMContentLoaded', () => {
@@ -825,6 +872,50 @@
         function removeWeeklyPhoto(idx) {
             tempWeeklyPhotos.splice(idx, 1);
             updateWeeklyPhotosDisplay();
+        }
+
+        // ==========================================
+        // ALGORITMO INTELIGENTE DE ANÁLISE DE CAMPO (SENTIMENTO AGRÍCOLA)
+        // ==========================================
+        function calculateFieldSentimentIndex(notes) {
+            if (!notes) return 70; // Padrão neutro saudável
+            
+            const text = notes.toLowerCase();
+            
+            // Dicionários agrícolas em Português
+            const positiveAgronomicWords = [
+                "vigor", "forte", "ótimo", "otimo", "bom", "excelente", "crescendo", "saudável", "saudavel", 
+                "verde", "bonito", "perfeito", "resistente", "desenvolve", "vigoroso", "esperado", "adequado", 
+                "positivo", "sucesso", "rápido", "rapido", "firme", "saúde", "saude", "formando", "fechando", 
+                "uniforme", "nutrido", "hidratado", "espetacular", "limpo"
+            ];
+            
+            const negativeAgronomicWords = [
+                "fraco", "ruim", "péssimo", "pessimo", "murcho", "amarelo", "amarelada", "seca", "seco", 
+                "doença", "doenca", "praga", "inseto", "atrasado", "lento", "morte", "morreu", "baixo", 
+                "insatisfatório", "insatisfatorio", "estresse", "queima", "mancha", "podre", "fungo", 
+                "deficiente", "lagarta", "atropelado", "danificado", "falha", "murchando"
+            ];
+
+            let posCount = 0;
+            let negCount = 0;
+
+            positiveAgronomicWords.forEach(word => {
+                const regex = new RegExp(`\\b${word}`, 'g');
+                const matches = text.match(regex);
+                if (matches) posCount += matches.length;
+            });
+
+            negativeAgronomicWords.forEach(word => {
+                const regex = new RegExp(`\\b${word}`, 'g');
+                const matches = text.match(regex);
+                if (matches) negCount += matches.length;
+            });
+
+            // Equação agronômica: Começa em 70% (neutro comercial)
+            // Cada ponto positivo acrescenta +15%. Negativos subtraem -20%
+            let score = 70 + (posCount * 15) - (negCount * 20);
+            return Math.max(0, Math.min(100, score));
         }
 
         function handleHarvestPhotoUpload(event) {
@@ -1231,6 +1322,9 @@
             });
         }
 
+        // =========================================================
+        // RESTAURAÇÃO: FUNÇÃO DE ATUALIZAÇÃO DE ESTATÍSTICAS
+        // =========================================================
         function updateStatistics(initCount, seedlingsTotal, harvestCount) {
             document.getElementById('stat-init-total').textContent = initCount;
             document.getElementById('stat-mudas').textContent = seedlingsTotal.toLocaleString('pt-PT');
@@ -1358,6 +1452,160 @@
             `;
         }
 
+        // ========================================================
+        // NOVO: GERAÇÃO DE GRÁFICO SVG DE LINHAS DE TENDÊNCIA DE SAÚDE
+        // ========================================================
+        function generateTrendChartSVG(initRecord, relativeWeeklies, harvest) {
+            const refDate = initRecord.plantDate || initRecord.date;
+            
+            const trendPoints = [];
+            // Ponto 0: Início do Teste (Padrão Inicial: 100% de saúde/vigor potencial das mudas saudáveis)
+            trendPoints.push({
+                day: 0,
+                label: 'Início',
+                score: 100,
+                date: formatDatePT(initRecord.date)
+            });
+
+            // Ordena acompanhamentos por data
+            const sortedWeeklies = [...relativeWeeklies].sort((a,b) => a.date.localeCompare(b.date));
+            sortedWeeklies.forEach((w, idx) => {
+                const days = getDaysBetween(refDate, w.date);
+                const score = calculateFieldSentimentIndex(w.notes);
+                trendPoints.push({
+                    day: days,
+                    label: `Evol. ${idx + 1}`,
+                    score: score,
+                    date: formatDatePT(w.date)
+                });
+            });
+
+            // Se houver colheita, calcula o score com base no rendimento
+            if (harvest) {
+                const days = getDaysBetween(refDate, harvest.date);
+                let yieldPercent = 100;
+                if (initRecord.seedlings > 0) {
+                    yieldPercent = Math.min(100, ((harvest.totalHarvested || 0) / initRecord.seedlings) * 100);
+                }
+                trendPoints.push({
+                    day: days,
+                    label: 'Colheita 🌾',
+                    score: Math.round(yieldPercent),
+                    date: formatDatePT(harvest.date)
+                });
+            }
+
+            const svgWidth = 1000;
+            const svgHeight = 360;
+            const paddingLeft = 110;
+            const paddingRight = 60;
+            const paddingTop = 70;
+            const paddingBottom = 60;
+
+            const chartWidth = svgWidth - paddingLeft - paddingRight;
+            const chartHeight = svgHeight - paddingTop - paddingBottom;
+
+            // Linhas horizontais de referência (0%, 25%, 50%, 75%, 100%)
+            let gridHTML = '';
+            const scoresRef = [100, 75, 50, 25, 0];
+            scoresRef.forEach(v => {
+                const ratio = (100 - v) / 100;
+                const gridY = paddingTop + (chartHeight * ratio);
+                gridHTML += `
+                    <line x1="${paddingLeft - 10}" y1="${gridY}" x2="${svgWidth - paddingRight}" y2="${gridY}" stroke="#e2e8f0" stroke-width="1.5" />
+                    <text x="${paddingLeft - 20}" y="${gridY + 5}" fill="#64748b" font-size="14" font-weight="bold" text-anchor="end" font-family="sans-serif">${v}%</text>
+                `;
+            });
+
+            // Zonas de Qualidade (Bom Índice >= 70% em Verde Claro, Baixo Índice < 40% em Vermelho Claro)
+            const greenZoneY = paddingTop;
+            const greenZoneHeight = chartHeight * 0.3; // 100% a 70%
+            
+            const warningZoneY = paddingTop + (chartHeight * 0.3);
+            const warningZoneHeight = chartHeight * 0.3; // 70% a 40%
+
+            const redZoneY = paddingTop + (chartHeight * 0.6);
+            const redZoneHeight = chartHeight * 0.4; // 40% a 0%
+
+            let zonesHTML = `
+                <!-- Zona Alta: Bom Índice -->
+                <rect x="${paddingLeft}" y="${greenZoneY}" width="${chartWidth}" height="${greenZoneHeight}" fill="#f0fdf4" opacity="0.8" />
+                <text x="${svgWidth - paddingRight - 10}" y="${greenZoneY + 25}" fill="#166534" font-size="12" font-weight="bold" text-anchor="end" font-family="sans-serif" opacity="0.65">BOM ÍNDICE (70-100%)</text>
+                
+                <!-- Zona Média: Regular -->
+                <rect x="${paddingLeft}" y="${warningZoneY}" width="${chartWidth}" height="${warningZoneHeight}" fill="#fffbeb" opacity="0.8" />
+                
+                <!-- Zona Baixa: Baixo Índice -->
+                <rect x="${paddingLeft}" y="${redZoneY}" width="${chartWidth}" height="${redZoneHeight}" fill="#fef2f2" opacity="0.8" />
+                <text x="${svgWidth - paddingRight - 10}" y="${svgHeight - paddingBottom - 15}" fill="#991b1b" font-size="12" font-weight="bold" text-anchor="end" font-family="sans-serif" opacity="0.65">BAIXO ÍNDICE (0-40%)</text>
+            `;
+
+            // Construção da linha de tendência
+            let linePointsHTML = '';
+            let linePathD = '';
+            let trendLabelsHTML = '';
+            const numPoints = trendPoints.length;
+
+            trendPoints.forEach((p, idx) => {
+                let x = paddingLeft;
+                if (numPoints > 1) {
+                    x = paddingLeft + (idx / (numPoints - 1)) * chartWidth;
+                } else {
+                    x = paddingLeft + chartWidth / 2;
+                }
+
+                // Inverte o eixo Y de forma que 100% seja em cima e 0% embaixo
+                const yRatio = (100 - p.score) / 100;
+                const y = paddingTop + (yRatio * chartHeight);
+
+                if (idx === 0) {
+                    linePathD = `M ${x} ${y}`;
+                } else {
+                    linePathD += ` L ${x} ${y}`;
+                }
+
+                // Cor do ponto de acordo com a nota de saúde
+                let pointColor = "#10b981"; // Verde
+                if (p.score < 40) {
+                    pointColor = "#f43f5e"; // Vermelho
+                } else if (p.score < 70) {
+                    pointColor = "#f59e0b"; // Amarelo
+                }
+
+                linePointsHTML += `
+                    <circle cx="${x}" cy="${y}" r="8" fill="#ffffff" stroke="${pointColor}" stroke-width="5" />
+                    <circle cx="${x}" cy="${y}" r="3" fill="${pointColor}" />
+                    <text x="${x}" y="${y - 16}" fill="#0f172a" font-size="15" font-weight="800" text-anchor="middle" font-family="sans-serif">${p.score}%</text>
+                `;
+
+                trendLabelsHTML += `
+                    <text x="${x}" y="${svgHeight - 15}" fill="#475569" font-size="14" font-weight="bold" text-anchor="middle" font-family="sans-serif">${p.label}</text>
+                    <text x="${x}" y="${svgHeight - 32}" fill="#94a3b8" font-size="11" font-weight="semibold" text-anchor="middle" font-family="sans-serif">${p.date}</text>
+                `;
+            });
+
+            const strokeLineHTML = trendPoints.length > 1 ? `
+                <path d="${linePathD}" fill="none" stroke="#2563eb" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round" />
+            ` : '';
+
+            return `
+                <div style="width: 100%; margin-top: 24px;">
+                    <span style="font-size: 16px; font-weight: 800; color: #1e3a8a; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px; font-family: sans-serif; display: flex; align-items: center; gap: 8px;">
+                        <svg class="w-5 h-5 text-blue-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                        Gráfico de Tendência de Vigor e Saúde da Planta (Com base nas Notas Semanais)
+                    </span>
+                    <svg viewBox="0 0 ${svgWidth} ${svgHeight}" style="width: 100%; height: auto; background: #ffffff; border-radius: 16px; border: 2px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                        ${zonesHTML}
+                        ${gridHTML}
+                        <line x1="${paddingLeft}" y1="${svgHeight - paddingBottom}" x2="${svgWidth - paddingRight}" y2="${svgHeight - paddingBottom}" stroke="#cbd5e1" stroke-width="2" />
+                        ${strokeLineHTML}
+                        ${linePointsHTML}
+                        ${trendLabelsHTML}
+                    </svg>
+                </div>
+            `;
+        }
+
         // ==========================================
         // NOVO: GRÁFICO DE PIZZA & ANÁLISE DE RENDIMENTO
         // ==========================================
@@ -1370,7 +1618,6 @@
 
             const yieldPercent = Math.min(100, (harvested / seedlings) * 100);
             const lossPercent = Math.max(0, 100 - yieldPercent);
-            const lostUnits = Math.max(0, seedlings - harvested);
 
             // Algoritmo profissional para o Parecer Agronômico
             let avaliacao = '';
@@ -1386,12 +1633,12 @@
 
             let vigor = averageGm >= 450 ? 'Alto Vigor Comercial (Pesado)' : (averageGm >= 300 ? 'Padrão Comercial Médio' : 'Calibre de Menor Escala');
 
-            // Parâmetros do Gráfico de Pizza Perfeito (usando cálculo de stroke-dasharray)
+            // Parâmetros do Gráfico de Pizza Perfeito
             const size = isExport ? 260 : 120;
             const r = isExport ? 65 : 30; // Raio
             const cx = size / 2;
             const cy = size / 2;
-            const strokeW = isExport ? 130 : 60; // Largura do traço preenche o centro, formando uma pizza real
+            const strokeW = isExport ? 130 : 60;
             const circ = 2 * Math.PI * r;
             const dash = (yieldPercent * circ) / 100;
 
@@ -1458,7 +1705,7 @@
                         <div style="background: #ffffff; border-left: 8px solid #f59e0b; padding: 26px 32px; border-radius: 0 16px 16px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                             <strong style="font-size: 20px; color: #b45309; display: block; margin-bottom: 12px; text-transform: uppercase; font-weight: 900;">Conclusão e Parecer Agronômico:</strong>
                             <p style="margin: 0; font-size: 20px; color: #78350f; line-height: 1.6; text-align: justify;">
-                                O acompanhamento evidenciou que a aplicação do produto <strong>"${product}"</strong> nas mudas culminou num rendimento produtivo prático de <strong>${yieldPercent.toFixed(1)}%</strong> relativo ao total estabelecido no plantio (${seedlings} mudas). 
+                                O acompanhamento evidenciou que a aplicação do produto <strong>"${product}"</strong> nas mudas culminou num rendimento produtivo prático de <strong>${yieldPercent.toFixed(1)}%</strong> relativo ao total estabelecido num plantio (${seedlings} mudas). 
                                 Com uma massa total apurada de <strong>${totalKg} Kg</strong> e uma média por cabeça finalizada em <strong>${averageGm}g</strong>, conclui-se <strong>${avaliacao}</strong>.
                                 O lote apresenta <strong>${vigor}</strong> para fins de despache comercial.
                             </p>
@@ -1569,14 +1816,12 @@
                 let statusBadgeHTML = '';
                 if (harvest) {
                     statusBadgeHTML = `
-                        <div class="inline-flex items-center gap-1.5 bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-full text-xs font-bold shadow-sm animate-bounce">
-                            <svg class="w-5 h-5 text-green-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <div class="inline-flex items-center gap-1.5 bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                            <svg class="w-5 h-5 text-green-700 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M12 21c-2.3 0-4.5-.5-6.5-1.5.3-.6.6-1.1 1.1-1.5s1.2-.7 1.9-.7h7c.7 0 1.4.3 1.9.7s.8.9 1.1 1.5c-2 1-4.2 1.5-6.5 1.5z" />
                                 <path d="M16 11.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-5 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
                                 <path d="M12 14c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z" />
                                 <path d="M12 3c-4.4 0-8 3.6-8 8v1c0 1.7.7 3.3 1.9 4.4L4.5 19.5c-.3.4-.1 1 .4 1h14.2c.5 0 .7-.6.4-1l-1.4-2.1C19.3 16.3 20 14.7 20 13v-1c0-4.4-3.6-8-8-8z" />
-                                <path d="M4 11V8.5c0-.8-.7-1.5-1.5-1.5S1 7.7 1 8.5V11" />
-                                <path d="M20 11V8.5c0-.8.7-1.5 1.5-1.5S23 7.7 23 8.5V11" />
                             </svg>
                             <span>Finalizado com Sucesso! 😸🎉</span>
                         </div>
@@ -1619,7 +1864,7 @@
                                 <span class="text-xs font-extrabold text-oasis-900 uppercase">Início de Aplicação do Teste (Dia ${startTestDelay})</span>
                                 <span class="text-[11px] text-slate-500 font-bold">${formatDatePT(initRecord.date)}</span>
                             </div>
-                            <p class="text-xs text-slate-700 mt-1">Tratamento ativo com o produto: <strong class="text-oasis-800">${initRecord.product}</strong> (${initRecord.totalApplied} ${initRecord.unit})</p>
+                            <p class="text-xs text-slate-700 mt-1">Tratamento active com o produto: <strong class="text-oasis-800">${initRecord.product}</strong> (${initRecord.totalApplied} ${initRecord.unit})</p>
                         </div>
                     </div>
                 `;
@@ -1628,6 +1873,15 @@
                     const sortedWeeklies = [...relativeWeeklies].sort((a,b) => a.date.localeCompare(b.date));
                     sortedWeeklies.forEach((weekly, wIdx) => {
                         const daysElapsed = getDaysBetween(refDate, weekly.date);
+                        const weeklyScore = calculateFieldSentimentIndex(weekly.notes);
+                        
+                        let badgeColor = "bg-emerald-100 text-emerald-800";
+                        if (weeklyScore < 40) {
+                            badgeColor = "bg-rose-100 text-rose-800";
+                        } else if (weeklyScore < 70) {
+                            badgeColor = "bg-amber-100 text-amber-800";
+                        }
+
                         let weeklyPhotosHTML = '';
                         if (weekly.photos && weekly.photos.length > 0) {
                             weekly.photos.forEach(wp => {
@@ -1640,7 +1894,10 @@
                                 <span class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-blue-500 border-4 border-white shadow-sm"></span>
                                 <div class="bg-blue-50/40 p-3 rounded-lg border border-blue-100">
                                     <div class="flex justify-between items-center flex-wrap gap-1">
-                                        <span class="text-xs font-bold text-blue-700 uppercase">Evolução #${wIdx + 1} (Dia ${daysElapsed})</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-bold text-blue-700 uppercase">Evolução #${wIdx + 1} (Dia ${daysElapsed})</span>
+                                            <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded ${badgeColor}">Vigor: ${weeklyScore}%</span>
+                                        </div>
                                         <span class="text-[11px] text-slate-500 font-semibold">${formatDatePT(weekly.date)}</span>
                                     </div>
                                     <p class="text-xs text-slate-700 leading-relaxed mt-1 bg-white p-2.5 rounded border border-slate-100 shadow-inner whitespace-pre-wrap">"${weekly.notes}"</p>
@@ -1664,7 +1921,7 @@
                         });
                     }
 
-                    // APLICANDO O NOVO COMPONENTE DE ANÁLISE DE RENDIMENTO NA INTERFACE
+                    // APLICANDO O COMPONENTE DE ANÁLISE DE RENDIMENTO NA INTERFACE
                     timelineHTML += `
                         <div class="relative">
                             <span class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-amber-500 border-4 border-white shadow-sm"></span>
@@ -1688,7 +1945,12 @@
 
                 timelineHTML += `</div>`;
 
+                // Gráfico cronológico de barras
                 let chartHTML = generateDynamicChartSVG(initRecord, relativeWeeklies, harvest);
+                
+                // NOVO: Gráfico de tendência de saúde/vigor (exigido pelo usuário)
+                let trendChartHTML = generateTrendChartSVG(initRecord, relativeWeeklies, harvest);
+
                 const nBlocoDisplay = initRecord.nBloco ? ` - Nº ${initRecord.nBloco}` : '';
 
                 card.innerHTML = `
@@ -1742,6 +2004,11 @@
                             <div class="mt-4 pt-4 border-t border-slate-100">
                                 <h5 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-4">Linha do Tempo Evolutiva do Teste</h5>
                                 ${timelineHTML}
+                            </div>
+
+                            <!-- Novo Gráfico de Tendência (Posicionado após a evolução e linha do tempo) -->
+                            <div class="mt-6 pt-6 border-t border-slate-200">
+                                ${trendChartHTML}
                             </div>
                         </div>
 
@@ -1863,7 +2130,7 @@
 
                 weeklyGroups.forEach((group, groupIdx) => {
                     htmlContent += `
-                        <div style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
+                        <div class="report-page-block" style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
                             
                             <!-- Cabeçalho Principal (Textos Aumentados) -->
                             <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 6px solid #15803d; padding-bottom: 30px; margin-bottom: 45px;">
@@ -1951,11 +2218,25 @@
                             const absoluteIndex = (groupIdx * 3) + wIdx + 1;
                             const mDate = w.date ? formatDatePT(w.date) : 'Sem data';
                             const daysElapsed = getDaysBetween(refDate, w.date);
+                            const currentScore = calculateFieldSentimentIndex(w.notes);
+
+                            let scoreColor = "#16a34a";
+                            let scoreText = "Bom";
+                            if (currentScore < 40) {
+                                scoreColor = "#dc2626";
+                                scoreText = "Baixo";
+                            } else if (currentScore < 70) {
+                                scoreColor = "#d97706";
+                                scoreText = "Regular";
+                            }
 
                             htmlContent += `
                                 <div style="margin-bottom: 36px; background: #f8fafc; border-left: 8px solid #2563eb; padding: 32px; border-radius: 0 16px 16px 0; border-top: 2px solid #e2e8f0; border-right: 2px solid #e2e8f0; border-bottom: 2px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); box-sizing: border-box;">
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 18px; align-items: center;">
-                                        <span style="font-size: 20px; font-weight: 800; color: #1d4ed8; background-color: #eff6ff; padding: 8px 16px; border-radius: 10px; border: 2px solid #bfdbfe;">Evolução #${absoluteIndex} (Dia ${daysElapsed})</span>
+                                        <div style="display: flex; align-items: center; gap: 14px;">
+                                            <span style="font-size: 20px; font-weight: 800; color: #1d4ed8; background-color: #eff6ff; padding: 8px 16px; border-radius: 10px; border: 2px solid #bfdbfe;">Evolução #${absoluteIndex} (Dia ${daysElapsed})</span>
+                                            <span style="font-size: 16px; font-weight: bold; background-color: ${scoreColor}15; color: ${scoreColor}; border: 1.5px solid ${scoreColor}50; padding: 6px 12px; border-radius: 8px;">Saúde: ${currentScore}% (${scoreText})</span>
+                                        </div>
                                         <span style="font-size: 18px; color: #64748b; font-weight: bold;">Data: ${mDate}</span>
                                     </div>
                                     <p style="margin: 0 0 24px 0; font-size: 20px; color: #334155; font-style: italic; line-height: 1.8; white-space: pre-wrap;">"${w.notes || ''}"</p>
@@ -1974,14 +2255,23 @@
 
                     htmlContent += `</div>`;
 
+                    // No final de cada lote de acompanhamento (última página do teste no PDF/JPG)
+                    if (groupIdx === weeklyGroups.length - 1) {
+                        const trendSVG = generateTrendChartSVG(initRecord, relativeWeeklies, harvest);
+                        htmlContent += `
+                            <div style="margin-top: 20px; margin-bottom: 30px; page-break-inside: avoid;">
+                                ${trendSVG}
+                            </div>
+                        `;
+                    }
+
                     if (groupIdx === weeklyGroups.length - 1 && harvest) {
-                        
-                        // INJEÇÃO DA NOVA ANÁLISE DE RENDIMENTO NO PDF E JPG COM GRÁFICO DE PIZZA
+                        // INJEÇÃO DA ANÁLISE DE RENDIMENTO NO PDF E JPG COM GRÁFICO DE PIZZA
                         htmlContent += generateYieldAnalysisHTML(initRecord, harvest, true);
 
                         if(harvest.photos && harvest.photos.length > 0) {
                             htmlContent += `
-                                <div style="margin-top: 35px; background: #ffffff; padding: 25px 35px; border-radius: 18px; border: 2px solid #fde68a;">
+                                <div style="margin-top: 35px; background: #ffffff; padding: 25px 35px; border-radius: 18px; border: 2px solid #fde68a; page-break-inside: avoid;">
                                     <h4 style="margin: 0 0 16px 0; font-size: 22px; text-transform: uppercase; color: #92400e; font-weight: 800;">📷 Imagens Comprobatórias da Colheita:</h4>
                                     <div style="display: flex; gap: 28px; flex-wrap: wrap;">
                                         ${harvest.photos.map(hp => `<img src="${hp}" style="width: 320px; height: 240px; object-fit: cover; border-radius: 14px; border: 3px solid #fde68a; box-shadow: 0 5px 10px rgba(0,0,0,0.08);">`).join('')}
@@ -2004,6 +2294,9 @@
             return htmlContent;
         }
 
+        // =========================================================
+        // NOVO: SISTEMA DE EXPORTAÇÃO JPG MUTI-PÁGINAS (ESTILO PDF)
+        // =========================================================
         function downloadCompleteJPG() {
             const visibleInits = initialRecords.filter(r => r.isVisible !== false);
             if (visibleInits.length === 0) {
@@ -2011,46 +2304,129 @@
                 return;
             }
 
-            showModalAlert('Gerando JPG', 'A processar as fotos e a paginar cronologicamente. Por favor, aguarde alguns segundos...', 'info');
+            // Exibir o painel modal do processador de imagens
+            const modal = document.getElementById('jpg-export-modal');
+            modal.classList.remove('hidden');
+            document.getElementById('jpg-processing-status').classList.remove('hidden');
+            document.getElementById('jpg-pages-list-container').classList.add('hidden');
+            updateJpgProgress('Iniciando compilação do relatório...', 0);
 
+            compiledJpgPages = [];
+
+            // Criar container offscreen temporário para renderizar as páginas separadamente
             const tempDiv = document.createElement('div');
             tempDiv.style.position = 'absolute';
             tempDiv.style.left = '0';
             tempDiv.style.top = '0';
             tempDiv.style.transform = 'translate(-150%, -150%)'; 
             tempDiv.style.width = '1200px'; 
-            tempDiv.style.background = '#f1f5f9';
+            tempDiv.style.background = '#ffffff';
             document.body.appendChild(tempDiv);
 
             tempDiv.innerHTML = generateOffscreenContentHTML(visibleInits);
 
-            setTimeout(() => {
-                html2canvas(tempDiv, {
-                    useCORS: true,
-                    scale: 1.5,
-                    backgroundColor: '#e2e8f0',
-                    logging: false,
-                    allowTaint: true
-                }).then(canvas => {
-                    const imgData = canvas.toDataURL('image/jpeg', 0.93);
+            // Permite um pequeno tempo para renderizar os gráficos SVG na DOM
+            setTimeout(async () => {
+                const pageBlocks = tempDiv.querySelectorAll('.report-page-block');
+                const totalPages = pageBlocks.length;
+
+                if (totalPages === 0) {
+                    document.body.removeChild(tempDiv);
+                    closeJpgModal();
+                    showModalAlert('Erro', 'Ocorreu um erro ao processar as folhas do relatório.', 'error');
+                    return;
+                }
+
+                // Renderiza cada folha separadamente de forma sequencial assíncrona
+                for (let i = 0; i < totalPages; i++) {
+                    const pageBlock = pageBlocks[i];
+                    const pageNum = i + 1;
+                    updateJpgProgress(`Convertendo Folha ${pageNum} de ${totalPages}...`, Math.round((i / totalPages) * 100));
+
+                    try {
+                        const canvas = await html2canvas(pageBlock, {
+                            useCORS: true,
+                            scale: 1.5, // Resolução de alta definição
+                            backgroundColor: '#ffffff',
+                            logging: false,
+                            allowTaint: true
+                        });
+                        const imgData = canvas.toDataURL('image/jpeg', 0.93);
+                        compiledJpgPages.push({
+                            name: `Relatorio_Oasis_Folha_${String(pageNum).padStart(2, '0')}.jpg`,
+                            dataUrl: imgData,
+                            num: pageNum
+                        });
+                    } catch (err) {
+                        console.error(`Erro ao converter a folha ${pageNum}:`, err);
+                    }
+                }
+
+                // Concluído!
+                updateJpgProgress('Páginas processadas com sucesso!', 100);
+                document.body.removeChild(tempDiv);
+
+                // Mostra a lista final de mini-visualizações com as ações de download
+                renderJpgPagesList();
+            }, 1500);
+        }
+
+        function updateJpgProgress(text, percent) {
+            document.getElementById('jpg-progress-text').textContent = text;
+            document.getElementById('jpg-progress-percent').textContent = `${percent}%`;
+            document.getElementById('jpg-progress-bar').style.width = `${percent}%`;
+        }
+
+        function renderJpgPagesList() {
+            document.getElementById('jpg-processing-status').classList.add('hidden');
+            const container = document.getElementById('jpg-pages-list-container');
+            container.classList.remove('hidden');
+
+            const grid = document.getElementById('jpg-pages-grid');
+            grid.innerHTML = '';
+
+            compiledJpgPages.forEach(page => {
+                const card = document.createElement('div');
+                card.className = "flex flex-col bg-slate-50 p-3 rounded-xl border border-slate-200 hover:border-slate-300 transition-all items-center space-y-2 text-center";
+                card.innerHTML = `
+                    <div class="relative w-full aspect-[1/1.41] overflow-hidden rounded-lg bg-white border border-slate-200 shadow-inner">
+                        <img src="${page.dataUrl}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="w-full">
+                        <span class="text-xs font-bold text-slate-700 block">Folha ${page.num}</span>
+                        <button onclick="downloadSingleJpgPage(${page.num - 1})" class="mt-1.5 w-full bg-slate-200 hover:bg-slate-300 text-slate-800 text-[10px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition-all">
+                            <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            Baixar Folha
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function downloadSingleJpgPage(index) {
+            const page = compiledJpgPages[index];
+            if (!page) return;
+            const link = document.createElement('a');
+            link.download = page.name;
+            link.href = page.dataUrl;
+            link.click();
+        }
+
+        function downloadAllJpgPages() {
+            // downloads sequenciais com intervalo mínimo de 400ms para evitar bloqueios do navegador
+            compiledJpgPages.forEach((page, idx) => {
+                setTimeout(() => {
                     const link = document.createElement('a');
-                    link.download = `Relatorio_Testes_Oasis_${new Date().toISOString().slice(0,10)}.jpg`;
-                    link.href = imgData;
+                    link.download = page.name;
+                    link.href = page.dataUrl;
                     link.click();
-                    
-                    document.body.removeChild(tempDiv);
-                    closeModal();
-                    
-                    setTimeout(() => {
-                        showModalAlert('Concluído', 'O seu arquivo JPG unificado de alta definição foi gerado com sucesso!', 'success');
-                    }, 400);
-                }).catch(err => {
-                    console.error("Erro na geração do JPG: ", err);
-                    document.body.removeChild(tempDiv);
-                    closeModal();
-                    showModalAlert('Erro', 'Ocorreu um erro ao converter o documento para formato JPG.', 'error');
-                });
-            }, 2000);
+                }, idx * 450);
+            });
+        }
+
+        function closeJpgModal() {
+            document.getElementById('jpg-export-modal').classList.add('hidden');
         }
 
         function downloadIndividualPDF(testId) {
