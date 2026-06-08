@@ -62,10 +62,10 @@
             </div>
            
             <div class="flex flex-wrap gap-2 justify-center">
-                <!-- Botão JPG -->
+                <!-- Botão JPG Único e Consolidado -->
                 <button onclick="downloadCompleteJPG()" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    Descarregar JPG Geral
+                    Descarregar JPG Único Completo
                 </button>
             </div>
         </div>
@@ -243,13 +243,13 @@
                             </div>
                         </div>
 
-                        <!-- Produto Aplicado -->
+                        <!-- Produto de Aplicação / Descrição (Caixa de Textos) -->
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                                Produto Aplicado / Tratamento
+                                Produto Aplicado / Descrição do Tratamento
                             </label>
-                            <input type="text" id="init-product" required placeholder="Ex: Fertilizante, Defensivo, etc." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
+                            <textarea id="init-product" required rows="3" placeholder="Insira o nome do fertilizante/defensivo e descreva detalhadamente a metodologia de tratamento e dosagem..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all"></textarea>
                         </div>
 
                         <!-- Total Aplicado e Unidade -->
@@ -540,49 +540,6 @@
         </div>
     </div>
 
-    <!-- Modal de Exportação JPG Multipalhas -->
-    <div id="jpg-export-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-5">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <span class="p-1.5 bg-blue-100 text-blue-700 rounded-lg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    </span>
-                    Exportar Imagens do Relatório
-                </h3>
-                <button onclick="closeJpgModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            
-            <!-- Estado do Processamento -->
-            <div id="jpg-processing-status" class="space-y-3">
-                <div class="flex justify-between text-sm font-semibold text-slate-600">
-                    <span id="jpg-progress-text">A processar páginas...</span>
-                    <span id="jpg-progress-percent">0%</span>
-                </div>
-                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                    <div id="jpg-progress-bar" class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
-                </div>
-                <p class="text-xs text-slate-400">Convertendo cada folha do relatório em uma imagem JPG independente e legível de alta definição.</p>
-            </div>
-
-            <!-- Lista de Páginas Prontas -->
-            <div id="jpg-pages-list-container" class="hidden space-y-4">
-                <div class="flex justify-between items-center bg-blue-50/50 p-3.5 rounded-xl border border-blue-100">
-                    <span class="text-xs font-bold text-blue-900">Todas as páginas foram geradas!</span>
-                    <button onclick="downloadAllJpgPages()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5 shadow transition-all">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                        Baixar Todas as Páginas
-                    </button>
-                </div>
-                <div id="jpg-pages-grid" class="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto p-1">
-                    <!-- Cards das folhas do relatório geradas dinamicamente no JS -->
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Script do Sistema -->
     <script>
         // Bancos de dados locais (Sincronizados com o LocalStorage)
@@ -594,9 +551,6 @@
         let tempInitialPhotos = [];
         let tempWeeklyPhotos = [];
         let tempHarvestPhotos = [];
-
-        // Lista de páginas JPG compiladas temporariamente
-        let compiledJpgPages = [];
 
         // Inicialização
         window.addEventListener('DOMContentLoaded', () => {
@@ -849,6 +803,7 @@
             event.target.value = '';
         }
 
+        // Atualiza fotos do acompanhamento semanal
         function updateWeeklyPhotosDisplay() {
             const preview = document.getElementById('week-photos-preview');
             const count = document.getElementById('week-photo-count');
@@ -1285,6 +1240,7 @@
             });
         }
 
+        // Deleta acompanhamento semanal do banco
         function deleteWeeklyRecord(id) {
             showModalConfirm('Confirmar Remoção', 'Deseja realmente apagar esta nota de acompanhamento evolutivo?', () => {
                 weeklyRecords = weeklyRecords.filter(w => w.id !== id);
@@ -1322,9 +1278,7 @@
             });
         }
 
-        // =========================================================
-        // RESTAURAÇÃO: FUNÇÃO DE ATUALIZAÇÃO DE ESTATÍSTICAS
-        // =========================================================
+        // Restaura contadores de estatísticas
         function updateStatistics(initCount, seedlingsTotal, harvestCount) {
             document.getElementById('stat-init-total').textContent = initCount;
             document.getElementById('stat-mudas').textContent = seedlingsTotal.toLocaleString('pt-PT');
@@ -1517,7 +1471,7 @@
                 `;
             });
 
-            // Zonas de Qualidade (Bom Índice >= 70% em Verde Claro, Baixo Índice < 40% em Vermelho Claro)
+            // Zonas de Qualidade
             const greenZoneY = paddingTop;
             const greenZoneHeight = chartHeight * 0.3; // 100% a 70%
             
@@ -1554,7 +1508,6 @@
                     x = paddingLeft + chartWidth / 2;
                 }
 
-                // Inverte o eixo Y de forma que 100% seja em cima e 0% embaixo
                 const yRatio = (100 - p.score) / 100;
                 const y = paddingTop + (yRatio * chartHeight);
 
@@ -1564,7 +1517,7 @@
                     linePathD += ` L ${x} ${y}`;
                 }
 
-                // Cor do ponto de acordo com a nota de saúde
+                // Cor do ponto de acordo com a nota de vigor
                 let pointColor = "#10b981"; // Verde
                 if (p.score < 40) {
                     pointColor = "#f43f5e"; // Vermelho
@@ -1591,7 +1544,7 @@
             return `
                 <div style="width: 100%; margin-top: 24px;">
                     <span style="font-size: 16px; font-weight: 800; color: #1e3a8a; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px; font-family: sans-serif; display: flex; align-items: center; gap: 8px;">
-                        <svg class="w-5 h-5 text-blue-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                         Gráfico de Tendência de Vigor e Saúde da Planta (Com base nas Notas Semanais)
                     </span>
                     <svg viewBox="0 0 ${svgWidth} ${svgHeight}" style="width: 100%; height: auto; background: #ffffff; border-radius: 16px; border: 2px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
@@ -1607,7 +1560,7 @@
         }
 
         // ==========================================
-        // NOVO: GRÁFICO DE PIZZA & ANÁLISE DE RENDIMENTO
+        // GRÁFICO DE PIZZA & ANÁLISE DE RENDIMENTO
         // ==========================================
         function generateYieldAnalysisHTML(initRecord, harvest, isExport = false) {
             let seedlings = initRecord.seedlings > 0 ? initRecord.seedlings : 1; 
@@ -1619,7 +1572,6 @@
             const yieldPercent = Math.min(100, (harvested / seedlings) * 100);
             const lossPercent = Math.max(0, 100 - yieldPercent);
 
-            // Algoritmo profissional para o Parecer Agronômico
             let avaliacao = '';
             if(yieldPercent >= 85 && averageGm >= 400) {
                 avaliacao = 'um excelente incremento no volume produtivo, indicando que a aplicação melhorou significativamente a formação, compactação e o peso da cabeça';
@@ -1633,17 +1585,16 @@
 
             let vigor = averageGm >= 450 ? 'Alto Vigor Comercial (Pesado)' : (averageGm >= 300 ? 'Padrão Comercial Médio' : 'Calibre de Menor Escala');
 
-            // Parâmetros do Gráfico de Pizza Perfeito
             const size = isExport ? 260 : 120;
-            const r = isExport ? 65 : 30; // Raio
+            const r = isExport ? 65 : 30; 
             const cx = size / 2;
             const cy = size / 2;
             const strokeW = isExport ? 130 : 60;
             const circ = 2 * Math.PI * r;
             const dash = (yieldPercent * circ) / 100;
 
-            const colorYield = "#10b981"; // Sucesso (Verde)
-            const colorLoss = "#f43f5e";  // Perda (Vermelho)
+            const colorYield = "#10b981"; 
+            const colorLoss = "#f43f5e";  
 
             const pieSvg = `
                 <svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" style="border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transform: rotate(-90deg); background: ${colorLoss}; display: block;">
@@ -1664,14 +1615,11 @@
                         </div>
 
                         <div style="display: flex; gap: 50px; align-items: center; margin-bottom: 35px;">
-                            <!-- Gráfico de Pizza -->
                             <div style="flex-shrink: 0; position: relative;">
                                 ${pieSvg}
                             </div>
 
-                            <!-- Legendas e Caixas de Dados -->
                             <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
-                                <!-- Legenda do Gráfico -->
                                 <div style="display: flex; gap: 30px; margin-bottom: 10px;">
                                     <div style="display: flex; align-items: center; gap: 10px;">
                                         <div style="width: 24px; height: 24px; background-color: ${colorYield}; border-radius: 6px; border: 1.5px solid #047857;"></div>
@@ -1683,7 +1631,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Caixas de Resumo -->
                                 <div style="display: flex; gap: 20px;">
                                     <div style="flex: 1; background: #ffffff; border: 2px solid #fde68a; padding: 20px; border-radius: 16px; text-align: center;">
                                         <span style="font-size: 15px; text-transform: uppercase; color: #78350f; font-weight: 800; display: block; margin-bottom: 8px;">Média p/ Cabeça</span>
@@ -1701,7 +1648,6 @@
                             </div>
                         </div>
 
-                        <!-- Texto de Análise Profissional -->
                         <div style="background: #ffffff; border-left: 8px solid #f59e0b; padding: 26px 32px; border-radius: 0 16px 16px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                             <strong style="font-size: 20px; color: #b45309; display: block; margin-bottom: 12px; text-transform: uppercase; font-weight: 900;">Conclusão e Parecer Agronômico:</strong>
                             <p style="margin: 0; font-size: 20px; color: #78350f; line-height: 1.6; text-align: justify;">
@@ -1714,7 +1660,6 @@
                 `;
             }
 
-            // Web Version HTML (UI Padrão)
             return `
                 <div class="bg-amber-50/60 border border-amber-200 rounded-xl p-5 mt-5 shadow-sm">
                     <h5 class="text-sm font-extrabold text-amber-900 uppercase mb-4 flex items-center gap-2 border-b border-amber-100 pb-2">
@@ -1864,7 +1809,7 @@
                                 <span class="text-xs font-extrabold text-oasis-900 uppercase">Início de Aplicação do Teste (Dia ${startTestDelay})</span>
                                 <span class="text-[11px] text-slate-500 font-bold">${formatDatePT(initRecord.date)}</span>
                             </div>
-                            <p class="text-xs text-slate-700 mt-1">Tratamento active com o produto: <strong class="text-oasis-800">${initRecord.product}</strong> (${initRecord.totalApplied} ${initRecord.unit})</p>
+                            <p class="text-xs text-slate-700 mt-1 whitespace-pre-wrap">Tratamento ativo com o produto: <strong class="text-oasis-800">${initRecord.product}</strong> (${initRecord.totalApplied} ${initRecord.unit})</p>
                         </div>
                     </div>
                 `;
@@ -1921,7 +1866,6 @@
                         });
                     }
 
-                    // APLICANDO O COMPONENTE DE ANÁLISE DE RENDIMENTO NA INTERFACE
                     timelineHTML += `
                         <div class="relative">
                             <span class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-amber-500 border-4 border-white shadow-sm"></span>
@@ -1945,10 +1889,7 @@
 
                 timelineHTML += `</div>`;
 
-                // Gráfico cronológico de barras
                 let chartHTML = generateDynamicChartSVG(initRecord, relativeWeeklies, harvest);
-                
-                // NOVO: Gráfico de tendência de saúde/vigor (exigido pelo usuário)
                 let trendChartHTML = generateTrendChartSVG(initRecord, relativeWeeklies, harvest);
 
                 const nBlocoDisplay = initRecord.nBloco ? ` - Nº ${initRecord.nBloco}` : '';
@@ -1990,7 +1931,7 @@
                                         <svg class="w-4 h-4 text-oasis-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
                                         Tratamento Inicial:
                                     </span>
-                                    <span class="font-semibold text-slate-800">${initRecord.product} (${initRecord.totalApplied} ${initRecord.unit})</span>
+                                    <span class="font-semibold text-slate-800 whitespace-pre-wrap">${initRecord.product} (${initRecord.totalApplied} ${initRecord.unit})</span>
                                 </div>
                                 
                                 <div class="mt-3 space-y-1">
@@ -2006,7 +1947,7 @@
                                 ${timelineHTML}
                             </div>
 
-                            <!-- Novo Gráfico de Tendência (Posicionado após a evolução e linha do tempo) -->
+                            <!-- Gráfico de Tendência (Posicionado após a evolução e linha do tempo) -->
                             <div class="mt-6 pt-6 border-t border-slate-200">
                                 ${trendChartHTML}
                             </div>
@@ -2089,9 +2030,9 @@
             }
         }
 
-        // =========================================================
-        // GERAÇÃO DE RELATÓRIOS PARA JPG E PDF
-        // =========================================================
+        // ====================================================================
+        // GERAÇÃO DE RELATÓRIOS PARA JPG E PDF (ESTRUTURA DE PÁGINAS ESTRIBO)
+        // ====================================================================
         function generateOffscreenContentHTML(visibleInits) {
             let htmlContent = '';
 
@@ -2128,89 +2069,137 @@
                     weeklyGroups.push([]); 
                 }
 
+                const totalTestPages = 1 + weeklyGroups.length + (harvest ? 1 : 0);
+                let currentPageTracker = 1;
+
+                // ========================================================================
+                // PÁGINA 1: DADOS INICIAIS DO TESTE (Exclusiva)
+                // ========================================================================
+                htmlContent += `
+                    <div class="report-page-block" style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
+                        
+                        <!-- Cabeçalho Principal -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 6px solid #15803d; padding-bottom: 30px; margin-bottom: 45px;">
+                            <div style="display: flex; align-items: center; gap: 32px;">
+                                <img src="https://i.imgur.com/wEozr34.png" style="width: 110px; height: 110px; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
+                                <div>
+                                    <h1 style="font-size: 42px; font-weight: 850; color: #14532d; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Fazenda Oásis</h1>
+                                    <p style="font-size: 24px; color: #16a34a; margin: 8px 0 0 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Acompanhamento Geral de Testes</p>
+                                </div>
+                            </div>
+                            <div style="text-align: right; font-size: 18px; color: #64748b; line-height: 1.6;">
+                                <p style="margin: 0;"><strong>Emitido em:</strong> ${new Date().toLocaleDateString('pt-PT')} às ${new Date().toLocaleTimeString('pt-PT')}</p>
+                                <p style="margin: 8px 0 0 0; font-weight: bold; color: #1e293b; font-size: 20px;">Lote ${index + 1} &mdash; Pág. ${currentPageTracker} de ${totalTestPages}</p>
+                            </div>
+                        </div>
+
+                        <!-- Identificação do Teste -->
+                        <div style="background-color: #f0fdf4; border: 3px solid #bbf7d0; padding: 30px 40px; border-radius: 20px; margin-bottom: 45px;">
+                            <span style="font-size: 16px; font-weight: 900; color: #16a34a; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 6px;">PÁGINA 01 - DADOS DE INSTALAÇÃO DO LOTE</span>
+                            <h3 style="margin: 0; font-size: 34px; color: #14532d; font-weight: 800; text-transform: uppercase;">
+                                ${blocoDisplay}${nBlocoDisplay} &mdash; ${cultureDisplay}
+                            </h3>
+                        </div>
+
+                        <div style="display: flex; gap: 28px; width: 100%; margin-bottom: 45px;">
+                            <div style="flex: 1; background: #f8fafc; border: 2px solid #cbd5e1; padding: 26px 18px; border-radius: 16px; text-align: center; box-sizing: border-box;">
+                                <span style="font-size: 16px; text-transform: uppercase; color: #64748b; font-weight: 800; display: block; margin-bottom: 12px;">Total Canteiros</span>
+                                <strong style="font-size: 32px; color: #1e293b;">${bedsDisplay}</strong>
+                            </div>
+                            <div style="flex: 1; background: #f8fafc; border: 2px solid #cbd5e1; padding: 26px 18px; border-radius: 16px; text-align: center; box-sizing: border-box;">
+                                <span style="font-size: 16px; text-transform: uppercase; color: #64748b; font-weight: 800; display: block; margin-bottom: 12px;">Mudas Totais</span>
+                                <strong style="font-size: 32px; color: #1e293b;">${seedlingsDisplay}</strong>
+                            </div>
+                            <div style="flex: 1.2; background: #f8fafc; border: 2px solid #cbd5e1; padding: 26px 18px; border-radius: 16px; text-align: center; box-sizing: border-box; word-wrap: break-word;">
+                                <span style="font-size: 16px; text-transform: uppercase; color: #64748b; font-weight: 800; display: block; margin-bottom: 12px;">Variedade</span>
+                                <strong style="font-size: 22px; color: #1e293b; display: block; line-height: 1.4;">${varietyDisplay}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Tabela de Cronologia de Plantio -->
+                        <div style="background: #ffffff; border: 2px solid #e2e8f0; border-radius: 16px; padding: 30px; margin-bottom: 45px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                            <h4 style="margin: 0 0 20px 0; font-size: 22px; text-transform: uppercase; color: #334155; font-weight: 850;">Cronologia Inicial</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                                <div style="background: #f1f5f9; padding: 20px; border-radius: 12px; border: 1.5px solid #cbd5e1;">
+                                    <span style="font-size: 14px; text-transform: uppercase; color: #475569; font-weight: bold; display: block; margin-bottom: 6px;">Data de Plantio das Mudas</span>
+                                    <strong style="font-size: 22px; color: #0f172a;">${plantDateDisplay}</strong>
+                                </div>
+                                <div style="background: #f1f5f9; padding: 20px; border-radius: 12px; border: 1.5px solid #cbd5e1;">
+                                    <span style="font-size: 14px; text-transform: uppercase; color: #475569; font-weight: bold; display: block; margin-bottom: 6px;">Instalação do Teste Prático</span>
+                                    <strong style="font-size: 22px; color: #0f172a;">${dateDisplay} &mdash; ${weekDisplay}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Informações do Tratamento Inicial -->
+                        <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 16px; padding: 35px; margin-bottom: 45px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                            <h4 style="margin: 0 0 16px 0; font-size: 22px; text-transform: uppercase; color: #14532d; font-weight: 850; letter-spacing: 0.5px; border-bottom: 2.5px solid #bbf7d0; padding-bottom: 12px;">Metodologia do Tratamento de Plantio</h4>
+                            <div style="font-size: 20px; color: #166534; line-height: 1.8; text-align: justify; white-space: pre-wrap; margin-bottom: 25px;">${productDisplay}</div>
+                            <div style="display: flex; gap: 20px; border-top: 1.5px dashed #bbf7d0; padding-top: 18px;">
+                                <div style="background: #ffffff; padding: 12px 24px; border-radius: 8px; border: 1px solid #bbf7d0; font-weight: bold; color: #14532d; font-size: 18px;">
+                                    Dosagem: ${totalAppliedDisplay} ${unitDisplay}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fotografias de Plantio -->
+                        ${initRecord.photos && initRecord.photos.length > 0 ? `
+                            <div style="background: #f8fafc; padding: 30px; border-radius: 16px; border: 2px solid #e2e8f0; margin-bottom: 45px;">
+                                <h4 style="margin: 0 0 24px 0; font-size: 20px; text-transform: uppercase; color: #475569; font-weight: 800; letter-spacing: 0.5px; border-bottom: 2px solid #cbd5e1; padding-bottom: 12px;">Imagens Iniciais do Teste:</h4>
+                                <div style="display: flex; gap: 32px; flex-wrap: wrap;">
+                                    ${initRecord.photos.map(p => `<img src="${p}" style="width: 320px; height: 240px; object-fit: cover; border-radius: 14px; border: 3px solid #cbd5e1; box-shadow: 0 6px 12px rgba(0,0,0,0.1);">`).join('')}
+                                </div>
+                            </div>
+                        ` : `
+                            <div style="background: #f8fafc; padding: 40px; border-radius: 16px; border: 2px dashed #cbd5e1; text-align: center; color: #64748b; font-size: 18px; font-style: italic;">
+                                Nenhuma imagem do plantio inicial foi registrada.
+                            </div>
+                        `}
+
+                        <!-- Rodapé Fixo da Página -->
+                        <div style="position: absolute; bottom: 40px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid #e2e8f0; padding-top: 24px; font-size: 16px; color: #94a3b8; font-weight: bold;">
+                            <span>Fazenda Oásis &copy; Registro de Acompanhamento de Culturas</span>
+                            <span>Página 1 de ${totalTestPages}</span>
+                        </div>
+                    </div>
+                `;
+
+                // ========================================================================
+                // PÁGINAS SEGUINTES: ACOMPANHAMENTO SEMANAL (De 3 em 3) + GRÁFICO TENDÊNCIA ÚNICO
+                // ========================================================================
                 weeklyGroups.forEach((group, groupIdx) => {
+                    currentPageTracker++;
+
                     htmlContent += `
                         <div class="report-page-block" style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
                             
-                            <!-- Cabeçalho Principal (Textos Aumentados) -->
-                            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 6px solid #15803d; padding-bottom: 30px; margin-bottom: 45px;">
+                            <!-- Cabeçalho Principal -->
+                            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 6px solid #1d4ed8; padding-bottom: 30px; margin-bottom: 45px;">
                                 <div style="display: flex; align-items: center; gap: 32px;">
                                     <img src="https://i.imgur.com/wEozr34.png" style="width: 110px; height: 110px; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
                                     <div>
-                                        <h1 style="font-size: 42px; font-weight: 850; color: #14532d; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Fazenda Oásis</h1>
-                                        <p style="font-size: 24px; color: #16a34a; margin: 8px 0 0 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Acompanhamento Geral de Testes</p>
+                                        <h1 style="font-size: 42px; font-weight: 850; color: #1e3a8a; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Fazenda Oásis</h1>
+                                        <p style="font-size: 24px; color: #2563eb; margin: 8px 0 0 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Acompanhamento Geral de Testes</p>
                                     </div>
                                 </div>
                                 <div style="text-align: right; font-size: 18px; color: #64748b; line-height: 1.6;">
                                     <p style="margin: 0;"><strong>Emitido em:</strong> ${new Date().toLocaleDateString('pt-PT')} às ${new Date().toLocaleTimeString('pt-PT')}</p>
-                                    <p style="margin: 8px 0 0 0; font-weight: bold; color: #1e293b; font-size: 20px;">Teste: ${index + 1} de ${sortedVisible.length} (Pág. ${groupIdx + 1} de ${weeklyGroups.length})</p>
+                                    <p style="margin: 8px 0 0 0; font-weight: bold; color: #1e293b; font-size: 20px;">Lote ${index + 1} &mdash; Pág. ${currentPageTracker} de ${totalTestPages}</p>
                                 </div>
                             </div>
 
-                            <!-- Dados do Bloco / Identificação do Teste -->
-                            <div style="display: flex; justify-content: space-between; align-items: center; background-color: #f0fdf4; border: 3px solid #bbf7d0; padding: 30px 40px; border-radius: 20px; margin-bottom: 40px;">
-                                <h3 style="margin: 0; font-size: 32px; color: #14532d; font-weight: 800; text-transform: uppercase;">
-                                    ${blocoDisplay}${nBlocoDisplay} &mdash; ${cultureDisplay}
-                               </h3>
-                                <div style="display: flex; align-items: center; gap: 18px;">
-                                    <span style="font-size: 18px; background-color: #dcfce7; color: #14532d; padding: 12px 24px; border-radius: 12px; font-weight: bold; border: 2px solid #bbf7d0;">
-                                        Plantio: ${plantDateDisplay}
-                                    </span>
-                                    <span style="font-size: 18px; background-color: #dcfce7; color: #14532d; padding: 12px 24px; border-radius: 12px; font-weight: bold; border: 2px solid #bbf7d0;">
-                                        Início Teste: ${dateDisplay} (${weekDisplay})
-                                    </span>
-                                    ${harvest && groupIdx === weeklyGroups.length - 1 ? `
-                                        <span style="font-size: 18px; background-color: #fef3c7; color: #92400e; padding: 12px 24px; border-radius: 12px; font-weight: bold; border: 2px solid #fde68a;">
-                                            😸 Finalizado 🎉
-                                        </span>
-                                    ` : ''}
-                                </div>
-                            </div>
-                    `;
-
-                    if (groupIdx === 0) {
-                        const svgGraphHTML = generateDynamicChartSVG(initRecord, relativeWeeklies, harvest);
-
-                        htmlContent += `
-                            <div style="display: flex; gap: 28px; width: 100%; margin-bottom: 40px;">
-                                <div style="flex: 1; background: #f8fafc; border: 2px solid #cbd5e1; padding: 26px 18px; border-radius: 16px; text-align: center; box-sizing: border-box;">
-                                    <span style="font-size: 16px; text-transform: uppercase; color: #64748b; font-weight: 800; display: block; margin-bottom: 12px;">Total Canteiros</span>
-                                    <strong style="font-size: 32px; color: #1e293b;">${bedsDisplay}</strong>
-                                </div>
-                                <div style="flex: 1; background: #f8fafc; border: 2px solid #cbd5e1; padding: 26px 18px; border-radius: 16px; text-align: center; box-sizing: border-box;">
-                                    <span style="font-size: 16px; text-transform: uppercase; color: #64748b; font-weight: 800; display: block; margin-bottom: 12px;">Mudas Totais</span>
-                                    <strong style="font-size: 32px; color: #1e293b;">${seedlingsDisplay}</strong>
-                                </div>
-                                <div style="flex: 1.2; background: #f8fafc; border: 2px solid #cbd5e1; padding: 26px 18px; border-radius: 16px; text-align: center; box-sizing: border-box; word-wrap: break-word;">
-                                    <span style="font-size: 16px; text-transform: uppercase; color: #64748b; font-weight: 800; display: block; margin-bottom: 12px;">Variedade</span>
-                                    <strong style="font-size: 20px; color: #1e293b; display: block; line-height: 1.4;">${varietyDisplay}</strong>
-                                </div>
-                                <div style="flex: 1.4; background: #f8fafc; border: 2px solid #cbd5e1; padding: 26px 18px; border-radius: 16px; text-align: center; box-sizing: border-box; word-wrap: break-word;">
-                                    <span style="font-size: 16px; text-transform: uppercase; color: #64748b; font-weight: 800; display: block; margin-bottom: 12px;">Tratamento Plantio</span>
-                                    <strong style="font-size: 18px; color: #15803d; display: block; line-height: 1.4;">${productDisplay} (${totalAppliedDisplay}${unitDisplay})</strong>
-                                </div>
+                            <!-- Identificação do Bloco -->
+                            <div style="background-color: #eff6ff; border: 3px solid #bfdbfe; padding: 25px 40px; border-radius: 20px; margin-bottom: 40px;">
+                                <span style="font-size: 15px; font-weight: 900; color: #1d4ed8; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 6px;">PÁGINA 0${currentPageTracker} - EVOLUÇÃO SEMANAL DO LOTE</span>
+                                <h3 style="margin: 0; font-size: 32px; color: #1e3a8a; font-weight: 800; text-transform: uppercase;">
+                                    ${blocoDisplay}${nBlocoDisplay} &mdash; ${cultureDisplay} (${varietyDisplay})
+                                </h3>
                             </div>
 
-                            <div style="margin-bottom: 45px;">
-                                ${svgGraphHTML}
-                            </div>
-
-                            ${initRecord.photos && initRecord.photos.length > 0 ? `
-                                <div style="margin-bottom: 45px; background: #f8fafc; padding: 30px; border-radius: 16px; border: 2px solid #e2e8f0;">
-                                    <h4 style="margin: 0 0 24px 0; font-size: 20px; text-transform: uppercase; color: #475569; font-weight: 800; letter-spacing: 0.5px; border-bottom: 2px solid #cbd5e1; padding-bottom: 12px;">Imagens Iniciais do Teste:</h4>
-                                    <div style="display: flex; gap: 32px; flex-wrap: wrap;">
-                                        ${initRecord.photos.map(p => `<img src="${p}" style="width: 320px; height: 240px; object-fit: cover; border-radius: 14px; border: 3px solid #cbd5e1; box-shadow: 0 6px 12px rgba(0,0,0,0.1);">`).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
-                        `;
-                    }
-
-                    htmlContent += `
-                        <div style="margin-top: 30px; margin-bottom: 40px;">
-                            <h4 style="margin: 0 0 24px 0; font-size: 22px; text-transform: uppercase; color: #475569; font-weight: 800; border-bottom: 3px solid #cbd5e1; padding-bottom: 14px; letter-spacing: 0.5px;">
-                                Linha do Tempo de Evoluções Semanais ${weeklyGroups.length > 1 ? `(Parte ${groupIdx + 1} de ${weeklyGroups.length})` : ''}:
-                            </h4>
+                            <div style="margin-top: 30px; margin-bottom: 40px;">
+                                <h4 style="margin: 0 0 24px 0; font-size: 22px; text-transform: uppercase; color: #475569; font-weight: 800; border-bottom: 3px solid #cbd5e1; padding-bottom: 14px; letter-spacing: 0.5px;">
+                                    Histórico de Evoluções Semanais Lançadas (Parte ${groupIdx + 1} de ${weeklyGroups.length}):
+                                </h4>
                     `;
 
                     if (group.length > 0) {
@@ -2231,71 +2220,112 @@
                             }
 
                             htmlContent += `
-                                <div style="margin-bottom: 36px; background: #f8fafc; border-left: 8px solid #2563eb; padding: 32px; border-radius: 0 16px 16px 0; border-top: 2px solid #e2e8f0; border-right: 2px solid #e2e8f0; border-bottom: 2px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); box-sizing: border-box;">
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 18px; align-items: center;">
+                                <div style="margin-bottom: 30px; background: #f8fafc; border-left: 8px solid #2563eb; padding: 25px 32px; border-radius: 0 16px 16px 0; border-top: 2.5px solid #e2e8f0; border-right: 2.5px solid #e2e8f0; border-bottom: 2.5px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); box-sizing: border-box;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 14px; align-items: center;">
                                         <div style="display: flex; align-items: center; gap: 14px;">
-                                            <span style="font-size: 20px; font-weight: 800; color: #1d4ed8; background-color: #eff6ff; padding: 8px 16px; border-radius: 10px; border: 2px solid #bfdbfe;">Evolução #${absoluteIndex} (Dia ${daysElapsed})</span>
-                                            <span style="font-size: 16px; font-weight: bold; background-color: ${scoreColor}15; color: ${scoreColor}; border: 1.5px solid ${scoreColor}50; padding: 6px 12px; border-radius: 8px;">Saúde: ${currentScore}% (${scoreText})</span>
+                                            <span style="font-size: 18px; font-weight: 800; color: #1d4ed8; background-color: #eff6ff; padding: 6px 12px; border-radius: 10px; border: 2px solid #bfdbfe;">Evolução #${absoluteIndex} (Dia ${daysElapsed})</span>
+                                            <span style="font-size: 15px; font-weight: bold; background-color: ${scoreColor}15; color: ${scoreColor}; border: 1.5px solid ${scoreColor}50; padding: 4px 8px; border-radius: 8px;">Saúde: ${currentScore}% (${scoreText})</span>
                                         </div>
-                                        <span style="font-size: 18px; color: #64748b; font-weight: bold;">Data: ${mDate}</span>
+                                        <span style="font-size: 16px; color: #64748b; font-weight: bold;">Data: ${mDate}</span>
                                     </div>
-                                    <p style="margin: 0 0 24px 0; font-size: 20px; color: #334155; font-style: italic; line-height: 1.8; white-space: pre-wrap;">"${w.notes || ''}"</p>
+                                    <p style="margin: 0 0 20px 0; font-size: 18px; color: #334155; font-style: italic; line-height: 1.8; white-space: pre-wrap;">"${w.notes || ''}"</p>
                                     
                                     ${w.photos && w.photos.length > 0 ? `
-                                        <div style="display: flex; gap: 28px; flex-wrap: wrap; margin-top: 24px; padding-top: 20px; border-top: 2px dashed #cbd5e1;">
-                                            ${w.photos.map(wp => `<img src="${wp}" style="width: 280px; height: 210px; object-fit: cover; border-radius: 14px; border: 3px solid #cbd5e1; box-shadow: 0 4px 8px rgba(0,0,0,0.08);">`).join('')}
+                                        <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-top: 18px; padding-top: 15px; border-top: 2px dashed #cbd5e1;">
+                                            ${w.photos.map(wp => `<img src="${wp}" style="width: 250px; height: 180px; object-fit: cover; border-radius: 14px; border: 3px solid #cbd5e1; box-shadow: 0 4px 8px rgba(0,0,0,0.08);">`).join('')}
                                         </div>
                                     ` : ''}
                                 </div>
                             `;
                         });
                     } else {
-                        htmlContent += `<p style="font-size: 20px; color: #94a3b8; font-style: italic; margin: 0;">Nenhum acompanhamento semanal lançado até ao momento.</p>`;
+                        htmlContent += `<p style="font-size: 20px; color: #94a3b8; font-style: italic; margin: 0;">Nenhum acompanhamento semanal lançado até ao momento para este lote.</p>`;
                     }
 
                     htmlContent += `</div>`;
 
-                    // No final de cada lote de acompanhamento (última página do teste no PDF/JPG)
+                    // NOVO: Renderiza o gráfico de tendência APENAS UMA VEZ na última página de semanais
                     if (groupIdx === weeklyGroups.length - 1) {
                         const trendSVG = generateTrendChartSVG(initRecord, relativeWeeklies, harvest);
                         htmlContent += `
-                            <div style="margin-top: 20px; margin-bottom: 30px; page-break-inside: avoid;">
+                            <div style="margin-top: 25px; margin-bottom: 30px; page-break-inside: avoid;">
                                 ${trendSVG}
                             </div>
                         `;
                     }
 
-                    if (groupIdx === weeklyGroups.length - 1 && harvest) {
-                        // INJEÇÃO DA ANÁLISE DE RENDIMENTO NO PDF E JPG COM GRÁFICO DE PIZZA
-                        htmlContent += generateYieldAnalysisHTML(initRecord, harvest, true);
+                    htmlContent += `
+                            <!-- Rodapé Fixo da Página -->
+                            <div style="position: absolute; bottom: 40px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid #e2e8f0; padding-top: 24px; font-size: 16px; color: #94a3b8; font-weight: bold;">
+                                <span>Fazenda Oásis &copy; Registro de Acompanhamento de Culturas</span>
+                                <span>Página ${currentPageTracker} de ${totalTestPages}</span>
+                            </div>
+                        </div>
+                    `;
+                });
 
-                        if(harvest.photos && harvest.photos.length > 0) {
-                            htmlContent += `
+                // ========================================================================
+                // PÁGINA FINAL: DADOS DA COLHEITA E RENDIMENTO (Exclusiva)
+                // ========================================================================
+                if (harvest) {
+                    currentPageTracker++;
+
+                    htmlContent += `
+                        <div class="report-page-block" style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
+                            
+                            <!-- Cabeçalho Principal -->
+                            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 6px solid #d97706; padding-bottom: 30px; margin-bottom: 45px;">
+                                <div style="display: flex; align-items: center; gap: 32px;">
+                                    <img src="https://i.imgur.com/wEozr34.png" style="width: 110px; height: 110px; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
+                                    <div>
+                                        <h1 style="font-size: 42px; font-weight: 850; color: #78350f; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Fazenda Oásis</h1>
+                                        <p style="font-size: 24px; color: #d97706; margin: 8px 0 0 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Acompanhamento Geral de Testes</p>
+                                    </div>
+                                </div>
+                                <div style="text-align: right; font-size: 18px; color: #64748b; line-height: 1.6;">
+                                    <p style="margin: 0;"><strong>Emitido em:</strong> ${new Date().toLocaleDateString('pt-PT')} às ${new Date().toLocaleTimeString('pt-PT')}</p>
+                                    <p style="margin: 8px 0 0 0; font-weight: bold; color: #1e293b; font-size: 20px;">Lote ${index + 1} &mdash; Pág. ${currentPageTracker} de ${totalTestPages}</p>
+                                </div>
+                            </div>
+
+                            <!-- Identificação do Bloco -->
+                            <div style="background-color: #fffbeb; border: 3px solid #fde68a; padding: 25px 40px; border-radius: 20px; margin-bottom: 40px;">
+                                <span style="font-size: 15px; font-weight: 900; color: #d97706; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 6px;">PÁGINA FINAL - ENCERRAMENTO E DADOS DE RENDIMENTO DA COLHEITA</span>
+                                <h3 style="margin: 0; font-size: 32px; color: #78350f; font-weight: 800; text-transform: uppercase;">
+                                    ${blocoDisplay}${nBlocoDisplay} &mdash; ${cultureDisplay} (${varietyDisplay})
+                                </h3>
+                            </div>
+
+                            <!-- Injeção dos dados de rendimento e parecer agronômico -->
+                            <div style="margin-top: 10px; margin-bottom: 40px;">
+                                ${generateYieldAnalysisHTML(initRecord, harvest, true)}
+                            </div>
+
+                            <!-- Fotos da colheita -->
+                            ${harvest.photos && harvest.photos.length > 0 ? `
                                 <div style="margin-top: 35px; background: #ffffff; padding: 25px 35px; border-radius: 18px; border: 2px solid #fde68a; page-break-inside: avoid;">
                                     <h4 style="margin: 0 0 16px 0; font-size: 22px; text-transform: uppercase; color: #92400e; font-weight: 800;">📷 Imagens Comprobatórias da Colheita:</h4>
                                     <div style="display: flex; gap: 28px; flex-wrap: wrap;">
                                         ${harvest.photos.map(hp => `<img src="${hp}" style="width: 320px; height: 240px; object-fit: cover; border-radius: 14px; border: 3px solid #fde68a; box-shadow: 0 5px 10px rgba(0,0,0,0.08);">`).join('')}
                                     </div>
                                 </div>
-                            `;
-                        }
-                    }
+                            ` : ''}
 
-                    htmlContent += `
+                            <!-- Rodapé Fixo da Página -->
                             <div style="position: absolute; bottom: 40px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid #e2e8f0; padding-top: 24px; font-size: 16px; color: #94a3b8; font-weight: bold;">
-                                <span>Fazenda Oásis &copy; Registo de Acompanhamento de Culturas</span>
-                                <span>Página ${groupIdx + 1} de ${weeklyGroups.length}</span>
+                                <span>Fazenda Oásis &copy; Registro de Acompanhamento de Culturas</span>
+                                <span>Página ${currentPageTracker} de ${totalTestPages}</span>
                             </div>
                         </div>
                     `;
-                });
+                }
             });
 
             return htmlContent;
         }
 
         // =========================================================
-        // NOVO: SISTEMA DE EXPORTAÇÃO JPG MUTI-PÁGINAS (ESTILO PDF)
+        // NOVO: SISTEMA DE EXPORTAÇÃO COMPLETO EM UM SÓ JPG
         // =========================================================
         function downloadCompleteJPG() {
             const visibleInits = initialRecords.filter(r => r.isVisible !== false);
@@ -2304,16 +2334,10 @@
                 return;
             }
 
-            // Exibir o painel modal do processador de imagens
-            const modal = document.getElementById('jpg-export-modal');
-            modal.classList.remove('hidden');
-            document.getElementById('jpg-processing-status').classList.remove('hidden');
-            document.getElementById('jpg-pages-list-container').classList.add('hidden');
-            updateJpgProgress('Iniciando compilação do relatório...', 0);
+            // Exibir modal amigável de processamento
+            showModalAlert('Gerando Ficheiro', 'A processar e compilar todo o relatório em um único ficheiro contínuo de imagem JPEG em alta definição. Por favor, aguarde...', 'info');
 
-            compiledJpgPages = [];
-
-            // Criar container offscreen temporário para renderizar as páginas separadamente
+            // Criar container offscreen temporário para fundir todas as páginas sequencialmente
             const tempDiv = document.createElement('div');
             tempDiv.style.position = 'absolute';
             tempDiv.style.left = '0';
@@ -2323,112 +2347,55 @@
             tempDiv.style.background = '#ffffff';
             document.body.appendChild(tempDiv);
 
+            // Gera todo o conteúdo estruturado
             tempDiv.innerHTML = generateOffscreenContentHTML(visibleInits);
 
-            // Permite um pequeno tempo para renderizar os gráficos SVG na DOM
+            // Ajustar margens dos blocos para uma fusão sem emendas visuais
+            const pageBlocks = tempDiv.querySelectorAll('.report-page-block');
+            pageBlocks.forEach(block => {
+                block.style.marginBottom = '0px'; 
+                block.style.border = 'none'; 
+                block.style.boxShadow = 'none';
+            });
+
+            // Permitir tempo para renderizar os gráficos e vetores dinamicamente na DOM
             setTimeout(async () => {
-                const pageBlocks = tempDiv.querySelectorAll('.report-page-block');
-                const totalPages = pageBlocks.length;
+                try {
+                    const canvas = await html2canvas(tempDiv, {
+                        useCORS: true,
+                        scale: 1.5, // Crisp HD rendering
+                        backgroundColor: '#ffffff',
+                        logging: false,
+                        allowTaint: true
+                    });
+                    
+                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                    
+                    // Dispara o download automático do arquivo consolidado no browser
+                    const link = document.createElement('a');
+                    link.download = `Relatorio_Oasis_Completo.jpg`;
+                    link.href = imgData;
+                    link.click();
 
-                if (totalPages === 0) {
+                    // Limpeza
                     document.body.removeChild(tempDiv);
-                    closeJpgModal();
-                    showModalAlert('Erro', 'Ocorreu um erro ao processar as folhas do relatório.', 'error');
-                    return;
-                }
-
-                // Renderiza cada folha separadamente de forma sequencial assíncrona
-                for (let i = 0; i < totalPages; i++) {
-                    const pageBlock = pageBlocks[i];
-                    const pageNum = i + 1;
-                    updateJpgProgress(`Convertendo Folha ${pageNum} de ${totalPages}...`, Math.round((i / totalPages) * 100));
-
-                    try {
-                        const canvas = await html2canvas(pageBlock, {
-                            useCORS: true,
-                            scale: 1.5, // Resolução de alta definição
-                            backgroundColor: '#ffffff',
-                            logging: false,
-                            allowTaint: true
-                        });
-                        const imgData = canvas.toDataURL('image/jpeg', 0.93);
-                        compiledJpgPages.push({
-                            name: `Relatorio_Oasis_Folha_${String(pageNum).padStart(2, '0')}.jpg`,
-                            dataUrl: imgData,
-                            num: pageNum
-                        });
-                    } catch (err) {
-                        console.error(`Erro ao converter a folha ${pageNum}:`, err);
+                    closeModal();
+                    
+                    setTimeout(() => {
+                        showModalAlert('Sucesso', 'Relatório completo descarregado com sucesso em um único ficheiro JPG!', 'success');
+                    }, 400);
+                } catch (err) {
+                    console.error("Erro na geração do JPG único consolidado:", err);
+                    if (tempDiv.parentNode) {
+                        document.body.removeChild(tempDiv);
                     }
+                    closeModal();
+                    showModalAlert('Erro', 'Ocorreu um erro ao converter o relatório em imagem única.', 'error');
                 }
-
-                // Concluído!
-                updateJpgProgress('Páginas processadas com sucesso!', 100);
-                document.body.removeChild(tempDiv);
-
-                // Mostra a lista final de mini-visualizações com as ações de download
-                renderJpgPagesList();
             }, 1500);
         }
 
-        function updateJpgProgress(text, percent) {
-            document.getElementById('jpg-progress-text').textContent = text;
-            document.getElementById('jpg-progress-percent').textContent = `${percent}%`;
-            document.getElementById('jpg-progress-bar').style.width = `${percent}%`;
-        }
-
-        function renderJpgPagesList() {
-            document.getElementById('jpg-processing-status').classList.add('hidden');
-            const container = document.getElementById('jpg-pages-list-container');
-            container.classList.remove('hidden');
-
-            const grid = document.getElementById('jpg-pages-grid');
-            grid.innerHTML = '';
-
-            compiledJpgPages.forEach(page => {
-                const card = document.createElement('div');
-                card.className = "flex flex-col bg-slate-50 p-3 rounded-xl border border-slate-200 hover:border-slate-300 transition-all items-center space-y-2 text-center";
-                card.innerHTML = `
-                    <div class="relative w-full aspect-[1/1.41] overflow-hidden rounded-lg bg-white border border-slate-200 shadow-inner">
-                        <img src="${page.dataUrl}" class="w-full h-full object-cover">
-                    </div>
-                    <div class="w-full">
-                        <span class="text-xs font-bold text-slate-700 block">Folha ${page.num}</span>
-                        <button onclick="downloadSingleJpgPage(${page.num - 1})" class="mt-1.5 w-full bg-slate-200 hover:bg-slate-300 text-slate-800 text-[10px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition-all">
-                            <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                            Baixar Folha
-                        </button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function downloadSingleJpgPage(index) {
-            const page = compiledJpgPages[index];
-            if (!page) return;
-            const link = document.createElement('a');
-            link.download = page.name;
-            link.href = page.dataUrl;
-            link.click();
-        }
-
-        function downloadAllJpgPages() {
-            // downloads sequenciais com intervalo mínimo de 400ms para evitar bloqueios do navegador
-            compiledJpgPages.forEach((page, idx) => {
-                setTimeout(() => {
-                    const link = document.createElement('a');
-                    link.download = page.name;
-                    link.href = page.dataUrl;
-                    link.click();
-                }, idx * 450);
-            });
-        }
-
-        function closeJpgModal() {
-            document.getElementById('jpg-export-modal').classList.add('hidden');
-        }
-
+        // Exportação em PDF individual
         function downloadIndividualPDF(testId) {
             const testRecord = initialRecords.find(r => r.id === testId);
             if (!testRecord) {
