@@ -6,8 +6,8 @@
     <title>Registro de Acompanhamento de Teste - Fazenda Oásis</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- html2pdf.js para exportação em PDF individual -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- jsPDF para exportacao em PDF individual -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- html2canvas para exportação em JPG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
@@ -395,7 +395,7 @@
                         <!-- Selecionar Teste Inicial Fixado -->
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                                 Vincular ao Teste Inicial
                             </label>
                             <select id="harvest-test-parent" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 font-semibold text-slate-700">
@@ -467,33 +467,24 @@
             <!-- Tabela & Histórico Geral (Lado Direito - 60%) -->
             <div class="lg:col-span-7 space-y-6">
                
-                <!-- Card de Resumos / Estatísticas -->
+                <!-- Card de Resumos / Estatísticas - AGORA CENTRALIZADOS -->
                 <div class="grid grid-cols-3 gap-4">
-                    <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Testes Iniciais</span>
-                        <div class="flex items-center justify-between">
-                            <span id="stat-init-total" class="text-2xl font-extrabold text-slate-800">0</span>
-                            <span class="p-1 bg-slate-100 text-slate-600 rounded">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                            </span>
+                    <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Testes Iniciais</span>
+                        <div class="flex items-center gap-2">
+                            <span id="stat-init-total" class="text-3xl font-extrabold text-slate-800">0</span>
                         </div>
                     </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-bold text-oasis-700 block mb-1">Mudas Totais</span>
-                        <div class="flex items-center justify-between">
-                            <span id="stat-mudas" class="text-2xl font-extrabold text-oasis-700">0</span>
-                            <span class="p-1 bg-oasis-50 text-oasis-700 rounded">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                            </span>
+                    <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center">
+                        <span class="text-xs font-bold text-oasis-700 uppercase tracking-wider block mb-2">Mudas Totais</span>
+                        <div class="flex items-center gap-2">
+                            <span id="stat-mudas" class="text-3xl font-extrabold text-oasis-700">0</span>
                         </div>
                     </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Testes Colhidos</span>
-                        <div class="flex items-center justify-between">
-                            <span id="stat-harvest-total" class="text-2xl font-extrabold text-amber-700">0</span>
-                            <span class="p-1 bg-amber-50 text-amber-700 rounded">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                            </span>
+                    <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Testes Colhidos</span>
+                        <div class="flex items-center gap-2">
+                            <span id="stat-harvest-total" class="text-3xl font-extrabold text-amber-700">0</span>
                         </div>
                     </div>
                 </div>
@@ -649,6 +640,7 @@
             document.getElementById('init-time').value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
         }
 
+        // Alterna entre selects predefinidos e input customizado
         function toggleCustom(fieldId) {
             const select = document.getElementById(`${fieldId}-select`);
             const customInput = document.getElementById(`${fieldId}-custom`);
@@ -803,7 +795,6 @@
             event.target.value = '';
         }
 
-        // Atualiza fotos do acompanhamento semanal
         function updateWeeklyPhotosDisplay() {
             const preview = document.getElementById('week-photos-preview');
             const count = document.getElementById('week-photo-count');
@@ -829,9 +820,6 @@
             updateWeeklyPhotosDisplay();
         }
 
-        // ==========================================
-        // ALGORITMO INTELIGENTE DE ANÁLISE DE CAMPO (SENTIMENTO AGRÍCOLA)
-        // ==========================================
         function calculateFieldSentimentIndex(notes) {
             if (!notes) return 70; // Padrão neutro saudável
             
@@ -868,7 +856,6 @@
             });
 
             // Equação agronômica: Começa em 70% (neutro comercial)
-            // Cada ponto positivo acrescenta +15%. Negativos subtraem -20%
             let score = 70 + (posCount * 15) - (negCount * 20);
             return Math.max(0, Math.min(100, score));
         }
@@ -1407,7 +1394,7 @@
         }
 
         // ========================================================
-        // NOVO: GERAÇÃO DE GRÁFICO SVG DE LINHAS DE TENDÊNCIA DE SAÚDE
+        // GERAÇÃO DE GRÁFICO SVG DE LINHAS DE TENDÊNCIA DE SAÚDE (CURVAS SUAVES & ONDAS)
         // ========================================================
         function generateTrendChartSVG(initRecord, relativeWeeklies, harvest) {
             const refDate = initRecord.plantDate || initRecord.date;
@@ -1453,7 +1440,7 @@
             const svgHeight = 360;
             const paddingLeft = 110;
             const paddingRight = 60;
-            const paddingTop = 70;
+            const paddingTop = 80; // Espaço vertical aumentado para caber as pílulas elevadas
             const paddingBottom = 60;
 
             const chartWidth = svgWidth - paddingLeft - paddingRight;
@@ -1466,12 +1453,12 @@
                 const ratio = (100 - v) / 100;
                 const gridY = paddingTop + (chartHeight * ratio);
                 gridHTML += `
-                    <line x1="${paddingLeft - 10}" y1="${gridY}" x2="${svgWidth - paddingRight}" y2="${gridY}" stroke="#e2e8f0" stroke-width="1.5" />
-                    <text x="${paddingLeft - 20}" y="${gridY + 5}" fill="#64748b" font-size="14" font-weight="bold" text-anchor="end" font-family="sans-serif">${v}%</text>
+                    <line x1="${paddingLeft - 10}" y1="${gridY}" x2="${svgWidth - paddingRight}" y2="${gridY}" stroke="#f1f5f9" stroke-width="1.5" />
+                    <text x="${paddingLeft - 20}" y="${gridY}" fill="#94a3b8" font-size="12" font-weight="800" text-anchor="end" dominant-baseline="middle" font-family="sans-serif">${v}%</text>
                 `;
             });
 
-            // Zonas de Qualidade
+            // Zonas de Qualidade (Gradientes sutis e profissionais para preenchimento de fundo)
             const greenZoneY = paddingTop;
             const greenZoneHeight = chartHeight * 0.3; // 100% a 70%
             
@@ -1483,62 +1470,94 @@
 
             let zonesHTML = `
                 <!-- Zona Alta: Bom Índice -->
-                <rect x="${paddingLeft}" y="${greenZoneY}" width="${chartWidth}" height="${greenZoneHeight}" fill="#f0fdf4" opacity="0.8" />
-                <text x="${svgWidth - paddingRight - 10}" y="${greenZoneY + 25}" fill="#166534" font-size="12" font-weight="bold" text-anchor="end" font-family="sans-serif" opacity="0.65">BOM ÍNDICE (70-100%)</text>
+                <rect x="${paddingLeft}" y="${greenZoneY}" width="${chartWidth}" height="${greenZoneHeight}" fill="url(#greenZoneGrad)" opacity="0.3" />
+                <text x="${svgWidth - paddingRight - 15}" y="${greenZoneY + 22}" fill="#15803d" font-size="11" font-weight="900" text-anchor="end" font-family="sans-serif" letter-spacing="1px" opacity="0.65">BOM ÍNDICE (70-100%)</text>
                 
                 <!-- Zona Média: Regular -->
-                <rect x="${paddingLeft}" y="${warningZoneY}" width="${chartWidth}" height="${warningZoneHeight}" fill="#fffbeb" opacity="0.8" />
+                <rect x="${paddingLeft}" y="${warningZoneY}" width="${chartWidth}" height="${warningZoneHeight}" fill="url(#warningZoneGrad)" opacity="0.25" />
                 
                 <!-- Zona Baixa: Baixo Índice -->
-                <rect x="${paddingLeft}" y="${redZoneY}" width="${chartWidth}" height="${redZoneHeight}" fill="#fef2f2" opacity="0.8" />
-                <text x="${svgWidth - paddingRight - 10}" y="${svgHeight - paddingBottom - 15}" fill="#991b1b" font-size="12" font-weight="bold" text-anchor="end" font-family="sans-serif" opacity="0.65">BAIXO ÍNDICE (0-40%)</text>
+                <rect x="${paddingLeft}" y="${redZoneY}" width="${chartWidth}" height="${redZoneHeight}" fill="url(#redZoneGrad)" opacity="0.3" />
+                <text x="${svgWidth - paddingRight - 15}" y="${svgHeight - paddingBottom - 18}" fill="#be123c" font-size="11" font-weight="900" text-anchor="end" font-family="sans-serif" letter-spacing="1px" opacity="0.65">BAIXO ÍNDICE (0-40%)</text>
             `;
 
-            // Construção da linha de tendência
+            // Transformar os pontos lineares em uma bela curva Bézier de onda suave
+            let curveD = '';
+            let areaD = '';
             let linePointsHTML = '';
-            let linePathD = '';
             let trendLabelsHTML = '';
             const numPoints = trendPoints.length;
 
-            trendPoints.forEach((p, idx) => {
+            const coords = trendPoints.map((p, idx) => {
                 let x = paddingLeft;
                 if (numPoints > 1) {
                     x = paddingLeft + (idx / (numPoints - 1)) * chartWidth;
                 } else {
                     x = paddingLeft + chartWidth / 2;
                 }
-
                 const yRatio = (100 - p.score) / 100;
                 const y = paddingTop + (yRatio * chartHeight);
+                return { x, y, score: p.score, label: p.label, date: p.date };
+            });
 
-                if (idx === 0) {
-                    linePathD = `M ${x} ${y}`;
-                } else {
-                    linePathD += ` L ${x} ${y}`;
+            if (coords.length > 0) {
+                // Cálculo das curvas Bezier suavizadas (como ondas de dashboard SaaS)
+                curveD = `M ${coords[0].x} ${coords[0].y}`;
+                for (let i = 0; i < coords.length - 1; i++) {
+                    const p0 = coords[i];
+                    const p1 = coords[i + 1];
+                    const cpX1 = p0.x + (p1.x - p0.x) / 3;
+                    const cpY1 = p0.y;
+                    const cpX2 = p0.x + 2 * (p1.x - p0.x) / 3;
+                    const cpY2 = p1.y;
+                    curveD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
                 }
+                // Caminho fechado para o preenchimento sob a curva (Gradiente de Onda)
+                areaD = `${curveD} L ${coords[coords.length - 1].x} ${svgHeight - paddingBottom} L ${coords[0].x} ${svgHeight - paddingBottom} Z`;
+            }
 
-                // Cor do ponto de acordo com a nota de vigor
+            coords.forEach((p) => {
                 let pointColor = "#10b981"; // Verde
+                let pointFill = "#e6f4ea";
                 if (p.score < 40) {
                     pointColor = "#f43f5e"; // Vermelho
+                    pointFill = "#fce8e6";
                 } else if (p.score < 70) {
                     pointColor = "#f59e0b"; // Amarelo
+                    pointFill = "#fef3d6";
                 }
 
+                // BALÃO DE PERCENTAGEM DE VIGOR: Subido e perfeitamente centralizado ao meio usando dominant-baseline="central"
                 linePointsHTML += `
-                    <circle cx="${x}" cy="${y}" r="8" fill="#ffffff" stroke="${pointColor}" stroke-width="5" />
-                    <circle cx="${x}" cy="${y}" r="3" fill="${pointColor}" />
-                    <text x="${x}" y="${y - 16}" fill="#0f172a" font-size="15" font-weight="800" text-anchor="middle" font-family="sans-serif">${p.score}%</text>
+                    <!-- Guia vertical pontilhada sutil -->
+                    <line x1="${p.x}" y1="${p.y}" x2="${p.x}" y2="${p.y - 12}" stroke="${pointColor}" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.7" />
+                    
+                    <!-- Ponto de dados moderno -->
+                    <circle cx="${p.x}" cy="${p.y}" r="8" fill="#ffffff" stroke="${pointColor}" stroke-width="4.5" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));" />
+                    <circle cx="${p.x}" cy="${p.y}" r="3.5" fill="${pointColor}" />
+                    
+                    <!-- Balão de Vigor (%) Subido e Centrado ao Meio no PDF/JPG e Web -->
+                    <g transform="translate(${p.x - 30}, ${p.y - 42})" style="filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.08));">
+                        <rect x="0" y="0" width="60" height="24" rx="12" fill="${pointFill}" stroke="${pointColor}" stroke-width="1.5" />
+                        <text x="30" y="12" fill="#1e293b" font-size="12" font-weight="800" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">${p.score}%</text>
+                    </g>
                 `;
 
                 trendLabelsHTML += `
-                    <text x="${x}" y="${svgHeight - 15}" fill="#475569" font-size="14" font-weight="bold" text-anchor="middle" font-family="sans-serif">${p.label}</text>
-                    <text x="${x}" y="${svgHeight - 32}" fill="#94a3b8" font-size="11" font-weight="semibold" text-anchor="middle" font-family="sans-serif">${p.date}</text>
+                    <text x="${p.x}" y="${svgHeight - 15}" fill="#475569" font-size="13" font-weight="800" text-anchor="middle" font-family="sans-serif">${p.label}</text>
+                    <text x="${p.x}" y="${svgHeight - 32}" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" font-family="sans-serif">${p.date}</text>
                 `;
             });
 
-            const strokeLineHTML = trendPoints.length > 1 ? `
-                <path d="${linePathD}" fill="none" stroke="#2563eb" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round" />
+            // Onda de preenchimento de gradiente sob a curva
+            const fillAreaHTML = coords.length > 1 ? `
+                <path d="${areaD}" fill="url(#areaGlowGrad)" />
+            ` : '';
+
+            // Brilho neon atrás do traçado principal suave
+            const strokeLineHTML = coords.length > 1 ? `
+                <path d="${curveD}" fill="none" stroke="#2563eb" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" style="filter: url(#shadowGlow);" opacity="0.4" />
+                <path d="${curveD}" fill="none" stroke="#1d4ed8" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" />
             ` : '';
 
             return `
@@ -1547,10 +1566,37 @@
                         <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                         Gráfico de Tendência de Vigor e Saúde da Planta (Com base nas Notas Semanais)
                     </span>
-                    <svg viewBox="0 0 ${svgWidth} ${svgHeight}" style="width: 100%; height: auto; background: #ffffff; border-radius: 16px; border: 2px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                    <svg viewBox="0 0 ${svgWidth} ${svgHeight}" style="width: 100%; height: auto; background: #ffffff; border-radius: 16px; border: 2px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
+                        <defs>
+                            <!-- Filtros de Sombra e Brilho -->
+                            <filter id="shadowGlow" x="-10%" y="-10%" width="120%" height="120%">
+                                <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#3b82f6" flood-opacity="0.35" />
+                            </filter>
+                            
+                            <!-- Gradiente de Preenchimento Estilo Onda Premium -->
+                            <linearGradient id="areaGlowGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.35" />
+                                <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.0" />
+                            </linearGradient>
+
+                            <!-- Gradientes para as Zonas de Qualidade -->
+                            <linearGradient id="greenZoneGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#ecfdf5" />
+                                <stop offset="100%" stop-color="#ffffff" />
+                            </linearGradient>
+                            <linearGradient id="warningZoneGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#fffbeb" />
+                                <stop offset="100%" stop-color="#ffffff" />
+                            </linearGradient>
+                            <linearGradient id="redZoneGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#fff5f5" />
+                                <stop offset="100%" stop-color="#ffffff" />
+                            </linearGradient>
+                        </defs>
                         ${zonesHTML}
                         ${gridHTML}
-                        <line x1="${paddingLeft}" y1="${svgHeight - paddingBottom}" x2="${svgWidth - paddingRight}" y2="${svgHeight - paddingBottom}" stroke="#cbd5e1" stroke-width="2" />
+                        <line x1="${paddingLeft}" y1="${svgHeight - paddingBottom}" x2="${svgWidth - paddingRight}" y2="${svgHeight - paddingBottom}" stroke="#cbd5e1" stroke-width="2.5" />
+                        ${fillAreaHTML}
                         ${strokeLineHTML}
                         ${linePointsHTML}
                         ${trendLabelsHTML}
@@ -1578,7 +1624,7 @@
             } else if(yieldPercent >= 80) {
                 avaliacao = 'uma ótima taxa de sobrevivência, apontando que o tratamento auxiliou positivamente no desenvolvimento saudável e na viabilidade comercial das cabeças';
             } else if(yieldPercent >= 60) {
-                avaliacao = 'um desenvolvimento vegetativo satisfatório; a aplicação demonstrou efeitos práticos na cultura, embora ainda haja potencial para otimização do estande e redução de quebras';
+                avaliacao = 'um desenvolvimento vegetativo satisfatório; a aplicação demonstrotou efeitos práticos na cultura, embora ainda haja potencial para otimização do estande e redução de quebras';
             } else {
                 avaliacao = 'um rendimento geral abaixo do ideal, sugerindo a necessidade de revisão do protocolo adotado para evitar perdas ou estresse fisiológico e melhoria efetiva da cabeça';
             }
@@ -1834,18 +1880,19 @@
                             });
                         }
 
+                        // Alinhamento centralizado sintonizado para as pílulas de evolução no histórico da web
                         timelineHTML += `
                             <div class="relative">
                                 <span class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-blue-500 border-4 border-white shadow-sm"></span>
                                 <div class="bg-blue-50/40 p-3 rounded-lg border border-blue-100">
                                     <div class="flex justify-between items-center flex-wrap gap-1">
                                         <div class="flex items-center gap-2">
-                                            <span class="text-xs font-bold text-blue-700 uppercase">Evolução #${wIdx + 1} (Dia ${daysElapsed})</span>
-                                            <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded ${badgeColor}">Vigor: ${weeklyScore}%</span>
+                                            <span style="display: inline-flex; align-items: center; justify-content: center; height: 32px; box-sizing: border-box; line-height: 1;" class="text-xs font-bold text-blue-700 uppercase bg-blue-100/50 px-3 rounded-lg border border-blue-200/60">Evolução #${wIdx + 1} (Dia ${daysElapsed})</span>
+                                            <span style="display: inline-flex; align-items: center; justify-content: center; height: 32px; box-sizing: border-box; line-height: 1;" class="text-[10px] font-extrabold px-3 rounded-lg ${badgeColor}">Vigor: ${weeklyScore}%</span>
                                         </div>
-                                        <span class="text-[11px] text-slate-500 font-semibold">${formatDatePT(weekly.date)}</span>
+                                        <span class="text-[11px] text-slate-500 font-semibold">Data: ${formatDatePT(weekly.date)}</span>
                                     </div>
-                                    <p class="text-xs text-slate-700 leading-relaxed mt-1 bg-white p-2.5 rounded border border-slate-100 shadow-inner whitespace-pre-wrap">"${weekly.notes}"</p>
+                                    <p class="text-xs text-slate-700 leading-relaxed mt-2 bg-white p-2.5 rounded border border-slate-100 shadow-inner whitespace-pre-wrap">"${weekly.notes}"</p>
                                     ${weeklyPhotosHTML ? `<div class="flex gap-2 flex-wrap mt-2">${weeklyPhotosHTML}</div>` : ''}
                                     <div class="flex gap-2.5 mt-2 justify-end">
                                         <button onclick="startWeeklyEditing('${weekly.id}')" class="text-[10px] text-blue-600 hover:underline font-bold inline-flex items-center gap-0.5">Editar</button>
@@ -2069,7 +2116,8 @@
                     weeklyGroups.push([]); 
                 }
 
-                const totalTestPages = 1 + weeklyGroups.length + (harvest ? 1 : 0);
+                // Total de paginas: 1(início) + grupos semanais + 1(Graficos) + 1(Colheita se existir)
+                const totalTestPages = 1 + weeklyGroups.length + 1 + (harvest ? 1 : 0);
                 let currentPageTracker = 1;
 
                 // ========================================================================
@@ -2116,17 +2164,17 @@
                             </div>
                         </div>
 
-                        <!-- Tabela de Cronologia de Plantio -->
+                        <!-- Tabela de Cronologia de Plantio - TOTALMENTE CENTRALIZADA AO MEIO -->
                         <div style="background: #ffffff; border: 2px solid #e2e8f0; border-radius: 16px; padding: 30px; margin-bottom: 45px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-                            <h4 style="margin: 0 0 20px 0; font-size: 22px; text-transform: uppercase; color: #334155; font-weight: 850;">Cronologia Inicial</h4>
+                            <h4 style="margin: 0 0 24px 0; font-size: 22px; text-transform: uppercase; color: #334155; font-weight: 850; text-align: center;">Cronologia Inicial</h4>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                                <div style="background: #f1f5f9; padding: 20px; border-radius: 12px; border: 1.5px solid #cbd5e1;">
-                                    <span style="font-size: 14px; text-transform: uppercase; color: #475569; font-weight: bold; display: block; margin-bottom: 6px;">Data de Plantio das Mudas</span>
-                                    <strong style="font-size: 22px; color: #0f172a;">${plantDateDisplay}</strong>
+                                <div style="background: #f1f5f9; padding: 24px; border-radius: 12px; border: 1.5px solid #cbd5e1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 110px; box-sizing: border-box;">
+                                    <span style="font-size: 14px; text-transform: uppercase; color: #475569; font-weight: bold; display: block; margin-bottom: 8px;">Data de Plantio das Mudas</span>
+                                    <strong style="font-size: 24px; color: #0f172a;">${plantDateDisplay}</strong>
                                 </div>
-                                <div style="background: #f1f5f9; padding: 20px; border-radius: 12px; border: 1.5px solid #cbd5e1;">
-                                    <span style="font-size: 14px; text-transform: uppercase; color: #475569; font-weight: bold; display: block; margin-bottom: 6px;">Instalação do Teste Prático</span>
-                                    <strong style="font-size: 22px; color: #0f172a;">${dateDisplay} &mdash; ${weekDisplay}</strong>
+                                <div style="background: #f1f5f9; padding: 24px; border-radius: 12px; border: 1.5px solid #cbd5e1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 110px; box-sizing: border-box;">
+                                    <span style="font-size: 14px; text-transform: uppercase; color: #475569; font-weight: bold; display: block; margin-bottom: 8px;">Instalação do Teste Prático</span>
+                                    <strong style="font-size: 24px; color: #0f172a;">${dateDisplay} &mdash; ${weekDisplay}</strong>
                                 </div>
                             </div>
                         </div>
@@ -2165,7 +2213,7 @@
                 `;
 
                 // ========================================================================
-                // PÁGINAS SEGUINTES: ACOMPANHAMENTO SEMANAL (De 3 em 3) + GRÁFICO TENDÊNCIA ÚNICO
+                // PÁGINAS SEGUINTES: ACOMPANHAMENTO SEMANAL (De 3 em 3)
                 // ========================================================================
                 weeklyGroups.forEach((group, groupIdx) => {
                     currentPageTracker++;
@@ -2219,12 +2267,13 @@
                                 scoreText = "Regular";
                             }
 
+                            // CORREÇÃO DE ALINHAMENTO NO PDF/JPG: inline-flex e line-height sintonizado para centralização absoluta vertical
                             htmlContent += `
                                 <div style="margin-bottom: 30px; background: #f8fafc; border-left: 8px solid #2563eb; padding: 25px 32px; border-radius: 0 16px 16px 0; border-top: 2.5px solid #e2e8f0; border-right: 2.5px solid #e2e8f0; border-bottom: 2.5px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); box-sizing: border-box;">
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 14px; align-items: center;">
                                         <div style="display: flex; align-items: center; gap: 14px;">
-                                            <span style="font-size: 18px; font-weight: 800; color: #1d4ed8; background-color: #eff6ff; padding: 6px 12px; border-radius: 10px; border: 2px solid #bfdbfe;">Evolução #${absoluteIndex} (Dia ${daysElapsed})</span>
-                                            <span style="font-size: 15px; font-weight: bold; background-color: ${scoreColor}15; color: ${scoreColor}; border: 1.5px solid ${scoreColor}50; padding: 4px 8px; border-radius: 8px;">Saúde: ${currentScore}% (${scoreText})</span>
+                                            <span style="font-size: 18px; font-weight: 800; color: #1d4ed8; background-color: #eff6ff; padding: 0 16px; border-radius: 10px; border: 2px solid #bfdbfe; display: inline-flex; align-items: center; justify-content: center; height: 38px; box-sizing: border-box; line-height: 1;">Evolução #${absoluteIndex} (Dia ${daysElapsed})</span>
+                                            <span style="font-size: 15px; font-weight: bold; background-color: ${scoreColor}15; color: ${scoreColor}; border: 1.5px solid ${scoreColor}50; padding: 0 16px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; height: 38px; box-sizing: border-box; line-height: 1;">Saúde: ${currentScore}% (${scoreText})</span>
                                         </div>
                                         <span style="font-size: 16px; color: #64748b; font-weight: bold;">Data: ${mDate}</span>
                                     </div>
@@ -2244,16 +2293,6 @@
 
                     htmlContent += `</div>`;
 
-                    // NOVO: Renderiza o gráfico de tendência APENAS UMA VEZ na última página de semanais
-                    if (groupIdx === weeklyGroups.length - 1) {
-                        const trendSVG = generateTrendChartSVG(initRecord, relativeWeeklies, harvest);
-                        htmlContent += `
-                            <div style="margin-top: 25px; margin-bottom: 30px; page-break-inside: avoid;">
-                                ${trendSVG}
-                            </div>
-                        `;
-                    }
-
                     htmlContent += `
                             <!-- Rodapé Fixo da Página -->
                             <div style="position: absolute; bottom: 40px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid #e2e8f0; padding-top: 24px; font-size: 16px; color: #94a3b8; font-weight: bold;">
@@ -2263,6 +2302,57 @@
                         </div>
                     `;
                 });
+
+                // ========================================================================
+                // PÁGINA ESPECÍFICA DE GRÁFICOS (Barra de Ciclos e Tendência Premium)
+                // ========================================================================
+                currentPageTracker++;
+                const barChartSVG = generateDynamicChartSVG(initRecord, relativeWeeklies, harvest);
+                const trendSVG = generateTrendChartSVG(initRecord, relativeWeeklies, harvest);
+
+                htmlContent += `
+                    <div class="report-page-block" style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
+                        
+                        <!-- Cabeçalho Principal -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 6px solid #475569; padding-bottom: 30px; margin-bottom: 45px;">
+                            <div style="display: flex; align-items: center; gap: 32px;">
+                                <img src="https://i.imgur.com/wEozr34.png" style="width: 110px; height: 110px; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
+                                <div>
+                                    <h1 style="font-size: 42px; font-weight: 850; color: #334155; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Fazenda Oásis</h1>
+                                    <p style="font-size: 24px; color: #64748b; margin: 8px 0 0 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Acompanhamento Geral de Testes</p>
+                                </div>
+                            </div>
+                            <div style="text-align: right; font-size: 18px; color: #64748b; line-height: 1.6;">
+                                <p style="margin: 0;"><strong>Emitido em:</strong> ${new Date().toLocaleDateString('pt-PT')} às ${new Date().toLocaleTimeString('pt-PT')}</p>
+                                <p style="margin: 8px 0 0 0; font-weight: bold; color: #1e293b; font-size: 20px;">Lote ${index + 1} &mdash; Pág. ${currentPageTracker} de ${totalTestPages}</p>
+                            </div>
+                        </div>
+
+                        <!-- Identificação do Bloco -->
+                        <div style="background-color: #f8fafc; border: 3px solid #e2e8f0; padding: 25px 40px; border-radius: 20px; margin-bottom: 40px;">
+                            <span style="font-size: 15px; font-weight: 900; color: #475569; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 6px;">PÁGINA 0${currentPageTracker} - ANÁLISE GRÁFICA DO CICLO</span>
+                            <h3 style="margin: 0; font-size: 32px; color: #334155; font-weight: 800; text-transform: uppercase;">
+                                ${blocoDisplay}${nBlocoDisplay} &mdash; ${cultureDisplay} (${varietyDisplay})
+                            </h3>
+                        </div>
+
+                        <!-- Gráfico de Barras do Ciclo de Dias -->
+                        <div style="margin-bottom: 50px;">
+                            ${barChartSVG}
+                        </div>
+
+                        <!-- Gráfico de Linha de Tendência de Vigor -->
+                        <div style="margin-bottom: 50px;">
+                            ${trendSVG}
+                        </div>
+
+                        <!-- Rodapé Fixo da Página -->
+                        <div style="position: absolute; bottom: 40px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid #e2e8f0; padding-top: 24px; font-size: 16px; color: #94a3b8; font-weight: bold;">
+                            <span>Fazenda Oásis &copy; Registro de Acompanhamento de Culturas</span>
+                            <span>Página ${currentPageTracker} de ${totalTestPages}</span>
+                        </div>
+                    </div>
+                `;
 
                 // ========================================================================
                 // PÁGINA FINAL: DADOS DA COLHEITA E RENDIMENTO (Exclusiva)
@@ -2288,7 +2378,7 @@
                                 </div>
                             </div>
 
-                            <!-- Identificação do Bloco -->
+                            <!-- Identificação do Lote -->
                             <div style="background-color: #fffbeb; border: 3px solid #fde68a; padding: 25px 40px; border-radius: 20px; margin-bottom: 40px;">
                                 <span style="font-size: 15px; font-weight: 900; color: #d97706; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 6px;">PÁGINA FINAL - ENCERRAMENTO E DADOS DE RENDIMENTO DA COLHEITA</span>
                                 <h3 style="margin: 0; font-size: 32px; color: #78350f; font-weight: 800; text-transform: uppercase;">
@@ -2325,7 +2415,7 @@
         }
 
         // =========================================================
-        // NOVO: SISTEMA DE EXPORTAÇÃO COMPLETO EM UM SÓ JPG
+        // SISTEMA DE EXPORTAÇÃO COMPLETO EM UM SÓ JPG
         // =========================================================
         function downloadCompleteJPG() {
             const visibleInits = initialRecords.filter(r => r.isVisible !== false);
@@ -2342,7 +2432,8 @@
             tempDiv.style.position = 'absolute';
             tempDiv.style.left = '0';
             tempDiv.style.top = '0';
-            tempDiv.style.transform = 'translate(-150%, -150%)'; 
+            tempDiv.style.zIndex = '-1';
+            tempDiv.style.pointerEvents = 'none';
             tempDiv.style.width = '1200px'; 
             tempDiv.style.background = '#ffffff';
             document.body.appendChild(tempDiv);
@@ -2361,6 +2452,8 @@
             // Permitir tempo para renderizar os gráficos e vetores dinamicamente na DOM
             setTimeout(async () => {
                 try {
+                    await waitForReportImages(tempDiv);
+
                     const canvas = await html2canvas(tempDiv, {
                         useCORS: true,
                         scale: 1.5, // Crisp HD rendering
@@ -2378,7 +2471,9 @@
                     link.click();
 
                     // Limpeza
-                    document.body.removeChild(tempDiv);
+                    if (tempDiv.parentNode) {
+                        document.body.removeChild(tempDiv);
+                    }
                     closeModal();
                     
                     setTimeout(() => {
@@ -2396,6 +2491,18 @@
         }
 
         // Exportação em PDF individual
+        function waitForReportImages(container) {
+            const images = Array.from(container.querySelectorAll('img'));
+            const pendingImages = images
+                .filter(img => !img.complete)
+                .map(img => new Promise(resolve => {
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                }));
+
+            return Promise.all(pendingImages);
+        }
+
         function downloadIndividualPDF(testId) {
             const testRecord = initialRecords.find(r => r.id === testId);
             if (!testRecord) {
@@ -2409,34 +2516,79 @@
             tempDiv.style.position = 'absolute';
             tempDiv.style.left = '0';
             tempDiv.style.top = '0';
-            tempDiv.style.transform = 'translate(-150%, -150%)';
+            tempDiv.style.zIndex = '-1';
+            tempDiv.style.pointerEvents = 'none';
             tempDiv.style.width = '1200px'; 
             tempDiv.style.background = '#ffffff';
             document.body.appendChild(tempDiv);
 
             tempDiv.innerHTML = generateOffscreenContentHTML([testRecord]);
 
-            const opt = {
-                margin:       [10, 10, 10, 10],
-                filename:     `Teste_Fazenda_Oasis_${testRecord.bloco || 'Bloco'}_${testRecord.culture || 'Cultura'}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, letterRendering: true, allowTaint: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
+            const filename = `Teste_Fazenda_Oasis_${testRecord.bloco || 'Bloco'}_${testRecord.culture || 'Cultura'}.pdf`;
 
-            setTimeout(() => {
-                html2pdf().from(tempDiv).set(opt).save().then(() => {
-                    document.body.removeChild(tempDiv);
+            setTimeout(async () => {
+                try {
+                    await waitForReportImages(tempDiv);
+                    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+                    const jsPDFConstructor = window.jspdf && window.jspdf.jsPDF;
+                    if (!jsPDFConstructor) {
+                        throw new Error('jsPDF nao foi carregado.');
+                    }
+
+                    const pdf = new jsPDFConstructor({
+                        unit: 'mm',
+                        format: 'a4',
+                        orientation: 'portrait'
+                    });
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+                    const pageBlocks = Array.from(tempDiv.querySelectorAll('.report-page-block'));
+
+                    if (pageBlocks.length === 0) {
+                        throw new Error('Nenhuma pagina de relatorio foi encontrada.');
+                    }
+
+                    for (let index = 0; index < pageBlocks.length; index++) {
+                        const pageBlock = pageBlocks[index];
+                        pageBlock.style.marginBottom = '0px';
+
+                        const canvas = await html2canvas(pageBlock, {
+                            scale: 1.5,
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#ffffff',
+                            logging: false,
+                            scrollX: 0,
+                            scrollY: 0,
+                            windowWidth: 1200,
+                            windowHeight: 1697
+                        });
+
+                        const imgData = canvas.toDataURL('image/jpeg', 0.98);
+                        if (index > 0) {
+                            pdf.addPage();
+                        }
+                        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                    }
+
+                    pdf.save(filename.replace(/[\\/:*?"<>|]+/g, '_'));
+
+                    if (tempDiv.parentNode) {
+                        document.body.removeChild(tempDiv);
+                    }
                     closeModal();
                     setTimeout(() => {
                         showModalAlert('PDF Pronto', 'O PDF individual foi gerado e descarregado com sucesso!', 'success');
                     }, 400);
-                }).catch(err => {
-                    console.error("Erro na geração do PDF: ", err);
-                    document.body.removeChild(tempDiv);
+                } catch (err) {
+                    console.error("Erro na geracao do PDF: ", err);
+                    if (tempDiv.parentNode) {
+                        document.body.removeChild(tempDiv);
+                    }
                     closeModal();
-                    showModalAlert('Erro', 'Ocorreu um erro de renderização ao gerar o PDF deste registo.', 'error');
-                });
+                    showModalAlert('Erro', 'Ocorreu um erro de renderizacao ao gerar o PDF deste registo.', 'error');
+                }
             }, 1200);
         }
     </script>
