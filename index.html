@@ -635,6 +635,7 @@
             document.getElementById('init-week').value = calculateWeekNumber(val);
         }
 
+        // Adiciona horário atual
         function setInitTimeNow() {
             const now = new Date();
             document.getElementById('init-time').value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -1393,9 +1394,9 @@
             `;
         }
 
-        // ========================================================
-        // GERAÇÃO DE GRÁFICO SVG DE LINHAS DE TENDÊNCIA DE SAÚDE (CURVAS SUAVES & ONDAS)
-        // ========================================================
+        // ============================================================================================
+        // GERAÇÃO DE GRÁFICO SVG DE TENDÊNCIA DE VIGOR (MISTO: BARRAS COM GRADIENTE E LINHA DE TENDÊNCIA)
+        // ============================================================================================
         function generateTrendChartSVG(initRecord, relativeWeeklies, harvest) {
             const refDate = initRecord.plantDate || initRecord.date;
             
@@ -1458,36 +1459,7 @@
                 `;
             });
 
-            // Zonas de Qualidade (Gradientes sutis e profissionais para preenchimento de fundo)
-            const greenZoneY = paddingTop;
-            const greenZoneHeight = chartHeight * 0.3; // 100% a 70%
-            
-            const warningZoneY = paddingTop + (chartHeight * 0.3);
-            const warningZoneHeight = chartHeight * 0.3; // 70% a 40%
-
-            const redZoneY = paddingTop + (chartHeight * 0.6);
-            const redZoneHeight = chartHeight * 0.4; // 40% a 0%
-
-            let zonesHTML = `
-                <!-- Zona Alta: Bom Índice -->
-                <rect x="${paddingLeft}" y="${greenZoneY}" width="${chartWidth}" height="${greenZoneHeight}" fill="url(#greenZoneGrad)" opacity="0.3" />
-                <text x="${svgWidth - paddingRight - 15}" y="${greenZoneY + 22}" fill="#15803d" font-size="11" font-weight="900" text-anchor="end" font-family="sans-serif" letter-spacing="1px" opacity="0.65">BOM ÍNDICE (70-100%)</text>
-                
-                <!-- Zona Média: Regular -->
-                <rect x="${paddingLeft}" y="${warningZoneY}" width="${chartWidth}" height="${warningZoneHeight}" fill="url(#warningZoneGrad)" opacity="0.25" />
-                
-                <!-- Zona Baixa: Baixo Índice -->
-                <rect x="${paddingLeft}" y="${redZoneY}" width="${chartWidth}" height="${redZoneHeight}" fill="url(#redZoneGrad)" opacity="0.3" />
-                <text x="${svgWidth - paddingRight - 15}" y="${svgHeight - paddingBottom - 18}" fill="#be123c" font-size="11" font-weight="900" text-anchor="end" font-family="sans-serif" letter-spacing="1px" opacity="0.65">BAIXO ÍNDICE (0-40%)</text>
-            `;
-
-            // Transformar os pontos lineares em uma bela curva Bézier de onda suave
-            let curveD = '';
-            let areaD = '';
-            let linePointsHTML = '';
-            let trendLabelsHTML = '';
             const numPoints = trendPoints.length;
-
             const coords = trendPoints.map((p, idx) => {
                 let x = paddingLeft;
                 if (numPoints > 1) {
@@ -1497,44 +1469,46 @@
                 }
                 const yRatio = (100 - p.score) / 100;
                 const y = paddingTop + (yRatio * chartHeight);
-                return { x, y, score: p.score, label: p.label, date: p.date };
+                return { x, y, score: p.score, label: p.label, date: p.date, rawHeight: chartHeight - (yRatio * chartHeight) };
             });
 
-            if (coords.length > 0) {
-                // Cálculo das curvas Bezier suavizadas (como ondas de dashboard SaaS)
-                curveD = `M ${coords[0].x} ${coords[0].y}`;
-                for (let i = 0; i < coords.length - 1; i++) {
-                    const p0 = coords[i];
-                    const p1 = coords[i + 1];
-                    const cpX1 = p0.x + (p1.x - p0.x) / 3;
-                    const cpY1 = p0.y;
-                    const cpX2 = p0.x + 2 * (p1.x - p0.x) / 3;
-                    const cpY2 = p1.y;
-                    curveD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
-                }
-                // Caminho fechado para o preenchimento sob a curva (Gradiente de Onda)
-                areaD = `${curveD} L ${coords[coords.length - 1].x} ${svgHeight - paddingBottom} L ${coords[0].x} ${svgHeight - paddingBottom} Z`;
-            }
+            let barsHTML = '';
+            let linePointsHTML = '';
+            let trendLabelsHTML = '';
 
-            coords.forEach((p) => {
+            coords.forEach((p, idx) => {
                 let pointColor = "#10b981"; // Verde
                 let pointFill = "#e6f4ea";
+                let barGradId = "trendBarGreen";
+
                 if (p.score < 40) {
                     pointColor = "#f43f5e"; // Vermelho
                     pointFill = "#fce8e6";
+                    barGradId = "trendBarRed";
                 } else if (p.score < 70) {
                     pointColor = "#f59e0b"; // Amarelo
                     pointFill = "#fef3d6";
+                    barGradId = "trendBarAmber";
                 }
+
+                // Desenho das barras com cantos superiores perfeitamente arredondados
+                const barWidth = 44;
+                const barX = p.x - (barWidth / 2);
+                const barY = p.y;
+                const barH = p.rawHeight;
+
+                barsHTML += `
+                    <!-- Barra de Saúde Arredondada com Gradiente -->
+                    <rect x="${barX}" y="${barY}" width="${barWidth}" height="${barH}" fill="url(#${barGradId})" rx="8" ry="8" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.05));" />
+                `;
 
                 // BALÃO DE PERCENTAGEM DE VIGOR: Subido e perfeitamente centralizado ao meio usando dominant-baseline="central"
                 linePointsHTML += `
                     <!-- Guia vertical pontilhada sutil -->
                     <line x1="${p.x}" y1="${p.y}" x2="${p.x}" y2="${p.y - 12}" stroke="${pointColor}" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.7" />
                     
-                    <!-- Ponto de dados moderno -->
-                    <circle cx="${p.x}" cy="${p.y}" r="8" fill="#ffffff" stroke="${pointColor}" stroke-width="4.5" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));" />
-                    <circle cx="${p.x}" cy="${p.y}" r="3.5" fill="${pointColor}" />
+                    <!-- Ponto de dados moderno no topo da barra -->
+                    <circle cx="${p.x}" cy="${p.y}" r="6" fill="#ffffff" stroke="${pointColor}" stroke-width="3.5" style="filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.1));" />
                     
                     <!-- Balão de Vigor (%) Subido e Centrado ao Meio no PDF/JPG e Web -->
                     <g transform="translate(${p.x - 30}, ${p.y - 42})" style="filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.08));">
@@ -1549,15 +1523,25 @@
                 `;
             });
 
-            // Onda de preenchimento de gradiente sob a curva
-            const fillAreaHTML = coords.length > 1 ? `
-                <path d="${areaD}" fill="url(#areaGlowGrad)" />
-            ` : '';
+            // Gerando curva suave Bézier de tendência passando por todas as barras
+            let curveD = '';
+            if (coords.length > 0) {
+                curveD = `M ${coords[0].x} ${coords[0].y}`;
+                for (let i = 0; i < coords.length - 1; i++) {
+                    const p0 = coords[i];
+                    const p1 = coords[i + 1];
+                    const cpX1 = p0.x + (p1.x - p0.x) / 3;
+                    const cpY1 = p0.y;
+                    const cpX2 = p0.x + 2 * (p1.x - p0.x) / 3;
+                    const cpY2 = p1.y;
+                    curveD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
+                }
+            }
 
-            // Brilho neon atrás do traçado principal suave
+            // Brilho neon atrás do traçado principal suave com o novo gradiente
             const strokeLineHTML = coords.length > 1 ? `
-                <path d="${curveD}" fill="none" stroke="#2563eb" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" style="filter: url(#shadowGlow);" opacity="0.4" />
-                <path d="${curveD}" fill="none" stroke="#1d4ed8" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" />
+                <path d="${curveD}" fill="none" stroke="url(#trendLineGrad)" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" style="filter: url(#shadowGlow);" opacity="0.35" />
+                <path d="${curveD}" fill="none" stroke="url(#trendLineGrad)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" />
             ` : '';
 
             return `
@@ -1568,37 +1552,45 @@
                     </span>
                     <svg viewBox="0 0 ${svgWidth} ${svgHeight}" style="width: 100%; height: auto; background: #ffffff; border-radius: 16px; border: 2px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
                         <defs>
-                            <!-- Filtros de Sombra e Brilho -->
+                            <!-- Filtros de Sombra e Brilho para Linha de Tendência -->
                             <filter id="shadowGlow" x="-10%" y="-10%" width="120%" height="120%">
-                                <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#3b82f6" flood-opacity="0.35" />
+                                <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#2563eb" flood-opacity="0.35" />
                             </filter>
                             
-                            <!-- Gradiente de Preenchimento Estilo Onda Premium -->
-                            <linearGradient id="areaGlowGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.35" />
-                                <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.0" />
+                            <!-- Gradiente Esmeralda/Azul para a Linha de Tendência -->
+                            <linearGradient id="trendLineGrad" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stop-color="#3b82f6" />
+                                <stop offset="50%" stop-color="#8b5cf6" />
+                                <stop offset="100%" stop-color="#10b981" />
                             </linearGradient>
 
-                            <!-- Gradientes para as Zonas de Qualidade -->
-                            <linearGradient id="greenZoneGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#ecfdf5" />
-                                <stop offset="100%" stop-color="#ffffff" />
+                            <!-- Gradientes de Qualidade para as Barras -->
+                            <linearGradient id="trendBarGreen" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#34d399" />
+                                <stop offset="100%" stop-color="#059669" />
                             </linearGradient>
-                            <linearGradient id="warningZoneGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#fffbeb" />
-                                <stop offset="100%" stop-color="#ffffff" />
+                            <linearGradient id="trendBarAmber" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#fbbf24" />
+                                <stop offset="100%" stop-color="#d97706" />
                             </linearGradient>
-                            <linearGradient id="redZoneGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#fff5f5" />
-                                <stop offset="100%" stop-color="#ffffff" />
+                            <linearGradient id="trendBarRed" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#f87171" />
+                                <stop offset="100%" stop-color="#dc2626" />
                             </linearGradient>
                         </defs>
-                        ${zonesHTML}
                         ${gridHTML}
                         <line x1="${paddingLeft}" y1="${svgHeight - paddingBottom}" x2="${svgWidth - paddingRight}" y2="${svgHeight - paddingBottom}" stroke="#cbd5e1" stroke-width="2.5" />
-                        ${fillAreaHTML}
+                        
+                        <!-- Desenho das Barras Dinâmicas de Saúde -->
+                        ${barsHTML}
+                        
+                        <!-- Linha de Tendência Neon Superior -->
                         ${strokeLineHTML}
+                        
+                        <!-- Balões flutuantes e nós -->
                         ${linePointsHTML}
+                        
+                        <!-- Rótulos e Datas inferiores -->
                         ${trendLabelsHTML}
                     </svg>
                 </div>
@@ -1994,7 +1986,7 @@
                                 ${timelineHTML}
                             </div>
 
-                            <!-- Gráfico de Tendência (Posicionado após a evolução e linha do tempo) -->
+                            <!-- Gráfico de Tendência de Vigor em Barras e Curva Fluida com Gradiente -->
                             <div class="mt-6 pt-6 border-t border-slate-200">
                                 ${trendChartHTML}
                             </div>
@@ -2164,7 +2156,7 @@
                             </div>
                         </div>
 
-                        <!-- Tabela de Cronologia de Plantio - TOTALMENTE CENTRALIZADA AO MEIO -->
+                        <!-- Tabela de Cronologia de Plantio - TOTALMENTE CENTRALIZADA -->
                         <div style="background: #ffffff; border: 2px solid #e2e8f0; border-radius: 16px; padding: 30px; margin-bottom: 45px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
                             <h4 style="margin: 0 0 24px 0; font-size: 22px; text-transform: uppercase; color: #334155; font-weight: 850; text-align: center;">Cronologia Inicial</h4>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
@@ -2267,7 +2259,7 @@
                                 scoreText = "Regular";
                             }
 
-                            // CORREÇÃO DE ALINHAMENTO NO PDF/JPG: inline-flex e line-height sintonizado para centralização absoluta vertical
+                            // Alinhamento centralizado vertical sintonizado no PDF/JPG
                             htmlContent += `
                                 <div style="margin-bottom: 30px; background: #f8fafc; border-left: 8px solid #2563eb; padding: 25px 32px; border-radius: 0 16px 16px 0; border-top: 2.5px solid #e2e8f0; border-right: 2.5px solid #e2e8f0; border-bottom: 2.5px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); box-sizing: border-box;">
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 14px; align-items: center;">
