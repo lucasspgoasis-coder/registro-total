@@ -56,16 +56,21 @@
                     <img id="logo-preview" src="https://i.imgur.com/wEozr34.png" alt="Logo Fazenda Oásis" class="max-w-full max-h-full object-contain" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
                 </div>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-oasis-900 tracking-tight">Registro de Acompanhamento de Teste</h1>
+                    <h1 class="text-xl sm:text-2xl font-bold text-oasis-900 tracking-tight">Registo de Acompanhamento de Teste</h1>
                     <p class="text-sm font-semibold text-oasis-600 tracking-wide uppercase">Fazenda Oásis</p>
                 </div>
             </div>
            
             <div class="flex flex-wrap gap-2 justify-center">
+                <!-- Botão PDF Único e Consolidado -->
+                <button onclick="downloadCompletePDF()" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    Descarregar PDF Completo
+                </button>
                 <!-- Botão JPG Único e Consolidado -->
                 <button onclick="downloadCompleteJPG()" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    Descarregar JPG Único Completo
+                    Descarregar JPG Completo
                 </button>
             </div>
         </div>
@@ -503,7 +508,7 @@
                     <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
                         <div>
                             <h3 class="text-lg font-bold text-slate-900">Painel Geral de Ciclos e Evoluções</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Os testes estão em ordem alfabética. Testes com o olho desmarcado serão ocultados do JPG.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Os testes estão em ordem alfabética. Testes com o olho desmarcado serão ocultados da exportação.</p>
                         </div>
                         <button onclick="clearSystemData()" class="text-xs text-red-600 hover:text-red-800 font-bold border border-red-200 hover:bg-red-50 px-3 py-2 rounded-lg transition-all inline-flex items-center gap-1.5 flex-shrink-0">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -579,6 +584,26 @@
             }
         }
 
+        // Nova Função de Ordenação Centralizada (Alfabética por Bloco e Numérica por nBloco)
+        function sortRecordsByBloco(records) {
+            return [...records].sort((a, b) => {
+                const blocoA = (a.bloco || "").toString();
+                const blocoB = (b.bloco || "").toString();
+                const cmpBloco = blocoA.localeCompare(blocoB, undefined, {numeric: true, sensitivity: 'base'});
+                if (cmpBloco !== 0) return cmpBloco;
+
+                const nA = (a.nBloco || "").toString();
+                const nB = (b.nBloco || "").toString();
+                const cmpN = nA.localeCompare(nB, undefined, {numeric: true, sensitivity: 'base'});
+                if (cmpN !== 0) return cmpN;
+                
+                // Desempate por cultura e data caso estejam no mesmo bloco
+                const cultureCompare = (a.culture || "").localeCompare(b.culture || "");
+                if (cultureCompare !== 0) return cultureCompare;
+                return (b.date || "").localeCompare(a.date || "");
+            });
+        }
+
         // Troca de Abas
         function switchTab(tab) {
             const tabInitBtn = document.getElementById('tab-initial-btn');
@@ -644,13 +669,11 @@
             document.getElementById('init-week').value = calculateWeekNumber(val);
         }
 
-        // Adiciona horário atual
         function setInitTimeNow() {
             const now = new Date();
             document.getElementById('init-time').value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
         }
 
-        // Alterna entre selects predefinidos e input customizado
         function toggleCustom(fieldId) {
             const select = document.getElementById(`${fieldId}-select`);
             const customInput = document.getElementById(`${fieldId}-custom`);
@@ -914,7 +937,7 @@
             const dropdown = document.getElementById('weekly-test-parent');
             const selectId = dropdown.value;
             dropdown.innerHTML = '<option value="">Escolha qual teste está acompanhando...</option>';
-            const sortedInits = [...initialRecords].sort((a,b) => b.date.localeCompare(a.date));
+            const sortedInits = sortRecordsByBloco(initialRecords);
             sortedInits.forEach(record => {
                 const opt = document.createElement('option');
                 opt.value = record.id;
@@ -929,7 +952,7 @@
             const dropdown = document.getElementById('harvest-test-parent');
             const selectId = dropdown.value;
             dropdown.innerHTML = '<option value="">Escolha qual teste deseja finalizar a colheita...</option>';
-            const sortedInits = [...initialRecords].sort((a,b) => b.date.localeCompare(a.date));
+            const sortedInits = sortRecordsByBloco(initialRecords);
             sortedInits.forEach(record => {
                 const opt = document.createElement('option');
                 opt.value = record.id;
@@ -1239,7 +1262,6 @@
             });
         }
 
-        // Deleta acompanhamento semanal do banco
         function deleteWeeklyRecord(id) {
             showModalConfirm('Confirmar Remoção', 'Deseja realmente apagar esta nota de acompanhamento evolutivo?', () => {
                 weeklyRecords = weeklyRecords.filter(w => w.id !== id);
@@ -1277,7 +1299,6 @@
             });
         }
 
-        // Restaura contadores de estatísticas
         function updateStatistics(initCount, seedlingsTotal, harvestCount) {
             document.getElementById('stat-init-total').textContent = initCount;
             document.getElementById('stat-mudas').textContent = seedlingsTotal.toLocaleString('pt-PT');
@@ -1406,13 +1427,12 @@
         }
 
         // ============================================================================================
-        // GERAÇÃO DE GRÁFICO SVG DE TENDÊNCIA DE VIGOR (MISTO: BARRAS COM GRADIENTE E LINHA DE TENDÊNCIA)
+        // GERAÇÃO DE GRÁFICO SVG DE TENDÊNCIA DE VIGOR
         // ============================================================================================
         function generateTrendChartSVG(initRecord, relativeWeeklies, harvest) {
             const refDate = initRecord.plantDate || initRecord.date;
             
             const trendPoints = [];
-            // Ponto 0: Início do Teste (Padrão Inicial: 100% de saúde/vigor potencial das mudas saudáveis)
             trendPoints.push({
                 day: 0,
                 label: 'Início',
@@ -1420,7 +1440,6 @@
                 date: formatDatePT(initRecord.date)
             });
 
-            // Ordena acompanhamentos por data
             const sortedWeeklies = [...relativeWeeklies].sort((a,b) => a.date.localeCompare(b.date));
             sortedWeeklies.forEach((w, idx) => {
                 const days = getDaysBetween(refDate, w.date);
@@ -1433,7 +1452,6 @@
                 });
             });
 
-            // Se houver colheita, calcula o score com base no rendimento
             if (harvest) {
                 const days = getDaysBetween(refDate, harvest.date);
                 let yieldPercent = 100;
@@ -1452,13 +1470,12 @@
             const svgHeight = 360;
             const paddingLeft = 110;
             const paddingRight = 60;
-            const paddingTop = 80; // Espaço vertical aumentado para caber as pílulas elevadas
+            const paddingTop = 80; 
             const paddingBottom = 60;
 
             const chartWidth = svgWidth - paddingLeft - paddingRight;
             const chartHeight = svgHeight - paddingTop - paddingBottom;
 
-            // Linhas horizontais de referência (0%, 25%, 50%, 75%, 100%)
             let gridHTML = '';
             const scoresRef = [100, 75, 50, 25, 0];
             scoresRef.forEach(v => {
@@ -1488,40 +1505,32 @@
             let trendLabelsHTML = '';
 
             coords.forEach((p, idx) => {
-                let pointColor = "#10b981"; // Verde
+                let pointColor = "#10b981"; 
                 let pointFill = "#e6f4ea";
                 let barGradId = "trendBarGreen";
 
                 if (p.score < 40) {
-                    pointColor = "#f43f5e"; // Vermelho
+                    pointColor = "#f43f5e"; 
                     pointFill = "#fce8e6";
                     barGradId = "trendBarRed";
                 } else if (p.score < 70) {
-                    pointColor = "#f59e0b"; // Amarelo
+                    pointColor = "#f59e0b"; 
                     pointFill = "#fef3d6";
                     barGradId = "trendBarAmber";
                 }
 
-                // Desenho das barras com cantos superiores perfeitamente arredondados
                 const barWidth = 44;
                 const barX = p.x - (barWidth / 2);
                 const barY = p.y;
                 const barH = p.rawHeight;
 
                 barsHTML += `
-                    <!-- Barra de Saúde Arredondada com Gradiente -->
                     <rect x="${barX}" y="${barY}" width="${barWidth}" height="${barH}" fill="url(#${barGradId})" rx="8" ry="8" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.05));" />
                 `;
 
-                // BALÃO DE PERCENTAGEM DE VIGOR: Subido e perfeitamente centralizado ao meio usando dominant-baseline="central"
                 linePointsHTML += `
-                    <!-- Guia vertical pontilhada sutil -->
                     <line x1="${p.x}" y1="${p.y}" x2="${p.x}" y2="${p.y - 12}" stroke="${pointColor}" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.7" />
-                    
-                    <!-- Ponto de dados moderno no topo da barra -->
                     <circle cx="${p.x}" cy="${p.y}" r="6" fill="#ffffff" stroke="${pointColor}" stroke-width="3.5" style="filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.1));" />
-                    
-                    <!-- Balão de Vigor (%) Subido e Centrado ao Meio no PDF/JPG e Web -->
                     <g transform="translate(${p.x - 30}, ${p.y - 42})" style="filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.08));">
                         <rect x="0" y="0" width="60" height="24" rx="12" fill="${pointFill}" stroke="${pointColor}" stroke-width="1.5" />
                         <text x="30" y="12" fill="#1e293b" font-size="12" font-weight="800" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">${p.score}%</text>
@@ -1534,7 +1543,6 @@
                 `;
             });
 
-            // Gerando curva suave Bézier de tendência passando por todas as barras
             let curveD = '';
             if (coords.length > 0) {
                 curveD = `M ${coords[0].x} ${coords[0].y}`;
@@ -1549,7 +1557,6 @@
                 }
             }
 
-            // Brilho neon atrás do traçado principal suave com o novo gradiente
             const strokeLineHTML = coords.length > 1 ? `
                 <path d="${curveD}" fill="none" stroke="url(#trendLineGrad)" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" style="filter: url(#shadowGlow);" opacity="0.35" />
                 <path d="${curveD}" fill="none" stroke="url(#trendLineGrad)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" />
@@ -1563,19 +1570,14 @@
                     </span>
                     <svg viewBox="0 0 ${svgWidth} ${svgHeight}" style="width: 100%; height: auto; background: #ffffff; border-radius: 16px; border: 2px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
                         <defs>
-                            <!-- Filtros de Sombra e Brilho para Linha de Tendência -->
                             <filter id="shadowGlow" x="-10%" y="-10%" width="120%" height="120%">
                                 <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#2563eb" flood-opacity="0.35" />
                             </filter>
-                            
-                            <!-- Gradiente Esmeralda/Azul para a Linha de Tendência -->
                             <linearGradient id="trendLineGrad" x1="0" y1="0" x2="1" y2="0">
                                 <stop offset="0%" stop-color="#3b82f6" />
                                 <stop offset="50%" stop-color="#8b5cf6" />
                                 <stop offset="100%" stop-color="#10b981" />
                             </linearGradient>
-
-                            <!-- Gradientes de Qualidade para as Barras -->
                             <linearGradient id="trendBarGreen" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="0%" stop-color="#34d399" />
                                 <stop offset="100%" stop-color="#059669" />
@@ -1591,17 +1593,9 @@
                         </defs>
                         ${gridHTML}
                         <line x1="${paddingLeft}" y1="${svgHeight - paddingBottom}" x2="${svgWidth - paddingRight}" y2="${svgHeight - paddingBottom}" stroke="#cbd5e1" stroke-width="2.5" />
-                        
-                        <!-- Desenho das Barras Dinâmicas de Saúde -->
                         ${barsHTML}
-                        
-                        <!-- Linha de Tendência Neon Superior -->
                         ${strokeLineHTML}
-                        
-                        <!-- Balões flutuantes e nós -->
                         ${linePointsHTML}
-                        
-                        <!-- Rótulos e Datas inferiores -->
                         ${trendLabelsHTML}
                     </svg>
                 </div>
@@ -1609,7 +1603,7 @@
         }
 
         // ============================================================================================
-        // GERAÇÃO DE GRÁFICO COMPARATIVO GLOBAL (BARRAS COM LINHA DE TENDÊNCIA E GRADIENTES)
+        // GERAÇÃO DE GRÁFICO COMPARATIVO GLOBAL COM DADOS FLUTUANTES INTEGRADOS NO GRÁFICO
         // ============================================================================================
         function generateComparativeChartSVG(inits, weeklies, harvests) {
             if (inits.length <= 1) return '';
@@ -1650,11 +1644,11 @@
             });
 
             const svgWidth = 1000;
-            const svgHeight = 520;
+            const svgHeight = 480; // Reduzido visto que as barras não vão ficar em baixo do gráfico
             const paddingLeft = 110;
             const paddingRight = 60;
             const paddingTop = 80;
-            const paddingBottom = 160;
+            const paddingBottom = 80; // Muito menos padding necessário no bottom
 
             const chartWidth = svgWidth - paddingLeft - paddingRight;
             const chartHeight = svgHeight - paddingTop - paddingBottom;
@@ -1734,17 +1728,37 @@
                     </g>
                 `;
 
+                // Rótulos na Base do Gráfico
                 trendLabelsHTML += `
                     <text x="${p.x}" y="${svgHeight - paddingBottom + 22}" fill="#475569" font-size="14" font-weight="800" text-anchor="middle" font-family="sans-serif">${p.bloco}</text>
                     <text x="${p.x}" y="${svgHeight - paddingBottom + 40}" fill="#94a3b8" font-size="12" font-weight="700" text-anchor="middle" font-family="sans-serif">${p.name}</text>
                     <text x="${p.x}" y="${svgHeight - paddingBottom + 58}" fill="${pointColor}" font-size="10" font-weight="900" text-anchor="middle" font-family="sans-serif" text-transform="uppercase" opacity="0.8">${p.status}</text>
                 `;
 
+                // Renderiza as Métricas da Colheita de forma flutuante DENTRO do Gráfico (sobrepondo ou à frente da barra)
                 if (p.metrics) {
+                    const cardY = p.y + 15;
+                    // Limita que não ultrapasse a linha do gráfico no eixo X
+                    const maxCardY = svgHeight - paddingBottom - 75; 
+                    const finalCardY = Math.min(cardY, maxCardY);
+
                     trendLabelsHTML += `
-                        <text x="${p.x}" y="${svgHeight - paddingBottom + 82}" fill="#78350f" font-size="11" font-weight="800" text-anchor="middle" font-family="sans-serif">Total: ${p.metrics.und.toLocaleString('pt-PT')} und</text>
-                        <text x="${p.x}" y="${svgHeight - paddingBottom + 100}" fill="#78350f" font-size="11" font-weight="800" text-anchor="middle" font-family="sans-serif">Média: ${p.metrics.medG} g</text>
-                        <text x="${p.x}" y="${svgHeight - paddingBottom + 118}" fill="#78350f" font-size="11" font-weight="800" text-anchor="middle" font-family="sans-serif">Massa: ${p.metrics.totKg} Kg</text>
+                        <g transform="translate(${p.x - 40}, ${finalCardY})" style="filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.15));">
+                            <!-- Fundo do Mini-Card Integrado -->
+                            <rect x="0" y="0" width="80" height="64" rx="8" fill="#ffffff" stroke="${pointColor}" stroke-width="1.5" opacity="0.95" />
+                            
+                            <!-- Dados de Unidades -->
+                            <rect x="4" y="6" width="12" height="12" rx="3" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+                            <text x="22" y="15" fill="#78350f" font-size="9" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.und.toLocaleString('pt-PT')} un</text>
+                            
+                            <!-- Dados de Média (gramas) -->
+                            <rect x="4" y="26" width="12" height="12" rx="3" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1"/>
+                            <text x="22" y="35" fill="#4c1d95" font-size="9" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.medG} g</text>
+                            
+                            <!-- Dados Totais (Kg) -->
+                            <rect x="4" y="46" width="12" height="12" rx="3" fill="#fce7f3" stroke="#ec4899" stroke-width="1"/>
+                            <text x="22" y="55" fill="#831843" font-size="9" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.totKg} kg</text>
+                        </g>
                     `;
                 }
             });
@@ -1991,11 +2005,8 @@
                 return;
             }
 
-            const sortedInitials = [...initialRecords].sort((a, b) => {
-                const cultureCompare = a.culture.localeCompare(b.culture);
-                if (cultureCompare !== 0) return cultureCompare;
-                return b.date.localeCompare(a.date);
-            });
+            // Ordenação centralizada por Bloco e Numeração
+            const sortedInitials = sortRecordsByBloco(initialRecords);
 
             let totalMudas = 0;
             let totalColhidos = harvestRecords.length;
@@ -2046,7 +2057,7 @@
                     `<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>` :
                     `<svg class="w-5 h-5 text-oasis-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>`;
 
-                const eyeTitle = isHidden ? "Reexibir no JPG" : "Ocultar do JPG";
+                const eyeTitle = isHidden ? "Reexibir na Exportação" : "Ocultar da Exportação";
 
                 let timelineHTML = `
                     <div class="relative pl-6 border-l-2 border-emerald-500 space-y-6">
@@ -2096,7 +2107,6 @@
                             });
                         }
 
-                        // Alinhamento centralizado sintonizado para as pílulas de evolução no histórico da web
                         timelineHTML += `
                             <div class="relative">
                                 <span class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-blue-500 border-4 border-white shadow-sm"></span>
@@ -2171,7 +2181,7 @@
                                     <span class="bg-oasis-50 text-oasis-800 text-xs font-bold px-2.5 py-1 rounded flex items-center gap-1 border border-oasis-100">
                                         Início Teste: ${formatDatePT(initRecord.date)} (${initRecord.week})
                                     </span>
-                                    ${isHidden ? '<span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1">Ocultado do JPG</span>' : ''}
+                                    ${isHidden ? '<span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1">Ocultado na Exportação</span>' : ''}
                                 </div>
                                 ${statusBadgeHTML}
                             </div>
@@ -2308,11 +2318,7 @@
         function generateOffscreenContentHTML(visibleInits) {
             let htmlContent = '';
 
-            const sortedVisible = [...visibleInits].sort((a, b) => {
-                const cultureCompare = (a.culture || "").localeCompare(b.culture || "");
-                if (cultureCompare !== 0) return cultureCompare;
-                return (b.date || "").localeCompare(a.date || "");
-            });
+            const sortedVisible = sortRecordsByBloco(visibleInits);
 
             sortedVisible.forEach((initRecord, index) => {
                 const relativeWeeklies = weeklyRecords.filter(w => w.parentId === initRecord.id);
@@ -2341,13 +2347,9 @@
                     weeklyGroups.push([]); 
                 }
 
-                // Total de paginas: 1(início) + grupos semanais + 1(Graficos) + 1(Colheita se existir)
                 const totalTestPages = 1 + weeklyGroups.length + 1 + (harvest ? 1 : 0);
                 let currentPageTracker = 1;
 
-                // ========================================================================
-                // PÁGINA 1: DADOS INICIAIS DO TESTE (Exclusiva)
-                // ========================================================================
                 htmlContent += `
                     <div class="report-page-block" style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
                         
@@ -2389,7 +2391,6 @@
                             </div>
                         </div>
 
-                        <!-- Tabela de Cronologia de Plantio - TOTALMENTE CENTRALIZADA -->
                         <div style="background: #ffffff; border: 2px solid #e2e8f0; border-radius: 16px; padding: 30px; margin-bottom: 45px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
                             <h4 style="margin: 0 0 24px 0; font-size: 22px; text-transform: uppercase; color: #334155; font-weight: 850; text-align: center;">Cronologia Inicial</h4>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
@@ -2404,7 +2405,6 @@
                             </div>
                         </div>
 
-                        <!-- Informações do Tratamento Inicial -->
                         <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 16px; padding: 35px; margin-bottom: 45px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
                             <h4 style="margin: 0 0 16px 0; font-size: 22px; text-transform: uppercase; color: #14532d; font-weight: 850; letter-spacing: 0.5px; border-bottom: 2.5px solid #bbf7d0; padding-bottom: 12px;">Metodologia do Tratamento de Plantio</h4>
                             <div style="font-size: 20px; color: #166534; line-height: 1.8; text-align: justify; white-space: pre-wrap; margin-bottom: 25px;">${productDisplay}</div>
@@ -2415,7 +2415,6 @@
                             </div>
                         </div>
 
-                        <!-- Fotografias de Plantio -->
                         ${initRecord.photos && initRecord.photos.length > 0 ? `
                             <div style="background: #f8fafc; padding: 30px; border-radius: 16px; border: 2px solid #e2e8f0; margin-bottom: 45px;">
                                 <h4 style="margin: 0 0 24px 0; font-size: 20px; text-transform: uppercase; color: #475569; font-weight: 800; letter-spacing: 0.5px; border-bottom: 2px solid #cbd5e1; padding-bottom: 12px;">Imagens Iniciais do Teste:</h4>
@@ -2425,28 +2424,23 @@
                             </div>
                         ` : `
                             <div style="background: #f8fafc; padding: 40px; border-radius: 16px; border: 2px dashed #cbd5e1; text-align: center; color: #64748b; font-size: 18px; font-style: italic;">
-                                Nenhuma imagem do plantio inicial foi registrada.
+                                Nenhuma imagem do plantio inicial foi registada.
                             </div>
                         `}
 
-                        <!-- Rodapé Fixo da Página -->
                         <div style="position: absolute; bottom: 40px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid #e2e8f0; padding-top: 24px; font-size: 16px; color: #94a3b8; font-weight: bold;">
-                            <span>Fazenda Oásis &copy; Registro de Acompanhamento de Culturas</span>
+                            <span>Fazenda Oásis &copy; Registo de Acompanhamento de Culturas</span>
                             <span>Página 1 de ${totalTestPages}</span>
                         </div>
                     </div>
                 `;
 
-                // ========================================================================
-                // PÁGINAS SEGUINTES: ACOMPANHAMENTO SEMANAL (De 3 em 3)
-                // ========================================================================
                 weeklyGroups.forEach((group, groupIdx) => {
                     currentPageTracker++;
 
                     htmlContent += `
                         <div class="report-page-block" style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
                             
-                            <!-- Cabeçalho Principal -->
                             <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 6px solid #1d4ed8; padding-bottom: 30px; margin-bottom: 45px;">
                                 <div style="display: flex; align-items: center; gap: 32px;">
                                     <img src="https://i.imgur.com/wEozr34.png" style="width: 110px; height: 110px; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
@@ -2461,7 +2455,6 @@
                                 </div>
                             </div>
 
-                            <!-- Identificação do Bloco -->
                             <div style="background-color: #eff6ff; border: 3px solid #bfdbfe; padding: 25px 40px; border-radius: 20px; margin-bottom: 40px;">
                                 <span style="font-size: 15px; font-weight: 900; color: #1d4ed8; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 6px;">PÁGINA 0${currentPageTracker} - EVOLUÇÃO SEMANAL DO LOTE</span>
                                 <h3 style="margin: 0; font-size: 32px; color: #1e3a8a; font-weight: 800; text-transform: uppercase;">
@@ -2492,7 +2485,6 @@
                                 scoreText = "Regular";
                             }
 
-                            // Alinhamento centralizado vertical sintonizado no PDF/JPG
                             htmlContent += `
                                 <div style="margin-bottom: 30px; background: #f8fafc; border-left: 8px solid #2563eb; padding: 25px 32px; border-radius: 0 16px 16px 0; border-top: 2.5px solid #e2e8f0; border-right: 2.5px solid #e2e8f0; border-bottom: 2.5px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); box-sizing: border-box;">
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 14px; align-items: center;">
@@ -2519,18 +2511,14 @@
                     htmlContent += `</div>`;
 
                     htmlContent += `
-                            <!-- Rodapé Fixo da Página -->
                             <div style="position: absolute; bottom: 40px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid #e2e8f0; padding-top: 24px; font-size: 16px; color: #94a3b8; font-weight: bold;">
-                                <span>Fazenda Oásis &copy; Registro de Acompanhamento de Culturas</span>
+                                <span>Fazenda Oásis &copy; Registo de Acompanhamento de Culturas</span>
                                 <span>Página ${currentPageTracker} de ${totalTestPages}</span>
                             </div>
                         </div>
                     `;
                 });
 
-                // ========================================================================
-                // PÁGINA ESPECÍFICA DE GRÁFICOS (Barra de Ciclos e Tendência Premium)
-                // ========================================================================
                 currentPageTracker++;
                 const barChartSVG = generateDynamicChartSVG(initRecord, relativeWeeklies, harvest);
                 const trendSVG = generateTrendChartSVG(initRecord, relativeWeeklies, harvest);
@@ -2538,7 +2526,6 @@
                 htmlContent += `
                     <div class="report-page-block" style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
                         
-                        <!-- Cabeçalho Principal -->
                         <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 6px solid #475569; padding-bottom: 30px; margin-bottom: 45px;">
                             <div style="display: flex; align-items: center; gap: 32px;">
                                 <img src="https://i.imgur.com/wEozr34.png" style="width: 110px; height: 110px; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
@@ -2553,7 +2540,6 @@
                             </div>
                         </div>
 
-                        <!-- Identificação do Bloco -->
                         <div style="background-color: #f8fafc; border: 3px solid #e2e8f0; padding: 25px 40px; border-radius: 20px; margin-bottom: 40px;">
                             <span style="font-size: 15px; font-weight: 900; color: #475569; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 6px;">PÁGINA 0${currentPageTracker} - ANÁLISE GRÁFICA DO CICLO</span>
                             <h3 style="margin: 0; font-size: 32px; color: #334155; font-weight: 800; text-transform: uppercase;">
@@ -2561,34 +2547,27 @@
                             </h3>
                         </div>
 
-                        <!-- Gráfico de Barras do Ciclo de Dias -->
                         <div style="margin-bottom: 50px;">
                             ${barChartSVG}
                         </div>
 
-                        <!-- Gráfico de Linha de Tendência de Vigor -->
                         <div style="margin-bottom: 50px;">
                             ${trendSVG}
                         </div>
 
-                        <!-- Rodapé Fixo da Página -->
                         <div style="position: absolute; bottom: 40px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid #e2e8f0; padding-top: 24px; font-size: 16px; color: #94a3b8; font-weight: bold;">
-                            <span>Fazenda Oásis &copy; Registro de Acompanhamento de Culturas</span>
+                            <span>Fazenda Oásis &copy; Registo de Acompanhamento de Culturas</span>
                             <span>Página ${currentPageTracker} de ${totalTestPages}</span>
                         </div>
                     </div>
                 `;
 
-                // ========================================================================
-                // PÁGINA FINAL: DADOS DA COLHEITA E RENDIMENTO (Exclusiva)
-                // ========================================================================
                 if (harvest) {
                     currentPageTracker++;
 
                     htmlContent += `
                         <div class="report-page-block" style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
                             
-                            <!-- Cabeçalho Principal -->
                             <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 6px solid #d97706; padding-bottom: 30px; margin-bottom: 45px;">
                                 <div style="display: flex; align-items: center; gap: 32px;">
                                     <img src="https://i.imgur.com/wEozr34.png" style="width: 110px; height: 110px; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=150&q=80'">
@@ -2603,7 +2582,6 @@
                                 </div>
                             </div>
 
-                            <!-- Identificação do Lote -->
                             <div style="background-color: #fffbeb; border: 3px solid #fde68a; padding: 25px 40px; border-radius: 20px; margin-bottom: 40px;">
                                 <span style="font-size: 15px; font-weight: 900; color: #d97706; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 6px;">PÁGINA FINAL - ENCERRAMENTO E DADOS DE RENDIMENTO DA COLHEITA</span>
                                 <h3 style="margin: 0; font-size: 32px; color: #78350f; font-weight: 800; text-transform: uppercase;">
@@ -2611,12 +2589,10 @@
                                 </h3>
                             </div>
 
-                            <!-- Injeção dos dados de rendimento e parecer agronômico -->
                             <div style="margin-top: 10px; margin-bottom: 40px;">
                                 ${generateYieldAnalysisHTML(initRecord, harvest, true)}
                             </div>
 
-                            <!-- Fotos da colheita -->
                             ${harvest.photos && harvest.photos.length > 0 ? `
                                 <div style="margin-top: 35px; background: #ffffff; padding: 25px 35px; border-radius: 18px; border: 2px solid #fde68a; page-break-inside: avoid;">
                                     <h4 style="margin: 0 0 16px 0; font-size: 22px; text-transform: uppercase; color: #92400e; font-weight: 800;">📷 Imagens Comprobatórias da Colheita:</h4>
@@ -2626,9 +2602,8 @@
                                 </div>
                             ` : ''}
 
-                            <!-- Rodapé Fixo da Página -->
                             <div style="position: absolute; bottom: 40px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid #e2e8f0; padding-top: 24px; font-size: 16px; color: #94a3b8; font-weight: bold;">
-                                <span>Fazenda Oásis &copy; Registro de Acompanhamento de Culturas</span>
+                                <span>Fazenda Oásis &copy; Registo de Acompanhamento de Culturas</span>
                                 <span>Página ${currentPageTracker} de ${totalTestPages}</span>
                             </div>
                         </div>
@@ -2636,7 +2611,6 @@
                 }
             });
 
-            // Adiciona página de Análise Global no final do PDF se houver mais de 1 teste
             if (sortedVisible.length > 1) {
                 const compSVG = generateComparativeChartSVG(sortedVisible, weeklyRecords, harvestRecords);
                 htmlContent += `
@@ -2670,7 +2644,7 @@
                         </div>
 
                         <div style="position: absolute; bottom: 40px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid #e2e8f0; padding-top: 24px; font-size: 16px; color: #94a3b8; font-weight: bold;">
-                            <span>Fazenda Oásis &copy; Registro de Acompanhamento de Culturas</span>
+                            <span>Fazenda Oásis &copy; Registo de Acompanhamento de Culturas</span>
                             <span>Relatório Global Concluído</span>
                         </div>
                     </div>
@@ -2690,10 +2664,8 @@
                 return;
             }
 
-            // Exibir modal amigável de processamento
             showModalAlert('Gerando Ficheiro', 'A processar e compilar todo o relatório em um único ficheiro contínuo de imagem JPEG em alta definição. Por favor, aguarde...', 'info');
 
-            // Criar container offscreen temporário para fundir todas as páginas sequencialmente
             const tempDiv = document.createElement('div');
             tempDiv.style.position = 'absolute';
             tempDiv.style.left = '0';
@@ -2704,10 +2676,8 @@
             tempDiv.style.background = '#ffffff';
             document.body.appendChild(tempDiv);
 
-            // Gera todo o conteúdo estruturado
             tempDiv.innerHTML = generateOffscreenContentHTML(visibleInits);
 
-            // Ajustar margens dos blocos para uma fusão sem emendas visuais
             const pageBlocks = tempDiv.querySelectorAll('.report-page-block');
             pageBlocks.forEach(block => {
                 block.style.marginBottom = '0px'; 
@@ -2715,14 +2685,13 @@
                 block.style.boxShadow = 'none';
             });
 
-            // Permitir tempo para renderizar os gráficos e vetores dinamicamente na DOM
             setTimeout(async () => {
                 try {
                     await waitForReportImages(tempDiv);
 
                     const canvas = await html2canvas(tempDiv, {
                         useCORS: true,
-                        scale: 1.5, // Crisp HD rendering
+                        scale: 1.5, 
                         backgroundColor: '#ffffff',
                         logging: false,
                         allowTaint: true
@@ -2730,13 +2699,11 @@
                     
                     const imgData = canvas.toDataURL('image/jpeg', 0.95);
                     
-                    // Dispara o download automático do arquivo consolidado no browser
                     const link = document.createElement('a');
                     link.download = `Relatorio_Oasis_Completo.jpg`;
                     link.href = imgData;
                     link.click();
 
-                    // Limpeza
                     if (tempDiv.parentNode) {
                         document.body.removeChild(tempDiv);
                     }
@@ -2752,6 +2719,96 @@
                     }
                     closeModal();
                     showModalAlert('Erro', 'Ocorreu um erro ao converter o relatório em imagem única.', 'error');
+                }
+            }, 1500);
+        }
+
+        // =========================================================
+        // NOVO: SISTEMA DE EXPORTAÇÃO COMPLETO EM PDF
+        // =========================================================
+        function downloadCompletePDF() {
+            const visibleInits = initialRecords.filter(r => r.isVisible !== false);
+            if (visibleInits.length === 0) {
+                showModalAlert('Falta de Dados', 'Não existem testes ativos ou visíveis para compilar no PDF.', 'warning');
+                return;
+            }
+
+            showModalAlert('Gerando Ficheiro', 'A processar e compilar todo o relatório em um único ficheiro PDF paginado em alta definição. Por favor, aguarde...', 'info');
+
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '0';
+            tempDiv.style.top = '0';
+            tempDiv.style.zIndex = '-1';
+            tempDiv.style.pointerEvents = 'none';
+            tempDiv.style.width = '1200px'; 
+            tempDiv.style.background = '#ffffff';
+            document.body.appendChild(tempDiv);
+
+            tempDiv.innerHTML = generateOffscreenContentHTML(visibleInits);
+
+            setTimeout(async () => {
+                try {
+                    await waitForReportImages(tempDiv);
+                    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+                    const jsPDFConstructor = window.jspdf && window.jspdf.jsPDF;
+                    if (!jsPDFConstructor) {
+                        throw new Error('jsPDF nao foi carregado.');
+                    }
+
+                    const pdf = new jsPDFConstructor({
+                        unit: 'mm',
+                        format: 'a4',
+                        orientation: 'portrait'
+                    });
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+                    const pageBlocks = Array.from(tempDiv.querySelectorAll('.report-page-block'));
+
+                    if (pageBlocks.length === 0) {
+                        throw new Error('Nenhuma pagina de relatorio foi encontrada.');
+                    }
+
+                    for (let index = 0; index < pageBlocks.length; index++) {
+                        const pageBlock = pageBlocks[index];
+                        pageBlock.style.marginBottom = '0px';
+
+                        const canvas = await html2canvas(pageBlock, {
+                            scale: 1.5,
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#ffffff',
+                            logging: false,
+                            scrollX: 0,
+                            scrollY: 0,
+                            windowWidth: 1200,
+                            windowHeight: 1697
+                        });
+
+                        const imgData = canvas.toDataURL('image/jpeg', 0.98);
+                        if (index > 0) {
+                            pdf.addPage();
+                        }
+                        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                    }
+
+                    pdf.save('Relatorio_Oasis_Completo.pdf');
+
+                    if (tempDiv.parentNode) {
+                        document.body.removeChild(tempDiv);
+                    }
+                    closeModal();
+                    setTimeout(() => {
+                        showModalAlert('PDF Pronto', 'O PDF completo de todos os testes foi gerado com sucesso!', 'success');
+                    }, 400);
+                } catch (err) {
+                    console.error("Erro na geracao do PDF Completo: ", err);
+                    if (tempDiv.parentNode) {
+                        document.body.removeChild(tempDiv);
+                    }
+                    closeModal();
+                    showModalAlert('Erro', 'Ocorreu um erro de renderização ao gerar o PDF Completo.', 'error');
                 }
             }, 1500);
         }
@@ -2853,7 +2910,7 @@
                         document.body.removeChild(tempDiv);
                     }
                     closeModal();
-                    showModalAlert('Erro', 'Ocorreu um erro de renderizacao ao gerar o PDF deste registo.', 'error');
+                    showModalAlert('Erro', 'Ocorreu um erro de renderização ao gerar o PDF deste registo.', 'error');
                 }
             }, 1200);
         }
