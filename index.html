@@ -1046,7 +1046,7 @@
             if (editId) {
                 const idx = weeklyRecords.findIndex(r => r.id === editId);
                 if (idx !== -1) weeklyRecords[idx] = record;
-                showModalAlert('Sucesso', 'Acompanhamento semanal atualizado!', 'success');
+                showModalAlert('Sucesso', 'Acompanhamento semanal updated!', 'success');
             } else {
                 weeklyRecords.push(record);
                 showModalAlert('Sucesso', 'Evolução registada!', 'success');
@@ -1262,6 +1262,7 @@
             });
         }
 
+        // Deleta um registro semanal
         function deleteWeeklyRecord(id) {
             showModalConfirm('Confirmar Remoção', 'Deseja realmente apagar esta nota de acompanhamento evolutivo?', () => {
                 weeklyRecords = weeklyRecords.filter(w => w.id !== id);
@@ -1305,129 +1306,8 @@
             document.getElementById('stat-harvest-total').textContent = harvestCount;
         }
 
-        // ==========================================
-        // GERAÇÃO DE GRÁFICO SVG CRONOLÓGICO DE BARRAS
-        // ==========================================
-        function generateDynamicChartSVG(initRecord, relativeWeeklies, harvest) {
-            const refDate = initRecord.plantDate || initRecord.date;
-            
-            const points = [];
-            points.push({
-                label: 'Plantio',
-                value: 0,
-                displayValue: 'Dia 0'
-            });
-
-            const initDelay = getDaysBetween(refDate, initRecord.date);
-            if (initDelay !== 0) {
-                points.push({
-                    label: 'Início',
-                    value: initDelay,
-                    displayValue: `Dia ${initDelay}`
-                });
-            }
-
-            const sortedWeeklies = [...relativeWeeklies].sort((a,b) => a.date.localeCompare(b.date));
-            sortedWeeklies.forEach((w, idx) => {
-                const days = getDaysBetween(refDate, w.date);
-                points.push({
-                    label: `Evol. ${idx + 1}`,
-                    value: days,
-                    displayValue: `Dia ${days}`
-                });
-            });
-
-            if (harvest) {
-                const days = getDaysBetween(refDate, harvest.date);
-                points.push({
-                    label: 'Colheita 🌾',
-                    value: days,
-                    displayValue: `Dia ${days}`
-                });
-            }
-
-            points.sort((a,b) => a.value - b.value);
-
-            const svgWidth = 1000;
-            const svgHeight = 340;
-            const paddingLeft = 80;
-            const paddingRight = 80;
-            const paddingTop = 70;
-            const paddingBottom = 60;
-
-            const chartWidth = svgWidth - paddingLeft - paddingRight;
-            const chartHeight = svgHeight - paddingTop - paddingBottom;
-
-            const maxVal = Math.max(...points.map(p => p.value)) || 1;
-
-            let gridHTML = '';
-            for(let i = 0; i <= 4; i++) {
-                let gridY = paddingTop + (chartHeight * (i/4));
-                gridHTML += `<line x1="${paddingLeft - 20}" y1="${gridY}" x2="${svgWidth - paddingRight + 20}" y2="${gridY}" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 6" />`;
-            }
-
-            let barsHTML = '';
-            let labelsHTML = '';
-            let trendPoints = [];
-            const numPoints = points.length;
-
-            points.forEach((p, idx) => {
-                let x = paddingLeft;
-                if (numPoints > 1) {
-                    x = paddingLeft + (idx / (numPoints - 1)) * chartWidth;
-                } else {
-                    x = paddingLeft + chartWidth / 2;
-                }
-
-                const scaledHeight = (p.value / maxVal) * chartHeight || 16;
-                const y = svgHeight - paddingBottom - scaledHeight;
-
-                trendPoints.push({ x: x, y: y });
-
-                barsHTML += `
-                    <rect x="${x - 24}" y="${y}" width="48" height="${scaledHeight}" fill="url(#oasisGradientModern)" rx="8" ry="8" />
-                `;
-
-                labelsHTML += `
-                    <text x="${x}" y="${y - 18}" fill="#064e3b" font-size="18" font-weight="800" text-anchor="middle" font-family="sans-serif">${p.displayValue}</text>
-                    <text x="${x}" y="${svgHeight - 20}" fill="#475569" font-size="16" font-weight="700" text-anchor="middle" font-family="sans-serif">${p.label}</text>
-                `;
-            });
-
-            let trendLineHTML = '';
-            if (trendPoints.length > 1) {
-                let pathD = `M ${trendPoints[0].x} ${trendPoints[0].y}`;
-                for (let i = 1; i < trendPoints.length; i++) {
-                    pathD += ` L ${trendPoints[i].x} ${trendPoints[i].y}`;
-                }
-                trendLineHTML = `
-                    <path d="${pathD}" fill="none" stroke="#1e40af" stroke-width="4.5" stroke-dasharray="8 6" stroke-linecap="round" stroke-linejoin="round" />
-                    ${trendPoints.map(tp => `<circle cx="${tp.x}" cy="${tp.y}" r="8" fill="#ffffff" stroke="#1e40af" stroke-width="4.5" />`).join('')}
-                `;
-            }
-
-            return `
-                <div style="width: 100%; margin-top: 24px;">
-                    <span style="font-size: 16px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px; font-family: sans-serif;">Gráfico Cronológico do Ciclo (A partir do Plantio)</span>
-                    <svg viewBox="0 0 ${svgWidth} ${svgHeight}" style="width: 100%; height: auto; background: #f8fafc; border-radius: 16px; border: 2px solid #cbd5e1;">
-                        <defs>
-                            <linearGradient id="oasisGradientModern" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#10b981" />
-                                <stop offset="100%" stop-color="#047857" />
-                            </linearGradient>
-                        </defs>
-                        ${gridHTML}
-                        <line x1="${paddingLeft - 20}" y1="${svgHeight - paddingBottom}" x2="${svgWidth - paddingRight + 20}" y2="${svgHeight - paddingBottom}" stroke="#94a3b8" stroke-width="3" />
-                        ${barsHTML}
-                        ${trendLineHTML}
-                        ${labelsHTML}
-                    </svg>
-                </div>
-            `;
-        }
-
         // ============================================================================================
-        // GERAÇÃO DE GRÁFICO SVG DE TENDÊNCIA DE VIGOR
+        // GERAÇÃO DE GRÁFICO DE TENDÊNCIA DE VIGOR
         // ============================================================================================
         function generateTrendChartSVG(initRecord, relativeWeeklies, harvest) {
             const refDate = initRecord.plantDate || initRecord.date;
@@ -1563,7 +1443,7 @@
             ` : '';
 
             return `
-                <div style="width: 100%; margin-top: 24px;">
+                <div style="width: 100%; margin-top: 10px;">
                     <span style="font-size: 16px; font-weight: 800; color: #1e3a8a; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px; font-family: sans-serif; display: flex; align-items: center; gap: 8px;">
                         <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                         Gráfico de Tendência de Vigor e Saúde da Planta (Com base nas Notas Semanais)
@@ -2087,7 +1967,7 @@
                                 <span class="text-xs font-extrabold text-oasis-900 uppercase">Início de Aplicação do Teste (Dia ${startTestDelay})</span>
                                 <span class="text-[11px] text-slate-500 font-bold">${formatDatePT(initRecord.date)}</span>
                             </div>
-                            <p class="text-xs text-slate-700 mt-1 whitespace-pre-wrap">Tratamento ativo com o produto: <strong class="text-oasis-800">${initRecord.product}</strong> (${initRecord.totalApplied} ${initRecord.unit})</p>
+                            <p class="text-xs text-slate-700 mt-1 whitespace-pre-wrap">Tratamento active com o produto: <strong class="text-oasis-800">${initRecord.product}</strong> (${initRecord.totalApplied} ${initRecord.unit})</p>
                         </div>
                     </div>
                 `;
@@ -2167,7 +2047,6 @@
 
                 timelineHTML += `</div>`;
 
-                let chartHTML = generateDynamicChartSVG(initRecord, relativeWeeklies, harvest);
                 let trendChartHTML = generateTrendChartSVG(initRecord, relativeWeeklies, harvest);
 
                 const nBlocoDisplay = initRecord.nBloco ? ` - Nº ${initRecord.nBloco}` : '';
@@ -2217,8 +2096,6 @@
                                     <div class="flex gap-2 flex-wrap">${initPhotosHTML}</div>
                                 </div>
                             </div>
-
-                            ${chartHTML}
 
                             <div class="mt-4 pt-4 border-t border-slate-100">
                                 <h5 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-4">Linha do Tempo Evolutiva do Teste</h5>
@@ -2525,7 +2402,6 @@
                 });
 
                 currentPageTracker++;
-                const barChartSVG = generateDynamicChartSVG(initRecord, relativeWeeklies, harvest);
                 const trendSVG = generateTrendChartSVG(initRecord, relativeWeeklies, harvest);
 
                 htmlContent += `
@@ -2552,11 +2428,7 @@
                             </h3>
                         </div>
 
-                        <div style="margin-bottom: 50px;">
-                            ${barChartSVG}
-                        </div>
-
-                        <div style="margin-bottom: 50px;">
+                        <div style="margin-bottom: 50px; margin-top: 40px;">
                             ${trendSVG}
                         </div>
 
