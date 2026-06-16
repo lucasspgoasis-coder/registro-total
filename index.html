@@ -481,7 +481,7 @@
             <!-- Tabela & Histórico Geral (Lado Direito - 60%) -->
             <div class="lg:col-span-7 space-y-6">
                
-                <!-- Card de Resumos / Estatísticas - AGORA CENTRALIZADOS -->
+                <!-- Card de Resumos / Estatísticas -->
                 <div class="grid grid-cols-3 gap-4">
                     <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center">
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Testes Iniciais</span>
@@ -854,11 +854,10 @@
         }
 
         function calculateFieldSentimentIndex(notes) {
-            if (!notes) return 70; // Padrão neutro saudável
+            if (!notes) return 70; 
             
             const text = notes.toLowerCase();
             
-            // Dicionários agrícolas em Português
             const positiveAgronomicWords = [
                 "vigor", "forte", "ótimo", "otimo", "bom", "excelente", "crescendo", "saudável", "saudavel", 
                 "verde", "bonito", "perfeito", "resistente", "desenvolve", "vigoroso", "esperado", "adequado", 
@@ -888,7 +887,6 @@
                 if (matches) negCount += matches.length;
             });
 
-            // Equação agronômica: Começa em 70% (neutro comercial)
             let score = 70 + (posCount * 15) - (negCount * 20);
             return Math.max(0, Math.min(100, score));
         }
@@ -1315,9 +1313,9 @@
             const trendPoints = [];
             trendPoints.push({
                 day: 0,
-                label: 'Início',
+                label: 'Plantio',
                 score: 100,
-                date: formatDatePT(initRecord.date)
+                date: formatDatePT(refDate)
             });
 
             const sortedWeeklies = [...relativeWeeklies].sort((a,b) => a.date.localeCompare(b.date));
@@ -1483,6 +1481,172 @@
         }
 
         // ============================================================================================
+        // NOVO: GERAÇÃO DE GRÁFICO DE EVOLUÇÃO DE DIAS (TEMPO DE PLANTIO)
+        // ============================================================================================
+        function generateCycleDaysChartSVG(initRecord, relativeWeeklies, harvest) {
+            const refDate = initRecord.plantDate || initRecord.date;
+            
+            const trendPoints = [];
+            trendPoints.push({
+                days: 0,
+                label: 'Plantio',
+                date: formatDatePT(refDate)
+            });
+
+            const sortedWeeklies = [...relativeWeeklies].sort((a,b) => a.date.localeCompare(b.date));
+            sortedWeeklies.forEach((w, idx) => {
+                trendPoints.push({
+                    days: getDaysBetween(refDate, w.date),
+                    label: `Evol. ${idx + 1}`,
+                    date: formatDatePT(w.date)
+                });
+            });
+
+            let totalDays = 0;
+            if (harvest) {
+                totalDays = getDaysBetween(refDate, harvest.date);
+                trendPoints.push({
+                    days: totalDays,
+                    label: 'Colheita 🌾',
+                    date: formatDatePT(harvest.date)
+                });
+            } else if (trendPoints.length > 0) {
+                totalDays = trendPoints[trendPoints.length - 1].days;
+            }
+
+            const svgWidth = 1000;
+            const svgHeight = 360;
+            const paddingLeft = 60;
+            const paddingRight = 240; // Espaço para o painel "Flash"
+            const paddingTop = 90;
+            const paddingBottom = 60;
+
+            const chartWidth = svgWidth - paddingLeft - paddingRight;
+            const chartHeight = svgHeight - paddingTop - paddingBottom;
+            
+            // Garantir que não divimos por 0 caso esteja no dia 0
+            const maxDays = Math.max(10, ...trendPoints.map(p => p.days));
+
+            // Grid Horizontal
+            let gridHTML = '';
+            const steps = 4;
+            for (let i = 0; i <= steps; i++) {
+                const ratio = i / steps;
+                const gridY = paddingTop + (chartHeight * ratio);
+                const dayValue = Math.round(maxDays * (1 - ratio));
+                gridHTML += `
+                    <line x1="${paddingLeft}" y1="${gridY}" x2="${svgWidth - paddingRight + 20}" y2="${gridY}" stroke="#f1f5f9" stroke-width="1.5" />
+                    <text x="${paddingLeft - 10}" y="${gridY}" fill="#94a3b8" font-size="12" font-weight="800" text-anchor="end" dominant-baseline="middle" font-family="sans-serif">${dayValue}d</text>
+                `;
+            }
+
+            // Coordenadas
+            const numPoints = trendPoints.length;
+            const coords = trendPoints.map((p, idx) => {
+                let x = paddingLeft + 40; 
+                if (numPoints > 1) {
+                    x = paddingLeft + 20 + (idx / (numPoints - 1)) * (chartWidth - 40);
+                } else {
+                    x = paddingLeft + chartWidth / 2;
+                }
+                const yRatio = p.days / maxDays; 
+                const y = paddingTop + chartHeight - (yRatio * chartHeight);
+                return { ...p, x, y };
+            });
+
+            // Linha e Área com Curvas Bezier
+            let curveD = '';
+            let areaD = '';
+            if (coords.length > 0) {
+                curveD = `M ${coords[0].x} ${coords[0].y}`;
+                areaD = `M ${coords[0].x} ${paddingTop + chartHeight} L ${coords[0].x} ${coords[0].y}`;
+                for (let i = 0; i < coords.length - 1; i++) {
+                    const p0 = coords[i];
+                    const p1 = coords[i + 1];
+                    const cpX1 = p0.x + (p1.x - p0.x) / 3;
+                    const cpY1 = p0.y;
+                    const cpX2 = p0.x + 2 * (p1.x - p0.x) / 3;
+                    const cpY2 = p1.y;
+                    curveD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
+                    areaD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
+                }
+                areaD += ` L ${coords[coords.length - 1].x} ${paddingTop + chartHeight} Z`;
+            }
+
+            let pointsHTML = '';
+            coords.forEach((p) => {
+                pointsHTML += `
+                    <!-- Linha tracejada de ligação vertical -->
+                    <line x1="${p.x}" y1="${p.y}" x2="${p.x}" y2="${paddingTop + chartHeight}" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4" />
+                    <!-- Ponto de marcação -->
+                    <circle cx="${p.x}" cy="${p.y}" r="6" fill="#ffffff" stroke="#f59e0b" stroke-width="4" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));" />
+                    
+                    <!-- Rótulo de Barras Total Dias Bem Destacado em Cima -->
+                    <g transform="translate(${p.x - 24}, ${p.y - 45})" style="filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.15));">
+                        <rect x="0" y="0" width="48" height="28" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" />
+                        <text x="24" y="14" fill="#92400e" font-size="13" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">${p.days}d</text>
+                    </g>
+
+                    <!-- Textos inferiores (Data e Título) -->
+                    <text x="${p.x}" y="${svgHeight - 40}" fill="#475569" font-size="13" font-weight="800" text-anchor="middle" font-family="sans-serif">${p.label}</text>
+                    <text x="${p.x}" y="${svgHeight - 24}" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" font-family="sans-serif">${p.date}</text>
+                `;
+            });
+
+            const strokeAndAreaHTML = coords.length > 1 ? `
+                <path d="${areaD}" fill="url(#cycleAreaGrad)" opacity="0.6" />
+                <path d="${curveD}" fill="none" stroke="url(#cycleLineGrad)" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" style="filter: url(#cycleShadowGlow);" opacity="0.35" />
+                <path d="${curveD}" fill="none" stroke="url(#cycleLineGrad)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" />
+            ` : '';
+
+            // Flash com Total Geral de Dias ao lado
+            const flashHTML = `
+                <g transform="translate(${svgWidth - 210}, ${paddingTop - 20})" style="filter: drop-shadow(0px 8px 16px rgba(245, 158, 11, 0.25));">
+                    <rect x="0" y="0" width="170" height="210" rx="20" fill="url(#flashCardGrad)" />
+                    <path d="M 85 15 L 45 95 L 80 95 L 65 185 L 145 80 L 95 80 Z" fill="#ffffff" opacity="0.15" />
+                    <text x="85" y="45" fill="#ffffff" font-size="15" font-weight="900" text-anchor="middle" font-family="sans-serif" letter-spacing="1.5">CICLO TOTAL</text>
+                    <text x="85" y="125" fill="#ffffff" font-size="64" font-weight="900" text-anchor="middle" font-family="sans-serif" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.15);">${totalDays}</text>
+                    <text x="85" y="175" fill="#ffffff" font-size="20" font-weight="800" text-anchor="middle" font-family="sans-serif">DIAS</text>
+                </g>
+            `;
+
+            return `
+                <div style="width: 100%; margin-top: 20px;">
+                    <span style="font-size: 16px; font-weight: 800; color: #92400e; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px; font-family: sans-serif; display: flex; align-items: center; gap: 8px;">
+                        <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        Evolução do Ciclo de Plantio (Total de Dias Acumulados)
+                    </span>
+                    <svg viewBox="0 0 ${svgWidth} ${svgHeight}" style="width: 100%; height: auto; background: #ffffff; border-radius: 16px; border: 2px solid #fde68a; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
+                        <defs>
+                            <filter id="cycleShadowGlow" x="-10%" y="-10%" width="120%" height="120%">
+                                <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#f59e0b" flood-opacity="0.4" />
+                            </filter>
+                            <linearGradient id="cycleLineGrad" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stop-color="#fbbf24" />
+                                <stop offset="50%" stop-color="#f59e0b" />
+                                <stop offset="100%" stop-color="#ea580c" />
+                            </linearGradient>
+                            <linearGradient id="cycleAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#fef3c7" />
+                                <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+                            </linearGradient>
+                            <linearGradient id="flashCardGrad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#f59e0b" />
+                                <stop offset="100%" stop-color="#ea580c" />
+                            </linearGradient>
+                        </defs>
+                        ${gridHTML}
+                        <line x1="${paddingLeft}" y1="${svgHeight - paddingBottom}" x2="${svgWidth - paddingRight + 20}" y2="${svgHeight - paddingBottom}" stroke="#cbd5e1" stroke-width="2.5" />
+                        ${strokeAndAreaHTML}
+                        ${pointsHTML}
+                        ${flashHTML}
+                    </svg>
+                </div>
+            `;
+        }
+
+
+        // ============================================================================================
         // GERAÇÃO DE GRÁFICO COMPARATIVO GLOBAL COM DADOS FLUTUANTES INTEGRADOS NO GRÁFICO
         // ============================================================================================
         function generateComparativeChartSVG(inits, weeklies, harvests) {
@@ -1526,11 +1690,11 @@
             });
 
             const svgWidth = 1000;
-            const svgHeight = 510; // Aumentado para acomodar o nome do produto
+            const svgHeight = 510;
             const paddingLeft = 110;
             const paddingRight = 60;
             const paddingTop = 80;
-            const paddingBottom = 110; // Aumentado para dar espaço extra para o texto do produto
+            const paddingBottom = 110; 
 
             const chartWidth = svgWidth - paddingLeft - paddingRight;
             const chartHeight = svgHeight - paddingTop - paddingBottom;
@@ -1610,7 +1774,6 @@
                     </g>
                 `;
 
-                // Rótulos na Base do Gráfico (Agora inclui o nome do produto/tratamento)
                 let displayProduct = p.product.length > 25 ? p.product.substring(0, 22) + '...' : p.product;
 
                 trendLabelsHTML += `
@@ -1620,27 +1783,21 @@
                     <text x="${p.x}" y="${svgHeight - paddingBottom + 76}" fill="${pointColor}" font-size="10" font-weight="900" text-anchor="middle" font-family="sans-serif" text-transform="uppercase" opacity="0.8">${p.status}</text>
                 `;
 
-                // Renderiza as Métricas da Colheita de forma flutuante DENTRO do Gráfico (sobrepondo ou à frente da barra)
                 if (p.metrics) {
                     const cardY = p.y + 15;
-                    // Limita que não ultrapasse a linha do gráfico no eixo X
                     const maxCardY = svgHeight - paddingBottom - 95; 
                     const finalCardY = Math.min(cardY, maxCardY);
 
                     trendLabelsHTML += `
                         <g transform="translate(${p.x - 50}, ${finalCardY})" style="filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.15));">
-                            <!-- Fundo do Mini-Card Integrado Aumentado -->
                             <rect x="0" y="0" width="100" height="84" rx="10" fill="#ffffff" stroke="${pointColor}" stroke-width="2" opacity="0.95" />
                             
-                            <!-- Dados de Unidades -->
                             <rect x="6" y="8" width="16" height="16" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
                             <text x="28" y="20" fill="#78350f" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.und.toLocaleString('pt-PT')} un</text>
                             
-                            <!-- Dados de Média (gramas) -->
                             <rect x="6" y="34" width="16" height="16" rx="4" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
                             <text x="28" y="46" fill="#4c1d95" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.medG} g</text>
                             
-                            <!-- Dados Totais (Kg) -->
                             <rect x="6" y="60" width="16" height="16" rx="4" fill="#fce7f3" stroke="#ec4899" stroke-width="1.5"/>
                             <text x="28" y="72" fill="#831843" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.totKg} kg</text>
                         </g>
@@ -2048,6 +2205,7 @@
                 timelineHTML += `</div>`;
 
                 let trendChartHTML = generateTrendChartSVG(initRecord, relativeWeeklies, harvest);
+                let cycleDaysChartHTML = generateCycleDaysChartSVG(initRecord, relativeWeeklies, harvest);
 
                 const nBlocoDisplay = initRecord.nBloco ? ` - Nº ${initRecord.nBloco}` : '';
 
@@ -2105,6 +2263,11 @@
                             <!-- Gráfico de Tendência de Vigor em Barras e Curva Fluida com Gradiente -->
                             <div class="mt-6 pt-6 border-t border-slate-200">
                                 ${trendChartHTML}
+                            </div>
+                            
+                            <!-- Gráfico da Evolução dos Dias -->
+                            <div class="mt-6 pt-6 border-t border-slate-200">
+                                ${cycleDaysChartHTML}
                             </div>
                         </div>
 
@@ -2403,6 +2566,7 @@
 
                 currentPageTracker++;
                 const trendSVG = generateTrendChartSVG(initRecord, relativeWeeklies, harvest);
+                const cycleDaysSVG = generateCycleDaysChartSVG(initRecord, relativeWeeklies, harvest);
 
                 htmlContent += `
                     <div class="report-page-block" style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
@@ -2428,8 +2592,13 @@
                             </h3>
                         </div>
 
-                        <div style="margin-bottom: 50px; margin-top: 40px;">
+                        <div style="margin-bottom: 30px; margin-top: 40px;">
                             ${trendSVG}
+                        </div>
+
+                        <!-- Novo Gráfico de Evolução de Dias -->
+                        <div style="margin-bottom: 50px; margin-top: 40px;">
+                            ${cycleDaysSVG}
                         </div>
 
                         <div style="position: absolute; bottom: 40px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid #e2e8f0; padding-top: 24px; font-size: 16px; color: #94a3b8; font-weight: bold;">
