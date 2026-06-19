@@ -435,8 +435,8 @@
                             <input type="number" step="any" id="harvest-average-gm" required placeholder="Ex: 450.5" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
                         </div>
 
-                        <!-- Total Colhido (Unidades) e Total kg -->
-                        <div class="grid grid-cols-2 gap-4">
+                        <!-- Total Colhido (Unidades), Total kg e Total Caixas -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                     <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
@@ -450,6 +450,13 @@
                                     Massa Total (Kg)
                                 </label>
                                 <input type="number" step="any" id="harvest-total-kg" required placeholder="Ex: 1710" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                    Total Caixas Colhidas
+                                </label>
+                                <input type="number" id="harvest-total-boxes" required placeholder="Ex: 150" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
                             </div>
                         </div>
 
@@ -750,6 +757,7 @@
             const now = new Date();
             const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
             document.getElementById('harvest-date').value = dateStr;
+            document.getElementById('harvest-total-boxes').value = '';
 
             tempHarvestPhotos = [];
             updateHarvestPhotosDisplay();
@@ -807,6 +815,7 @@
             updateInitialPhotosDisplay();
         }
 
+        // Fotos Semanais
         function handleWeeklyPhotoUpload(event) {
             const files = event.target.files;
             if(!files) return;
@@ -1073,6 +1082,7 @@
                 averageGm: parseFloat(document.getElementById('harvest-average-gm').value) || 0,
                 totalHarvested: parseInt(document.getElementById('harvest-total-harvested').value) || 0,
                 totalKg: parseFloat(document.getElementById('harvest-total-kg').value) || 0,
+                totalBoxes: parseInt(document.getElementById('harvest-total-boxes').value) || 0,
                 photos: [...tempHarvestPhotos]
             };
 
@@ -1228,6 +1238,7 @@
             document.getElementById('harvest-average-gm').value = record.averageGm || '';
             document.getElementById('harvest-total-harvested').value = record.totalHarvested || '';
             document.getElementById('harvest-total-kg').value = record.totalKg || '';
+            document.getElementById('harvest-total-boxes').value = record.totalBoxes || '';
 
             tempHarvestPhotos = [...record.photos];
             updateHarvestPhotosDisplay();
@@ -1481,7 +1492,7 @@
         }
 
         // ============================================================================================
-        // NOVO: GERAÇÃO DE GRÁFICO DE EVOLUÇÃO DE DIAS (TEMPO DE PLANTIO)
+        // GERAÇÃO DE GRÁFICO DE EVOLUÇÃO DE DIAS (TEMPO DE PLANTIO)
         // ============================================================================================
         function generateCycleDaysChartSVG(initRecord, relativeWeeklies, harvest) {
             const refDate = initRecord.plantDate || initRecord.date;
@@ -1668,7 +1679,8 @@
                     metrics = {
                         und: h.totalHarvested || 0,
                         medG: h.averageGm || 0,
-                        totKg: h.totalKg || 0
+                        totKg: h.totalKg || 0,
+                        boxes: h.totalBoxes || 0
                     };
                 } else if (wList.length > 0) {
                     const lastW = wList[wList.length - 1];
@@ -1785,21 +1797,25 @@
 
                 if (p.metrics) {
                     const cardY = p.y + 15;
-                    const maxCardY = svgHeight - paddingBottom - 95; 
+                    const cardHeight = 108;
+                    const maxCardY = svgHeight - paddingBottom - 115; 
                     const finalCardY = Math.min(cardY, maxCardY);
 
                     trendLabelsHTML += `
                         <g transform="translate(${p.x - 50}, ${finalCardY})" style="filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.15));">
-                            <rect x="0" y="0" width="100" height="84" rx="10" fill="#ffffff" stroke="${pointColor}" stroke-width="2" opacity="0.95" />
+                            <rect x="0" y="0" width="100" height="${cardHeight}" rx="10" fill="#ffffff" stroke="${pointColor}" stroke-width="2" opacity="0.95" />
                             
                             <rect x="6" y="8" width="16" height="16" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
                             <text x="28" y="20" fill="#78350f" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.und.toLocaleString('pt-PT')} un</text>
                             
-                            <rect x="6" y="34" width="16" height="16" rx="4" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
-                            <text x="28" y="46" fill="#4c1d95" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.medG} g</text>
+                            <rect x="6" y="32" width="16" height="16" rx="4" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+                            <text x="28" y="44" fill="#4c1d95" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.medG} g</text>
                             
-                            <rect x="6" y="60" width="16" height="16" rx="4" fill="#fce7f3" stroke="#ec4899" stroke-width="1.5"/>
-                            <text x="28" y="72" fill="#831843" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.totKg} kg</text>
+                            <rect x="6" y="56" width="16" height="16" rx="4" fill="#fce7f3" stroke="#ec4899" stroke-width="1.5"/>
+                            <text x="28" y="68" fill="#831843" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.totKg} kg</text>
+
+                            <rect x="6" y="80" width="16" height="16" rx="4" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="1.5"/>
+                            <text x="28" y="92" fill="#0369a1" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.boxes} cx</text>
                         </g>
                     `;
                 }
@@ -1885,6 +1901,7 @@
             let harvested = harvest.totalHarvested || 0;
             const averageGm = harvest.averageGm || 0;
             const totalKg = harvest.totalKg || 0;
+            const totalBoxes = harvest.totalBoxes || 0;
             const product = initRecord.product || 'Nenhum';
 
             const yieldPercent = Math.min(100, (harvested / seedlings) * 100);
@@ -1962,6 +1979,10 @@
                                         <span style="font-size: 15px; text-transform: uppercase; color: #78350f; font-weight: 800; display: block; margin-bottom: 8px;">Massa Total</span>
                                         <strong style="font-size: 26px; color: #92400e;">${totalKg} Kg</strong>
                                     </div>
+                                    <div style="flex: 1; background: #ffffff; border: 2px solid #fde68a; padding: 20px; border-radius: 16px; text-align: center;">
+                                        <span style="font-size: 15px; text-transform: uppercase; color: #78350f; font-weight: 800; display: block; margin-bottom: 8px;">Total Caixas</span>
+                                        <strong style="font-size: 26px; color: #92400e;">${totalBoxes} cx</strong>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1970,7 +1991,7 @@
                             <strong style="font-size: 20px; color: #b45309; display: block; margin-bottom: 12px; text-transform: uppercase; font-weight: 900;">Conclusão e Parecer Agronômico:</strong>
                             <p style="margin: 0; font-size: 20px; color: #78350f; line-height: 1.6; text-align: justify;">
                                 O acompanhamento evidenciou que a aplicação do produto <strong>"${product}"</strong> nas mudas culminou num rendimento produtivo prático de <strong>${yieldPercent.toFixed(1)}%</strong> relativo ao total estabelecido num plantio (${seedlings} mudas). 
-                                Com uma massa total apurada de <strong>${totalKg} Kg</strong> e uma média por cabeça finalizada em <strong>${averageGm}g</strong>, conclui-se <strong>${avaliacao}</strong>.
+                                Com uma massa total apurada de <strong>${totalKg} Kg</strong> (rendendo um total de <strong>${totalBoxes} caixas</strong>) e uma média por cabeça finalizada em <strong>${averageGm}g</strong>, conclui-se <strong>${avaliacao}</strong>.
                                 O lote apresenta <strong>${vigor}</strong> para fins de despache comercial.
                             </p>
                         </div>
@@ -2001,18 +2022,22 @@
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-3 gap-3">
+                            <div class="grid grid-cols-4 gap-2">
                                 <div class="bg-white p-3 rounded-lg border border-amber-100 shadow-sm text-center">
                                     <span class="text-[10px] text-amber-700 font-extrabold uppercase block mb-1">Média p/ Cabeça</span>
-                                    <strong class="text-amber-900 text-lg">${averageGm} g</strong>
+                                    <strong class="text-amber-900 text-base block mt-0.5">${averageGm} g</strong>
                                 </div>
                                 <div class="bg-white p-3 rounded-lg border border-amber-100 shadow-sm text-center">
                                     <span class="text-[10px] text-amber-700 font-extrabold uppercase block mb-1">Total Colhido</span>
-                                    <strong class="text-amber-900 text-lg">${harvested} und</strong>
+                                    <strong class="text-amber-900 text-base block mt-0.5">${harvested} un</strong>
                                 </div>
                                 <div class="bg-white p-3 rounded-lg border border-amber-100 shadow-sm text-center">
                                     <span class="text-[10px] text-amber-700 font-extrabold uppercase block mb-1">Massa Total</span>
-                                    <strong class="text-amber-900 text-lg">${totalKg} Kg</strong>
+                                    <strong class="text-amber-900 text-base block mt-0.5">${totalKg} Kg</strong>
+                                </div>
+                                <div class="bg-white p-3 rounded-lg border border-amber-100 shadow-sm text-center">
+                                    <span class="text-[10px] text-amber-700 font-extrabold uppercase block mb-1">Total Caixas</span>
+                                    <strong class="text-amber-900 text-base block mt-0.5">${totalBoxes} cx</strong>
                                 </div>
                             </div>
                         </div>
@@ -2021,7 +2046,7 @@
                     <div class="bg-white p-4 rounded-lg border border-amber-100 shadow-inner">
                         <strong class="text-[11px] font-extrabold text-amber-800 uppercase block mb-2">Conclusão e Parecer Agronômico:</strong>
                         <p class="text-xs text-amber-900 leading-relaxed text-justify">
-                            A aplicação do produto <strong class="text-amber-950">"${product}"</strong> nas mudas culminou num rendimento prático de <strong>${yieldPercent.toFixed(1)}%</strong> em relação ao estande original (${seedlings} mudas). Com a massa final consolidada em <strong>${totalKg} Kg</strong> e peso unitário de <strong>${averageGm}g por cabeça</strong>, constata-se <strong>${avaliacao}</strong>. Em suma, o volume colhido apresenta <strong>${vigor}</strong>.
+                            A aplicação do produto <strong class="text-amber-950">"${product}"</strong> nas mudas culminou num rendimento prático de <strong>${yieldPercent.toFixed(1)}%</strong> em relação ao estande original (${seedlings} mudas). Com a massa final consolidada em <strong>${totalKg} Kg</strong> (totalizando <strong>${totalBoxes} caixas colhidas</strong>) e peso unitário de <strong>${averageGm}g por cabeça</strong>, constata-se <strong>${avaliacao}</strong>. Em suma, o volume colhido apresenta <strong>${vigor}</strong>.
                         </p>
                     </div>
                 </div>
@@ -2110,7 +2135,7 @@
                                     <span class="text-xs font-extrabold text-emerald-800 uppercase">Plantio das Mudas (Dia 0)</span>
                                     <span class="text-[11px] text-slate-500 font-bold">${formatDatePT(refDate)}</span>
                                 </div>
-                                <p class="text-xs text-slate-600 mt-1">Cultura plantada com ${initRecord.seedlings} mudas distribuídas em ${initRecord.beds} canteiros.</p>
+                                <p class="text-xs text-slate-600 mt-1">Cultura plantada with ${initRecord.seedlings} mudas distribuídas em ${initRecord.beds} canteiros.</p>
                             </div>
                         </div>
                 `;
@@ -2770,7 +2795,7 @@
         }
 
         // =========================================================
-        // NOVO: SISTEMA DE EXPORTAÇÃO COMPLETO EM PDF
+        // SISTEMA DE EXPORTAÇÃO COMPLETO EM PDF
         // =========================================================
         function downloadCompletePDF() {
             const visibleInits = initialRecords.filter(r => r.isVisible !== false);
