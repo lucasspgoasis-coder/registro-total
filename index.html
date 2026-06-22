@@ -1317,6 +1317,99 @@
         }
 
         // ============================================================================================
+        // GERAÇÃO DOS FLASH CARDS DE DADOS DE PLANTIO (APÓS GRÁFICO DO CICLO)
+        // ============================================================================================
+        function generatePlantingDataCard(initRecord) {
+            return `
+                <div style="display: flex; gap: 16px; margin-top: 30px; flex-wrap: wrap;">
+                    <div style="flex: 1; background: #fffbeb; border: 2px solid #fde68a; border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 4px;">Data Plantio</span>
+                        <strong style="font-size: 18px; color: #78350f;">${formatDatePT(initRecord.plantDate || initRecord.date)}</strong>
+                    </div>
+                    <div style="flex: 1; background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 11px; font-weight: 800; color: #16a34a; text-transform: uppercase; margin-bottom: 4px;">Mudas Plantadas</span>
+                        <strong style="font-size: 18px; color: #14532d;">${(initRecord.seedlings || 0).toLocaleString('pt-PT')} un</strong>
+                    </div>
+                    <div style="flex: 1; background: #eff6ff; border: 2px solid #bfdbfe; border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 11px; font-weight: 800; color: #2563eb; text-transform: uppercase; margin-bottom: 4px;">Canteiros</span>
+                        <strong style="font-size: 18px; color: #1e3a8a;">${initRecord.beds || 0}</strong>
+                    </div>
+                    <div style="flex: 1.5; background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 4px;">Cultura / Var.</span>
+                        <strong style="font-size: 18px; color: #0f172a;">${initRecord.culture} (${initRecord.variety})</strong>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================================================================
+        // GERAÇÃO DE HISTOGRAMA DE SAÚDE (SUBSTITUTO DO GRÁFICO DE TENDÊNCIA DE VIGOR)
+        // ============================================================================================
+        function generateHealthHistogramSVG(weeklies) {
+            if (!weeklies || weeklies.length === 0) {
+                return `
+                    <div style="width: 100%; margin-top: 30px; text-align: center; padding: 24px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 16px; color: #64748b; font-size: 15px; font-style: italic;">
+                        Nenhum registo de saúde/vigor adicionado durante o ciclo.
+                    </div>
+                `;
+            }
+
+            const sortedWeeklies = [...weeklies].sort((a,b) => a.date.localeCompare(b.date));
+            
+            const svgWidth = 1000;
+            const svgHeight = 260;
+            const paddingTop = 40;
+            const paddingBottom = 40;
+            const paddingSide = 60;
+            const chartW = svgWidth - 2 * paddingSide;
+            const chartH = svgHeight - paddingTop - paddingBottom;
+            
+            const barCount = sortedWeeklies.length;
+            const bucketW = chartW / barCount;
+            
+            let bars = '';
+            sortedWeeklies.forEach((w, i) => {
+                const score = w.vigorScore !== undefined ? w.vigorScore : calculateFieldSentimentIndex(w.notes);
+                const x = paddingSide + i * bucketW + bucketW / 2;
+                const h = (score / 100) * chartH;
+                const y = paddingTop + chartH - h;
+                const barW = Math.min(45, bucketW * 0.6);
+                const barX = x - barW / 2;
+                
+                let color = "#10b981"; 
+                if (score < 40) color = "#ef4444"; 
+                else if (score < 70) color = "#f59e0b"; 
+                
+                bars += `
+                    <rect x="${barX}" y="${y}" width="${barW}" height="${h}" fill="${color}" rx="6" />
+                    <text x="${x}" y="${y - 12}" fill="${color}" font-size="14" font-weight="900" text-anchor="middle" font-family="sans-serif">${score}%</text>
+                    <text x="${x}" y="${svgHeight - 15}" fill="#64748b" font-size="12" font-weight="800" text-anchor="middle" font-family="sans-serif">${formatDatePT(w.date)}</text>
+                `;
+            });
+            
+            let grid = '';
+            [0, 50, 100].forEach(v => {
+                const y = paddingTop + chartH - (v / 100) * chartH;
+                grid += `<line x1="${paddingSide - 10}" y1="${y}" x2="${svgWidth - paddingSide + 10}" y2="${y}" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4 4" />
+                         <text x="${paddingSide - 20}" y="${y}" fill="#94a3b8" font-size="11" font-weight="800" text-anchor="end" dominant-baseline="middle" font-family="sans-serif">${v}%</text>`;
+            });
+
+            return `
+                <div style="width: 100%; margin-top: 40px;">
+                    <span style="font-size: 16px; font-weight: 800; color: #16a34a; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px; font-family: sans-serif; display: flex; align-items: center; gap: 8px;">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                        Histograma de Saúde da Planta (% Vigor ao Longo do Ciclo)
+                    </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgWidth} ${svgHeight}" style="width: 100%; height: auto; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0;">
+                        ${grid}
+                        <line x1="${paddingSide - 10}" y1="${paddingTop + chartH}" x2="${svgWidth - paddingSide + 10}" y2="${paddingTop + chartH}" stroke="#cbd5e1" stroke-width="2.5" />
+                        ${bars}
+                    </svg>
+                </div>
+            `;
+        }
+
+        // ============================================================================================
         // GERAÇÃO DE GRÁFICO DE EVOLUÇÃO DE DIAS (TEMPO DE PLANTIO)
         // ============================================================================================
         function generateCycleDaysChartSVG(initRecord, relativeWeeklies, harvest) {
@@ -1353,17 +1446,15 @@
             const svgWidth = 1000;
             const svgHeight = 360;
             const paddingLeft = 60;
-            const paddingRight = 240; // Espaço para o painel "Flash"
+            const paddingRight = 240; 
             const paddingTop = 90;
             const paddingBottom = 60;
 
             const chartWidth = svgWidth - paddingLeft - paddingRight;
             const chartHeight = svgHeight - paddingTop - paddingBottom;
             
-            // Garantir que não divimos por 0 caso esteja no dia 0
             const maxDays = Math.max(10, ...trendPoints.map(p => p.days));
 
-            // Grid Horizontal
             let gridHTML = '';
             const steps = 4;
             for (let i = 0; i <= steps; i++) {
@@ -1376,7 +1467,6 @@
                 `;
             }
 
-            // Coordenadas
             const numPoints = trendPoints.length;
             const coords = trendPoints.map((p, idx) => {
                 let x = paddingLeft + 40; 
@@ -1390,7 +1480,6 @@
                 return { ...p, x, y };
             });
 
-            // Linha e Área com Curvas Bezier
             let curveD = '';
             let areaD = '';
             if (coords.length > 0) {
@@ -1412,18 +1501,12 @@
             let pointsHTML = '';
             coords.forEach((p) => {
                 pointsHTML += `
-                    <!-- Linha tracejada de ligação vertical -->
                     <line x1="${p.x}" y1="${p.y}" x2="${p.x}" y2="${paddingTop + chartHeight}" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4" />
-                    <!-- Ponto de marcação -->
                     <circle cx="${p.x}" cy="${p.y}" r="6" fill="#ffffff" stroke="#f59e0b" stroke-width="4" />
-                    
-                    <!-- Rótulo de Barras Total Dias Bem Destacado em Cima -->
                     <g transform="translate(${p.x - 24}, ${p.y - 45})">
                         <rect x="0" y="0" width="48" height="28" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" />
                         <text x="24" y="14" fill="#92400e" font-size="13" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">${p.days}d</text>
                     </g>
-
-                    <!-- Textos inferiores (Data e Título) -->
                     <text x="${p.x}" y="${svgHeight - 40}" fill="#475569" font-size="13" font-weight="800" text-anchor="middle" font-family="sans-serif">${p.label}</text>
                     <text x="${p.x}" y="${svgHeight - 24}" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" font-family="sans-serif">${p.date}</text>
                 `;
@@ -1435,7 +1518,6 @@
                 <path d="${curveD}" fill="none" stroke="url(#cycleLineGrad)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" />
             ` : '';
 
-            // Flash com Total Geral de Dias ao lado
             const flashHTML = `
                 <g transform="translate(${svgWidth - 210}, ${paddingTop - 20})">
                     <rect x="0" y="0" width="170" height="210" rx="20" fill="url(#flashCardGrad)" />
@@ -1478,9 +1560,8 @@
             `;
         }
 
-
         // ============================================================================================
-        // GERAÇÃO DE GRÁFICO COMPARATIVO GLOBAL COM DADOS FLUTUANTES INTEGRADOS NO GRÁFICO
+        // GERAÇÃO DE GRÁFICO COMPARATIVO GLOBAL (COM AS PORCENTAGENS ALINHADAS NOS FLASH CARDS)
         // ============================================================================================
         function generateComparativeChartSVG(inits, weeklies, harvests) {
             const sortedInits = sortRecordsByBloco(inits);
@@ -1524,10 +1605,10 @@
             });
 
             const svgWidth = 1000;
-            const svgHeight = 510;
+            const svgHeight = 450;
             const paddingLeft = 110;
             const paddingRight = 60;
-            const paddingTop = 80;
+            const paddingTop = 60;
             const paddingBottom = 110; 
 
             const chartWidth = svgWidth - paddingLeft - paddingRight;
@@ -1616,31 +1697,6 @@
                     <text x="${p.x}" y="${svgHeight - paddingBottom + 58}" fill="#0f172a" font-size="11" font-weight="600" font-style="italic" text-anchor="middle" font-family="sans-serif">${displayProduct}</text>
                     <text x="${p.x}" y="${svgHeight - paddingBottom + 76}" fill="${pointColor}" font-size="10" font-weight="900" text-anchor="middle" font-family="sans-serif" text-transform="uppercase" opacity="0.8">${p.status}</text>
                 `;
-
-                if (p.metrics) {
-                    const cardY = p.y + 15;
-                    const cardHeight = 108;
-                    const maxCardY = svgHeight - paddingBottom - 115; 
-                    const finalCardY = Math.min(cardY, maxCardY);
-
-                    trendLabelsHTML += `
-                        <g transform="translate(${p.x - 50}, ${finalCardY})">
-                            <rect x="0" y="0" width="100" height="${cardHeight}" rx="10" fill="#ffffff" stroke="${pointColor}" stroke-width="2" opacity="0.95" />
-                            
-                            <rect x="6" y="8" width="16" height="16" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
-                            <text x="28" y="20" fill="#78350f" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.und.toLocaleString('pt-PT')} un</text>
-                            
-                            <rect x="6" y="32" width="16" height="16" rx="4" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
-                            <text x="28" y="44" fill="#4c1d95" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.medG} g</text>
-                            
-                            <rect x="6" y="56" width="16" height="16" rx="4" fill="#fce7f3" stroke="#ec4899" stroke-width="1.5"/>
-                            <text x="28" y="68" fill="#831843" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.totKg} kg</text>
-
-                            <rect x="6" y="80" width="16" height="16" rx="4" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="1.5"/>
-                            <text x="28" y="92" fill="#0369a1" font-size="12" font-weight="900" text-anchor="start" font-family="sans-serif">${p.metrics.boxes} cx</text>
-                        </g>
-                    `;
-                }
             });
 
             let curveD = '';
@@ -1662,19 +1718,20 @@
                 <path d="${curveD}" fill="none" stroke="url(#compLineGrad)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" />
             ` : '';
 
+            // Construção das Listas Flash Cards separadas
             const totalUnd = chartData.reduce((acc, curr) => acc + (curr.metrics ? curr.metrics.und : 0), 0);
             const totalKg = chartData.reduce((acc, curr) => acc + (curr.metrics ? curr.metrics.totKg : 0), 0);
             const maxMedG = Math.max(...chartData.map(d => d.metrics ? d.metrics.medG : 0), 1);
 
             let listUnd = chartData.map(d => {
                 if (!d.metrics) return '';
-                const pct = totalUnd > 0 ? ((d.metrics.und / totalUnd) * 100).toFixed(1) : 0;
+                const pct = totalUnd > 0 ? Math.round((d.metrics.und / totalUnd) * 100) : 0;
                 return `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #e2e8f0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #e2e8f0;">
                         <span style="color: #475569; font-size: 13px; font-weight: 700;">${d.bloco}</span>
-                        <div style="text-align: right;">
-                            <span style="color: #0f172a; font-size: 14px; font-weight: 900;">${d.metrics.und.toLocaleString('pt-PT')} un</span>
-                            <span style="color: #64748b; font-size: 12px; font-weight: 700; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; margin-left: 6px; display: inline-block; width: 45px; text-align: center;">${pct}%</span>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #0f172a; font-size: 15px; font-weight: 900;">${d.metrics.und.toLocaleString('pt-PT')} un</span>
+                            <span style="color: #64748b; font-size: 12px; font-weight: 800; background: #f1f5f9; padding: 3px 8px; border-radius: 6px; text-align: center; min-width: 35px;">${pct}%</span>
                         </div>
                     </div>
                 `;
@@ -1682,13 +1739,13 @@
 
             let listKg = chartData.map(d => {
                 if (!d.metrics) return '';
-                const pct = totalKg > 0 ? ((d.metrics.totKg / totalKg) * 100).toFixed(1) : 0;
+                const pct = totalKg > 0 ? Math.round((d.metrics.totKg / totalKg) * 100) : 0;
                 return `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #e2e8f0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #e2e8f0;">
                         <span style="color: #475569; font-size: 13px; font-weight: 700;">${d.bloco}</span>
-                        <div style="text-align: right;">
-                            <span style="color: #0f172a; font-size: 14px; font-weight: 900;">${d.metrics.totKg.toLocaleString('pt-PT')} kg</span>
-                            <span style="color: #64748b; font-size: 12px; font-weight: 700; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; margin-left: 6px; display: inline-block; width: 45px; text-align: center;">${pct}%</span>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #0f172a; font-size: 15px; font-weight: 900;">${d.metrics.totKg.toLocaleString('pt-PT')} kg</span>
+                            <span style="color: #64748b; font-size: 12px; font-weight: 800; background: #f1f5f9; padding: 3px 8px; border-radius: 6px; text-align: center; min-width: 35px;">${pct}%</span>
                         </div>
                     </div>
                 `;
@@ -1696,13 +1753,13 @@
 
             let listMedG = chartData.map(d => {
                 if (!d.metrics) return '';
-                const pct = maxMedG > 0 ? ((d.metrics.medG / maxMedG) * 100).toFixed(1) : 0;
+                const pct = maxMedG > 0 ? Math.round((d.metrics.medG / maxMedG) * 100) : 0;
                 return `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #e2e8f0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #e2e8f0;">
                         <span style="color: #475569; font-size: 13px; font-weight: 700;">${d.bloco}</span>
-                        <div style="text-align: right;">
-                            <span style="color: #0f172a; font-size: 14px; font-weight: 900;">${d.metrics.medG.toLocaleString('pt-PT')} g</span>
-                            <span style="color: #64748b; font-size: 12px; font-weight: 700; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; margin-left: 6px; display: inline-block; width: 45px; text-align: center;" title="Proporção ao lote mais pesado">${pct}%</span>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #0f172a; font-size: 15px; font-weight: 900;">${d.metrics.medG.toLocaleString('pt-PT')} g</span>
+                            <span style="color: #64748b; font-size: 12px; font-weight: 800; background: #f1f5f9; padding: 3px 8px; border-radius: 6px; text-align: center; min-width: 35px;" title="Proporção ao lote mais pesado">${pct}%</span>
                         </div>
                     </div>
                 `;
@@ -1783,7 +1840,7 @@
         }
 
         // ============================================================================================
-        // GERAÇÃO DE GRÁFICO DE CAIXAS POR TESTE (BARRAS + PIZZA)
+        // GERAÇÃO DE GRÁFICO DE CAIXAS POR TESTE (BARRAS + PIZZA COM FLASH CARD EXTERNO)
         // ============================================================================================
         function generateBoxesChartSVG(inits, harvests) {
             const sortedInits = sortRecordsByBloco(inits);
@@ -1806,14 +1863,13 @@
             const svgWidth = 1000;
             const svgHeight = 450;
             const paddingLeft = 80;
-            const paddingRightBar = 400; // Espaço reservado para o gráfico de pizza à direita
+            const paddingRightBar = 400; // Espaço reservado para a pizza
             const paddingTop = 60;
-            const paddingBottom = 80; 
+            const paddingBottom = 100; // Aumentado para rótulos legíveis em baixo
 
             const chartWidth = svgWidth - paddingLeft - paddingRightBar;
             const chartHeight = svgHeight - paddingTop - paddingBottom;
 
-            // Linhas de Grade e Eixo Y
             let gridHTML = '';
             const steps = 4;
             for(let i=0; i<=steps; i++) {
@@ -1826,7 +1882,6 @@
                 `;
             }
 
-            // Cálculo das Barras e Linha de Tendência
             const numPoints = chartData.length;
             const bucketWidth = chartWidth / numPoints;
             
@@ -1852,16 +1907,16 @@
                 linePointsHTML += `
                     <line x1="${p.x}" y1="${p.y}" x2="${p.x}" y2="${p.y - 10}" stroke="#b45309" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.5" />
                     <circle cx="${p.x}" cy="${p.y}" r="5" fill="#ffffff" stroke="#d97706" stroke-width="3" />
-                    <text x="${p.x}" y="${p.y - 18}" fill="#92400e" font-size="12" font-weight="900" text-anchor="middle" font-family="sans-serif">${p.boxes} cx</text>
+                    <text x="${p.x}" y="${p.y - 18}" fill="#92400e" font-size="13" font-weight="900" text-anchor="middle" font-family="sans-serif">${p.boxes} cx</text>
                 `;
 
+                // Nomes em tamanho perfeitamente visível
                 labelsHTML += `
-                    <text x="${p.x}" y="${svgHeight - paddingBottom + 20}" fill="#475569" font-size="12" font-weight="800" text-anchor="middle" font-family="sans-serif">${p.name}</text>
-                    <text x="${p.x}" y="${svgHeight - paddingBottom + 36}" fill="#94a3b8" font-size="10" font-weight="700" text-anchor="middle" font-family="sans-serif">${p.culture}</text>
+                    <text x="${p.x}" y="${svgHeight - paddingBottom + 24}" fill="#475569" font-size="14" font-weight="800" text-anchor="middle" font-family="sans-serif">${p.name}</text>
+                    <text x="${p.x}" y="${svgHeight - paddingBottom + 42}" fill="#94a3b8" font-size="12" font-weight="700" text-anchor="middle" font-family="sans-serif">${p.culture}</text>
                 `;
             });
 
-            // Curva da Linha de Tendência
             let curveD = '';
             if (coords.length > 0) {
                 curveD = `M ${coords[0].x} ${coords[0].y}`;
@@ -1881,11 +1936,10 @@
                 <path d="${curveD}" fill="none" stroke="url(#boxesLineGrad)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
             ` : '';
 
-            // GRÁFICO DE PIZZA (Percentagem de Caixas)
+            // GRÁFICO DE PIZZA
             let pieHTML = '';
             let pieLegendHTML = '';
 
-            // Flash Card no lugar do texto anterior
             const flashCardHTML = `
                 <g transform="translate(680, 25)">
                     <rect x="0" y="0" width="240" height="70" rx="14" fill="url(#flashBoxesGrad)" />
@@ -1923,7 +1977,6 @@
 
                     pieHTML += `<path d="${path}" fill="${color}" stroke="#ffffff" stroke-width="2" />`;
 
-                    // Rótulo dentro da fatia
                     if (sliceAngle > 0.15) {
                         const midAngle = currentAngle + sliceAngle / 2;
                         const labelX = pieCx + (pieR * 0.65) * Math.cos(midAngle);
@@ -1936,7 +1989,6 @@
                     currentAngle = endAngle;
                 });
 
-                // Legenda em Grelha
                 let legX = 660;
                 let legY = pieCy + pieR + 30;
                 validData.forEach((d, i) => {
@@ -1954,15 +2006,16 @@
                 pieHTML = `<text x="800" y="240" fill="#94a3b8" font-size="14" font-weight="bold" text-anchor="middle" font-family="sans-serif">Sem colheitas (0 caixas)</text>`;
             }
 
+            // Geração de Flash Cards dinâmicos fora do SVG
             let listBoxes = chartData.map(d => {
                 if (d.boxes <= 0) return '';
-                const pct = totalBoxes > 0 ? ((d.boxes / totalBoxes) * 100).toFixed(1) : 0;
+                const pct = totalBoxes > 0 ? Math.round((d.boxes / totalBoxes) * 100) : 0;
                 return `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #fde68a;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #fde68a;">
                         <span style="color: #92400e; font-size: 14px; font-weight: 700;">${d.name} <span style="font-size: 11px; opacity: 0.7;">(${d.culture})</span></span>
-                        <div style="text-align: right;">
-                            <span style="color: #78350f; font-size: 15px; font-weight: 900;">${d.boxes.toLocaleString('pt-PT')} cx</span>
-                            <span style="color: #b45309; font-size: 13px; font-weight: 800; background: #fef3c7; padding: 2px 8px; border-radius: 6px; margin-left: 8px; display: inline-block; width: 50px; text-align: center;">${pct}%</span>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #78350f; font-size: 16px; font-weight: 900;">${d.boxes.toLocaleString('pt-PT')} cx</span>
+                            <span style="color: #b45309; font-size: 13px; font-weight: 800; background: #fef3c7; padding: 3px 8px; border-radius: 6px; text-align: center; min-width: 40px;">${pct}%</span>
                         </div>
                     </div>
                 `;
@@ -1972,7 +2025,7 @@
                 <div style="margin-top: 24px; background: #fffbeb; border: 2px solid #fde68a; border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                     <h4 style="margin: 0 0 16px 0; font-size: 16px; color: #b45309; font-weight: 900; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
                         <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                        Detalhamento Comercial: Caixas por Lote
+                        Detalhamento Comercial (Participação em Percentagem):
                     </h4>
                     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0 30px;">
                         ${listBoxes || '<div style="color:#b45309; font-size:14px; font-style:italic; grid-column: 1/-1;">Nenhum lote finalizado com caixas colhidas.</div>'}
@@ -1984,7 +2037,7 @@
                 <div style="width: 100%; margin-top: 10px;">
                     <span style="font-size: 16px; font-weight: 800; color: #92400e; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px; font-family: sans-serif; display: flex; align-items: center; gap: 8px;">
                         <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                        Análise de Produção Física: Total de Caixas por Teste
+                        Análise de Produção Física: Gráfico de Caixas por Teste
                     </span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgWidth} ${svgHeight}" style="width: 100%; height: auto; background: #ffffff; border-radius: 16px; border: 2px solid #fde68a; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
                         <defs>
@@ -2003,7 +2056,6 @@
                             </linearGradient>
                         </defs>
                         
-                        <!-- Área de Barras e Linha -->
                         ${gridHTML}
                         <line x1="${paddingLeft}" y1="${svgHeight - paddingBottom}" x2="${svgWidth - paddingRightBar}" y2="${svgHeight - paddingBottom}" stroke="#cbd5e1" stroke-width="2.5" />
                         ${barsHTML}
@@ -2011,10 +2063,8 @@
                         ${linePointsHTML}
                         ${labelsHTML}
 
-                        <!-- Separador -->
                         <line x1="${svgWidth - paddingRightBar + 20}" y1="40" x2="${svgWidth - paddingRightBar + 20}" y2="${svgHeight - 40}" stroke="#f1f5f9" stroke-width="2" stroke-dasharray="6 6" />
 
-                        <!-- Área de Pizza e Flash Card -->
                         ${flashCardHTML}
                         ${pieHTML}
                         ${pieLegendHTML}
@@ -2194,7 +2244,7 @@
             if (initialRecords.length === 0) {
                 container.innerHTML = `
                     <div class="p-12 text-center text-slate-400">
-                        <svg class="w-12 h-12 mx-auto mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                        <svg class="w-12 h-12 mx-auto mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                         <p class="font-bold text-slate-600 text-sm">Sem testes no ciclo</p>
                         <p class="text-xs text-slate-400 mt-1">Insira os Dados Iniciais de plantio para começar.</p>
                     </div>
@@ -2208,7 +2258,6 @@
             let totalMudas = 0;
             let totalColhidos = harvestRecords.length;
             
-            // Set para controlar se o ciclo já foi gerado para este Bloco
             const renderedCycleBlocks = new Set();
 
             sortedInitials.forEach(initRecord => {
@@ -2364,8 +2413,12 @@
 
                 const blockKey = initRecord.bloco + (initRecord.nBloco || '');
                 let cycleDaysChartHTML = '';
+                
+                // Regra para não repetir gráficos num mesmo Bloco
                 if (!renderedCycleBlocks.has(blockKey)) {
                     cycleDaysChartHTML = generateCycleDaysChartSVG(initRecord, relativeWeeklies, harvest);
+                    cycleDaysChartHTML += generatePlantingDataCard(initRecord);
+                    cycleDaysChartHTML += generateHealthHistogramSVG(relativeWeeklies);
                     renderedCycleBlocks.add(blockKey);
                 }
 
@@ -2423,7 +2476,7 @@
                             </div>
                             
                             ${cycleDaysChartHTML ? `
-                            <!-- Gráfico da Evolução dos Dias -->
+                            <!-- Secção de Gráficos do Ciclo e Saúde -->
                             <div class="mt-6 pt-6 border-t border-slate-200">
                                 ${cycleDaysChartHTML}
                             </div>
@@ -2742,6 +2795,8 @@
                     currentTestPage++;
                     
                     const cycleDaysSVG = generateCycleDaysChartSVG(initRecord, relativeWeeklies, harvest);
+                    const plantDataCard = generatePlantingDataCard(initRecord);
+                    const healthHist = generateHealthHistogramSVG(relativeWeeklies);
 
                     htmlContent += `
                         <div class="report-page-block" style="width: 1200px; min-height: 1697px; padding: 80px; background: #ffffff; margin-bottom: 40px; border: 3px solid #cbd5e1; box-sizing: border-box; page-break-after: always; position: relative; font-family: sans-serif; color: #1e293b; overflow: hidden; word-wrap: break-word;">
@@ -2768,8 +2823,16 @@
                             </div>
 
                             <!-- Gráfico de Evolução de Dias -->
-                            <div style="margin-bottom: 50px; margin-top: 40px;">
+                            <div style="margin-bottom: 20px; margin-top: 40px;">
                                 ${cycleDaysSVG}
+                            </div>
+                            
+                            <!-- Flash Cards de Plantio -->
+                            ${plantDataCard}
+
+                            <!-- Histograma de Vigor -->
+                            <div style="margin-bottom: 50px;">
+                                ${healthHist}
                             </div>
 
                             <div style="position: absolute; bottom: 40px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid #e2e8f0; padding-top: 24px; font-size: 16px; color: #94a3b8; font-weight: bold;">
@@ -2869,7 +2932,7 @@
                     </div>
                 `;
 
-                // NOVO: Adiciona a página da Análise de Produção em Caixas no final do relatório
+                // Adiciona a página da Análise de Produção em Caixas no final do relatório
                 const boxesSVG = generateBoxesChartSVG(sortedVisible, harvestRecords);
                 
                 htmlContent += `
