@@ -426,24 +426,8 @@
                             <input type="date" id="harvest-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600 focus:bg-white transition-all">
                         </div>
 
-                        <!-- Média em gramas -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
-                                Média (g) por planta/cabeça
-                            </label>
-                            <input type="number" step="any" id="harvest-average-gm" required placeholder="Ex: 450.5" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
-                        </div>
-
-                        <!-- Total Colhido (Unidades), Total kg e Total Caixas -->
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                                    Total Colhido (Unidades)
-                                </label>
-                                <input type="number" id="harvest-total-harvested" oninput="calculateHarvestAverages()" required placeholder="Ex: 3800" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
-                            </div>
+                        <!-- LINHA 1: Entradas Manuais -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                                     <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
@@ -458,17 +442,28 @@
                                 </label>
                                 <input type="number" id="harvest-total-boxes" oninput="calculateHarvestAverages()" required placeholder="Ex: 150" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
                             </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1 text-oasis-700">
+                                    <svg class="w-3.5 h-3.5 text-oasis-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+                                    Média (Und/Caixa)
+                                </label>
+                                <input type="number" step="any" id="harvest-avg-un-box" oninput="calculateHarvestAverages()" required placeholder="Ex: 25.5" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oasis-600">
+                            </div>
                         </div>
 
-                        <!-- Novo: Médias por Caixa (Auto-Calculado) -->
-                        <div class="grid grid-cols-2 gap-4 mt-2">
+                        <!-- LINHA 2: Campos Calculados Automaticamente -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">Média (Kg/Caixa)</label>
-                                <input type="text" id="harvest-avg-kg-box" readonly placeholder="Calculado auto..." class="w-full bg-slate-100 text-slate-600 font-bold border border-slate-200 rounded-xl px-3 py-2 text-sm cursor-not-allowed">
+                                <input type="text" id="harvest-avg-kg-box" readonly placeholder="Auto..." class="w-full bg-slate-100 text-slate-600 font-bold border border-slate-200 rounded-xl px-3 py-2 text-sm cursor-not-allowed">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">Média (Und/Caixa)</label>
-                                <input type="text" id="harvest-avg-un-box" readonly placeholder="Calculado auto..." class="w-full bg-slate-100 text-slate-600 font-bold border border-slate-200 rounded-xl px-3 py-2 text-sm cursor-not-allowed">
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">Total Colhido (Und)</label>
+                                <input type="text" id="harvest-total-harvested" readonly placeholder="Auto..." class="w-full bg-slate-100 text-slate-600 font-bold border border-slate-200 rounded-xl px-3 py-2 text-sm cursor-not-allowed">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1 text-amber-700">Média (g) por cabeça</label>
+                                <input type="text" id="harvest-average-gm" readonly placeholder="Auto..." class="w-full bg-amber-50 text-amber-900 font-extrabold border border-amber-200 rounded-xl px-3 py-2 text-sm cursor-not-allowed">
                             </div>
                         </div>
 
@@ -769,9 +764,12 @@
             const now = new Date();
             const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
             document.getElementById('harvest-date').value = dateStr;
+            document.getElementById('harvest-total-kg').value = '';
             document.getElementById('harvest-total-boxes').value = '';
-            document.getElementById('harvest-avg-kg-box').value = '';
             document.getElementById('harvest-avg-un-box').value = '';
+            document.getElementById('harvest-avg-kg-box').value = '';
+            document.getElementById('harvest-total-harvested').value = '';
+            document.getElementById('harvest-average-gm').value = '';
 
             tempHarvestPhotos = [];
             updateHarvestPhotosDisplay();
@@ -876,19 +874,31 @@
             updateWeeklyPhotosDisplay();
         }
 
+        // NOVA LÓGICA DE CÁLCULO DA COLHEITA
         function calculateHarvestAverages() {
-            const und = parseFloat(document.getElementById('harvest-total-harvested').value) || 0;
             const kg = parseFloat(document.getElementById('harvest-total-kg').value) || 0;
             const boxes = parseFloat(document.getElementById('harvest-total-boxes').value) || 0;
+            const avgUnBox = parseFloat(document.getElementById('harvest-avg-un-box').value) || 0;
             
             if (boxes > 0) {
-                const avgKg = (kg / boxes).toFixed(2);
-                const avgUn = (und / boxes).toFixed(1);
-                document.getElementById('harvest-avg-kg-box').value = `${avgKg} Kg`;
-                document.getElementById('harvest-avg-un-box').value = `${avgUn} un`;
+                const avgKg = (kg / boxes);
+                document.getElementById('harvest-avg-kg-box').value = `${avgKg.toFixed(2)} Kg`;
+
+                if (avgUnBox > 0) {
+                    // Média Gramas (Cabeça): ((Total Kg / Total Caixas) / Media Unid por Caixa) * 1000
+                    const avgGms = (avgKg / avgUnBox) * 1000;
+                    document.getElementById('harvest-average-gm').value = avgGms.toFixed(1);
+                    
+                    // Opcional: Total de unidades também calculado sozinho com base nas caixas
+                    document.getElementById('harvest-total-harvested').value = Math.round(boxes * avgUnBox);
+                } else {
+                    document.getElementById('harvest-average-gm').value = '';
+                    document.getElementById('harvest-total-harvested').value = '';
+                }
             } else {
                 document.getElementById('harvest-avg-kg-box').value = '';
-                document.getElementById('harvest-avg-un-box').value = '';
+                document.getElementById('harvest-average-gm').value = '';
+                document.getElementById('harvest-total-harvested').value = '';
             }
         }
 
@@ -1266,11 +1276,16 @@
             document.getElementById('harvest-edit-id').value = record.id;
             document.getElementById('harvest-test-parent').value = record.parentId;
             document.getElementById('harvest-date').value = record.date || '';
-            document.getElementById('harvest-average-gm').value = record.averageGm || '';
-            document.getElementById('harvest-total-harvested').value = record.totalHarvested || '';
             document.getElementById('harvest-total-kg').value = record.totalKg || '';
             document.getElementById('harvest-total-boxes').value = record.totalBoxes || '';
             
+            // Popula Média Und/Caixa dinamicamente
+            if (record.totalHarvested && record.totalBoxes) {
+                document.getElementById('harvest-avg-un-box').value = (record.totalHarvested / record.totalBoxes).toFixed(1);
+            } else {
+                document.getElementById('harvest-avg-un-box').value = '';
+            }
+
             calculateHarvestAverages();
 
             tempHarvestPhotos = [...record.photos];
