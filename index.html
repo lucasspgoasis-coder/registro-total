@@ -561,7 +561,7 @@
 
     <!-- Script do Sistema -->
     <script>
-        // Bancos de dados locais (Sincronizados com o LocalStorage)
+        // Bancos de dados locais
         let initialRecords = [];
         let weeklyRecords = [];
         let harvestRecords = [];
@@ -572,8 +572,8 @@
         let tempHarvestPhotos = [];
 
         // Inicialização
-        window.addEventListener('DOMContentLoaded', () => {
-            loadStoredData();
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadStoredData();
             switchTab('initial');
             resetInitialForm();
             resetWeeklyForm();
@@ -581,22 +581,77 @@
             renderUnifiedHistory();
         });
 
-        // Carrega dados persistidos
-        function loadStoredData() {
-            const storedInit = localStorage.getItem('oasis_initial_records');
-            const storedWeekly = localStorage.getItem('oasis_weekly_records');
-            const storedHarvest = localStorage.getItem('oasis_harvest_records');
-           
-            if (storedInit) {
-                try { initialRecords = JSON.parse(storedInit); } catch(e) { initialRecords = []; }
-            }
-            if (storedWeekly) {
-                try { weeklyRecords = JSON.parse(storedWeekly); } catch(e) { weeklyRecords = []; }
-            }
-            if (storedHarvest) {
-                try { harvestRecords = JSON.parse(storedHarvest); } catch(e) { harvestRecords = []; }
+        // ==========================================
+        // IndexedDB Wrapper - Aumentar Armazenamento
+        // ==========================================
+        const DB_NAME = 'OasisDB';
+        const DB_VERSION = 1;
+        const STORE_INIT = 'initial_records';
+        const STORE_WEEKLY = 'weekly_records';
+        const STORE_HARVEST = 'harvest_records';
+
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onerror = event => reject("Erro ao abrir Banco de Dados (IndexedDB)");
+                request.onsuccess = event => resolve(event.target.result);
+                request.onupgradeneeded = event => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_INIT)) db.createObjectStore(STORE_INIT, { keyPath: 'id' });
+                    if (!db.objectStoreNames.contains(STORE_WEEKLY)) db.createObjectStore(STORE_WEEKLY, { keyPath: 'id' });
+                    if (!db.objectStoreNames.contains(STORE_HARVEST)) db.createObjectStore(STORE_HARVEST, { keyPath: 'id' });
+                };
+            });
+        }
+
+        async function saveToDB(storeName, dataArray) {
+            const db = await initDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                store.clear(); // Limpa existente para substituir
+                dataArray.forEach(item => store.put(item));
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+        }
+
+        async function loadStoredData() {
+            try {
+                const db = await initDB();
+                
+                const getStoreData = (storeName) => {
+                    return new Promise((resolve) => {
+                        const tx = db.transaction(storeName, 'readonly');
+                        const store = tx.objectStore(storeName);
+                        const request = store.getAll();
+                        request.onsuccess = () => resolve(request.result);
+                        request.onerror = () => resolve([]); 
+                    });
+                };
+
+                initialRecords = await getStoreData(STORE_INIT) || [];
+                weeklyRecords = await getStoreData(STORE_WEEKLY) || [];
+                harvestRecords = await getStoreData(STORE_HARVEST) || [];
+
+                // Fallback para migração dos dados antigos do LocalStorage caso o DB esteja vazio
+                if (initialRecords.length === 0 && localStorage.getItem('oasis_initial_records')) {
+                    try { initialRecords = JSON.parse(localStorage.getItem('oasis_initial_records')); } catch(e) {}
+                    try { weeklyRecords = JSON.parse(localStorage.getItem('oasis_weekly_records')); } catch(e) {}
+                    try { harvestRecords = JSON.parse(localStorage.getItem('oasis_harvest_records')); } catch(e) {}
+                    
+                    await saveToDB(STORE_INIT, initialRecords);
+                    await saveToDB(STORE_WEEKLY, weeklyRecords);
+                    await saveToDB(STORE_HARVEST, harvestRecords);
+                }
+            } catch (e) {
+                console.error("Erro ao carregar dados do IndexedDB", e);
+                initialRecords = [];
+                weeklyRecords = [];
+                harvestRecords = [];
             }
         }
+        // ==========================================
 
         // Nova Função de Ordenação Centralizada (Alfabética por Bloco e Numérica por nBloco)
         function sortRecordsByBloco(records) {
@@ -724,7 +779,7 @@
                 <span class="p-1.5 bg-oasis-100 text-oasis-700 rounded-lg">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </span>
-                Registo de Dados Iniciais
+                Registro de Dados Iniciais
             `;
             document.getElementById('init-submit-btn').innerHTML = `
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
@@ -874,7 +929,6 @@
             updateWeeklyPhotosDisplay();
         }
 
-        // NOVA LÓGICA DE CÁLCULO DA COLHEITA
         function calculateHarvestAverages() {
             const kg = parseFloat(document.getElementById('harvest-total-kg').value) || 0;
             const boxes = parseFloat(document.getElementById('harvest-total-boxes').value) || 0;
@@ -889,7 +943,6 @@
                     const avgGms = (avgKg / avgUnBox) * 1000;
                     document.getElementById('harvest-average-gm').value = avgGms.toFixed(1);
                     
-                    // Opcional: Total de unidades também calculado sozinho com base nas caixas
                     document.getElementById('harvest-total-harvested').value = Math.round(boxes * avgUnBox);
                 } else {
                     document.getElementById('harvest-average-gm').value = '';
@@ -1010,7 +1063,7 @@
             if (selectId) dropdown.value = selectId;
         }
 
-        function saveInitialRecord(event) {
+        async function saveInitialRecord(event) {
             event.preventDefault();
 
             const editId = document.getElementById('initial-edit-id').value;
@@ -1065,12 +1118,12 @@
                 showModalAlert('Sucesso', 'Dados iniciais guardados no histórico!', 'success');
             }
 
-            localStorage.setItem('oasis_initial_records', JSON.stringify(initialRecords));
+            await saveToDB(STORE_INIT, initialRecords);
             resetInitialForm();
             renderUnifiedHistory();
         }
 
-        function saveWeeklyRecord(event) {
+        async function saveWeeklyRecord(event) {
             event.preventDefault();
 
             const parentId = document.getElementById('weekly-test-parent').value;
@@ -1099,12 +1152,12 @@
                 showModalAlert('Sucesso', 'Evolução registada!', 'success');
             }
 
-            localStorage.setItem('oasis_weekly_records', JSON.stringify(weeklyRecords));
+            await saveToDB(STORE_WEEKLY, weeklyRecords);
             resetWeeklyForm();
             renderUnifiedHistory();
         }
 
-        function saveHarvestRecord(event) {
+        async function saveHarvestRecord(event) {
             event.preventDefault();
 
             const parentId = document.getElementById('harvest-test-parent').value;
@@ -1143,16 +1196,16 @@
                 showModalAlert('Sucesso', 'Colheita registada com sucesso!', 'success');
             }
 
-            localStorage.setItem('oasis_harvest_records', JSON.stringify(harvestRecords));
+            await saveToDB(STORE_HARVEST, harvestRecords);
             resetHarvestForm();
             renderUnifiedHistory();
         }
 
-        function toggleVisibility(id) {
+        async function toggleVisibility(id) {
             const index = initialRecords.findIndex(r => r.id === id);
             if (index !== -1) {
                 initialRecords[index].isVisible = !initialRecords[index].isVisible;
-                localStorage.setItem('oasis_initial_records', JSON.stringify(initialRecords));
+                await saveToDB(STORE_INIT, initialRecords);
                 renderUnifiedHistory();
             }
         }
@@ -1226,7 +1279,6 @@
             showModalAlert('Cancelado', 'Edição de dados iniciais cancelada.', 'info');
         }
 
-        // Truncar para o cancelamento
         function cancelWeeklyEdit() {
             resetWeeklyForm();
             showModalAlert('Cancelado', 'Edição de acompanhamento cancelada.', 'info');
@@ -1279,7 +1331,6 @@
             document.getElementById('harvest-total-kg').value = record.totalKg || '';
             document.getElementById('harvest-total-boxes').value = record.totalBoxes || '';
             
-            // Popula Média Und/Caixa dinamicamente
             if (record.totalHarvested && record.totalBoxes) {
                 document.getElementById('harvest-avg-un-box').value = (record.totalHarvested / record.totalBoxes).toFixed(1);
             } else {
@@ -1307,39 +1358,38 @@
         }
 
         function deleteInitialRecord(id) {
-            showModalConfirm('Confirmar Remoção', 'Deseja realmente eliminar este teste inicial e todas as suas evoluções correspondentes?', () => {
+            showModalConfirm('Confirmar Remoção', 'Deseja realmente eliminar este teste inicial e todas as suas evoluções correspondentes?', async () => {
                 initialRecords = initialRecords.filter(r => r.id !== id);
                 weeklyRecords = weeklyRecords.filter(w => w.parentId !== id);
                 harvestRecords = harvestRecords.filter(h => h.parentId !== id);
-                localStorage.setItem('oasis_initial_records', JSON.stringify(initialRecords));
-                localStorage.setItem('oasis_weekly_records', JSON.stringify(weeklyRecords));
-                localStorage.setItem('oasis_harvest_records', JSON.stringify(harvestRecords));
+                await saveToDB(STORE_INIT, initialRecords);
+                await saveToDB(STORE_WEEKLY, weeklyRecords);
+                await saveToDB(STORE_HARVEST, harvestRecords);
                 renderUnifiedHistory();
                 showModalAlert('Removido', 'Registo removido com sucesso.', 'success');
             });
         }
 
-        // Deleta um registro semanal
         function deleteWeeklyRecord(id) {
-            showModalConfirm('Confirmar Remoção', 'Deseja realmente apagar esta nota de acompanhamento evolutivo?', () => {
+            showModalConfirm('Confirmar Remoção', 'Deseja realmente apagar esta nota de acompanhamento evolutivo?', async () => {
                 weeklyRecords = weeklyRecords.filter(w => w.id !== id);
-                localStorage.setItem('oasis_weekly_records', JSON.stringify(weeklyRecords));
+                await saveToDB(STORE_WEEKLY, weeklyRecords);
                 renderUnifiedHistory();
                 showModalAlert('Removido', 'Evolução apagada com sucesso.', 'success');
             });
         }
 
         function deleteHarvestRecord(id) {
-            showModalConfirm('Confirmar Remoção', 'Deseja realmente remover os dados de fecho de colheita para este teste?', () => {
+            showModalConfirm('Confirmar Remoção', 'Deseja realmente remover os dados de fecho de colheita para este teste?', async () => {
                 harvestRecords = harvestRecords.filter(h => h.parentId !== id);
-                localStorage.setItem('oasis_harvest_records', JSON.stringify(harvestRecords));
+                await saveToDB(STORE_HARVEST, harvestRecords);
                 renderUnifiedHistory();
                 showModalAlert('Removido', 'Os dados de colheita foram removidos.', 'success');
             });
         }
 
         function clearSystemData() {
-            showModalConfirm('Limpeza Completa', 'Atenção! Esta ação limpará absolutamente todos os registos de testes do seu histórico local permanentemente. Deseja prosseguir?', () => {
+            showModalConfirm('Limpeza Completa', 'Atenção! Esta ação limpará absolutamente todos os registos de testes do seu histórico local permanentemente. Deseja prosseguir?', async () => {
                 localStorage.removeItem('oasis_initial_records');
                 localStorage.removeItem('oasis_weekly_records');
                 localStorage.removeItem('oasis_harvest_records');
@@ -1347,6 +1397,10 @@
                 initialRecords = [];
                 weeklyRecords = [];
                 harvestRecords = [];
+
+                await saveToDB(STORE_INIT, []);
+                await saveToDB(STORE_WEEKLY, []);
+                await saveToDB(STORE_HARVEST, []);
 
                 resetInitialForm();
                 resetWeeklyForm();
@@ -1364,7 +1418,7 @@
         }
 
         // ============================================================================================
-        // GERAÇÃO DOS FLASH CARDS DE DADOS DE PLANTIO (APÓS GRÁFICO DO CICLO)
+        // GERAÇÃO DOS FLASH CARDS DE DADOS DE PLANTIO
         // ============================================================================================
         function generatePlantingDataCard(initRecord) {
             return `
@@ -1390,7 +1444,7 @@
         }
 
         // ============================================================================================
-        // GERAÇÃO DE GRÁFICO DE EVOLUÇÃO DE DIAS (TEMPO DE PLANTIO)
+        // GERAÇÃO DE GRÁFICO DE EVOLUÇÃO DE DIAS
         // ============================================================================================
         function generateCycleDaysChartSVG(initRecord, relativeWeeklies, harvest) {
             const refDate = initRecord.plantDate || initRecord.date;
@@ -1541,11 +1595,19 @@
         }
 
         // ============================================================================================
-        // GERAÇÃO DE GRÁFICO COMPARATIVO GLOBAL (COM AS PORCENTAGENS ALINHADAS NOS FLASH CARDS)
+        // GERAÇÃO DE GRÁFICO COMPARATIVO GLOBAL 
         // ============================================================================================
         function generateComparativeChartSVG(inits, weeklies, harvests) {
             const sortedInits = sortRecordsByBloco(inits);
             if (sortedInits.length <= 1) return '';
+
+            // Encontrar máximos para calcular a percentagem ponderada baseada no Rendimento de Caixas e Media de g
+            let maxMedG = 1;
+            let maxBoxes = 1;
+            harvests.forEach(h => {
+                if ((h.averageGm || 0) > maxMedG) maxMedG = h.averageGm;
+                if ((h.totalBoxes || 0) > maxBoxes) maxBoxes = h.totalBoxes;
+            });
 
             const chartData = sortedInits.map(init => {
                 const h = harvests.find(x => x.parentId === init.id);
@@ -1556,8 +1618,11 @@
                 let metrics = null;
                 
                 if (h) {
-                    const seedlings = init.seedlings > 0 ? init.seedlings : 1;
-                    finalScore = Math.min(100, ((h.totalHarvested || 0) / seedlings) * 100);
+                    // A fórmula cruza o quão perto o lote ficou da Média Máxima de Gramas (50%) e Total Máximo de Caixas (50%)
+                    const scoreMedG = ((h.averageGm || 0) / maxMedG) * 50;
+                    const scoreBoxes = ((h.totalBoxes || 0) / maxBoxes) * 50;
+                    finalScore = Math.min(100, scoreMedG + scoreBoxes);
+                    
                     status = 'Colhido (Rendimento)';
                     metrics = {
                         und: h.totalHarvested || 0,
@@ -1585,11 +1650,11 @@
             });
 
             const svgWidth = 1000;
-            const svgHeight = 450;
+            const svgHeight = 450; 
             const paddingLeft = 110;
             const paddingRight = 60;
             const paddingTop = 60;
-            const paddingBottom = 130; 
+            const paddingBottom = 60; 
 
             const chartWidth = svgWidth - paddingLeft - paddingRight;
             const chartHeight = svgHeight - paddingTop - paddingBottom;
@@ -1669,13 +1734,9 @@
                     </g>
                 `;
 
-                let displayProduct = p.product.length > 25 ? p.product.substring(0, 22) + '...' : p.product;
-
+                // Adiciona apenas o número do teste no eixo X (sem inclinação)
                 trendLabelsHTML += `
-                    <text x="${p.x}" y="${svgHeight - paddingBottom + 28}" fill="#475569" font-size="18" font-weight="900" text-anchor="middle" font-family="sans-serif">${p.bloco}</text>
-                    <text x="${p.x}" y="${svgHeight - paddingBottom + 50}" fill="#94a3b8" font-size="14" font-weight="700" text-anchor="middle" font-family="sans-serif">${p.name}</text>
-                    <text x="${p.x}" y="${svgHeight - paddingBottom + 70}" fill="#0f172a" font-size="12" font-weight="600" font-style="italic" text-anchor="middle" font-family="sans-serif">${displayProduct}</text>
-                    <text x="${p.x}" y="${svgHeight - paddingBottom + 90}" fill="${pointColor}" font-size="11" font-weight="900" text-anchor="middle" font-family="sans-serif" text-transform="uppercase" opacity="0.8">${p.status}</text>
+                    <text x="${p.x}" y="${svgHeight - paddingBottom + 30}" fill="#475569" font-size="16" font-weight="900" text-anchor="middle" font-family="sans-serif">${idx + 1}</text>
                 `;
             });
 
@@ -1698,10 +1759,31 @@
                 <path d="${curveD}" fill="none" stroke="url(#compLineGrad)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" />
             ` : '';
 
-            // Construção das Listas Flash Cards separadas
+            // Construção da Legenda (Flash Card Grid)
+            let legendHTML = `
+                <div style="margin-top: 16px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <h4 style="margin: 0 0 12px 0; font-size: 13px; color: #475569; font-weight: 800; text-transform: uppercase;">Legenda dos Testes</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;">
+            `;
+            
+            chartData.forEach((p, idx) => {
+                let displayProduct = p.product.length > 25 ? p.product.substring(0, 22) + '...' : p.product;
+                legendHTML += `
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <div style="background: #3b82f6; color: #ffffff; width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; flex-shrink: 0;">${idx + 1}</div>
+                        <div style="line-height: 1.3;">
+                            <strong style="color: #0f172a; font-size: 13px; display: block;">${p.bloco}</strong>
+                            <span style="color: #475569; font-size: 12px; font-weight: 600;">${p.name}</span><br>
+                            <span style="color: #64748b; font-size: 11px; font-style: italic;">${displayProduct}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            legendHTML += `</div></div>`;
+
+            // Construção das Listas Flash Cards separadas de Estatísticas
             const totalUnd = chartData.reduce((acc, curr) => acc + (curr.metrics ? curr.metrics.und : 0), 0);
             const totalKg = chartData.reduce((acc, curr) => acc + (curr.metrics ? curr.metrics.totKg : 0), 0);
-            const maxMedG = Math.max(...chartData.map(d => d.metrics ? d.metrics.medG : 0), 1);
 
             let listUnd = chartData.map(d => {
                 if (!d.metrics) return '';
@@ -1772,7 +1854,7 @@
                 <div style="width: 100%; margin-top: 10px;">
                     <span style="font-size: 16px; font-weight: 800; color: #4c1d95; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px; font-family: sans-serif; display: flex; align-items: center; gap: 8px;">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                        Comparativo Global de Desempenho (Entre Lotes Visíveis)
+                        Comparativo Global de Desempenho (Cálculo Ponderado)
                     </span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgWidth} ${svgHeight}" style="width: 100%; height: auto; background: #ffffff; border-radius: 16px; border: 2px solid #ddd6fe; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
                         <defs>
@@ -1814,13 +1896,14 @@
                         ${linePointsHTML}
                         ${trendLabelsHTML}
                     </svg>
+                    ${legendHTML}
                     ${statsHTML}
                 </div>
             `;
         }
 
         // ============================================================================================
-        // GERAÇÃO DE GRÁFICO DE CAIXAS POR TESTE (BARRAS + PIZZA COM FLASH CARD EXTERNO)
+        // GERAÇÃO DE GRÁFICO DE CAIXAS POR TESTE
         // ============================================================================================
         function generateBoxesChartSVG(inits, harvests) {
             const sortedInits = sortRecordsByBloco(inits);
@@ -1841,11 +1924,11 @@
             const maxBoxes = Math.max(10, ...chartData.map(d => d.boxes)) * 1.2;
 
             const svgWidth = 1000;
-            const svgHeight = 450;
+            const svgHeight = 440; 
             const paddingLeft = 80;
-            const paddingRightBar = 400; // Espaço reservado para a pizza
+            const paddingRightBar = 400; 
             const paddingTop = 60;
-            const paddingBottom = 100; // Aumentado para rótulos legíveis em baixo
+            const paddingBottom = 60; 
 
             const chartWidth = svgWidth - paddingLeft - paddingRightBar;
             const chartHeight = svgHeight - paddingTop - paddingBottom;
@@ -1876,7 +1959,7 @@
             let linePointsHTML = '';
             let labelsHTML = '';
 
-            coords.forEach(p => {
+            coords.forEach((p, idx) => {
                 const barWidth = Math.max(30, Math.min(60, bucketWidth * 0.6));
                 const barX = p.x - (barWidth / 2);
                 
@@ -1884,7 +1967,6 @@
                     <rect x="${barX}" y="${p.y}" width="${barWidth}" height="${p.rawHeight}" fill="url(#boxesBarGrad)" rx="6" ry="6" />
                 `;
 
-                // Nomes dentro da barra verticalmente
                 if (p.rawHeight > 45) {
                     const barCenterX = barX + barWidth / 2;
                     const textY = p.y + p.rawHeight - 12;
@@ -1897,10 +1979,9 @@
                     <text x="${p.x}" y="${p.y - 18}" fill="#92400e" font-size="13" font-weight="900" text-anchor="middle" font-family="sans-serif">${p.boxes} cx</text>
                 `;
 
-                // Nomes em tamanho perfeitamente visível na base
+                // Adiciona apenas o número do teste no eixo X (sem inclinação)
                 labelsHTML += `
-                    <text x="${p.x}" y="${svgHeight - paddingBottom + 24}" fill="#475569" font-size="16" font-weight="900" text-anchor="middle" font-family="sans-serif">${p.name}</text>
-                    <text x="${p.x}" y="${svgHeight - paddingBottom + 44}" fill="#94a3b8" font-size="13" font-weight="700" text-anchor="middle" font-family="sans-serif">${p.culture}</text>
+                    <text x="${p.x}" y="${svgHeight - paddingBottom + 30}" fill="#475569" font-size="16" font-weight="900" text-anchor="middle" font-family="sans-serif">${idx + 1}</text>
                 `;
             });
 
@@ -1923,7 +2004,6 @@
                 <path d="${curveD}" fill="none" stroke="url(#boxesLineGrad)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
             ` : '';
 
-            // GRÁFICO DE PIZZA
             let pieHTML = '';
             let pieLegendHTML = '';
 
@@ -1993,7 +2073,26 @@
                 pieHTML = `<text x="800" y="240" fill="#94a3b8" font-size="14" font-weight="bold" text-anchor="middle" font-family="sans-serif">Sem colheitas (0 caixas)</text>`;
             }
 
-            // Geração de Flash Cards dinâmicos fora do SVG
+            // Construção da Legenda (Flash Card Grid)
+            let legendHTML = `
+                <div style="margin-top: 16px; background: #fffbeb; border: 2px solid #fde68a; border-radius: 12px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <h4 style="margin: 0 0 12px 0; font-size: 13px; color: #b45309; font-weight: 800; text-transform: uppercase;">Legenda dos Lotes</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;">
+            `;
+            
+            chartData.forEach((p, idx) => {
+                legendHTML += `
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div style="background: #f59e0b; color: #ffffff; width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; flex-shrink: 0;">${idx + 1}</div>
+                        <div style="line-height: 1.2;">
+                            <strong style="color: #78350f; font-size: 13px; display: block;">${p.name}</strong>
+                            <span style="color: #92400e; font-size: 12px;">${p.culture}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            legendHTML += `</div></div>`;
+
             let listBoxes = chartData.map(d => {
                 if (d.boxes <= 0) return '';
                 const pct = totalBoxes > 0 ? Math.round((d.boxes / totalBoxes) * 100) : 0;
@@ -2056,6 +2155,7 @@
                         ${pieHTML}
                         ${pieLegendHTML}
                     </svg>
+                    ${legendHTML}
                     ${boxesStatsHTML}
                 </div>
             `;
@@ -2081,7 +2181,7 @@
             } else if(yieldPercent >= 80) {
                 avaliacao = 'uma ótima taxa de sobrevivência, apontando que o tratamento auxiliou positivamente no desenvolvimento saudável e na viabilidade comercial das cabeças';
             } else if(yieldPercent >= 60) {
-                avaliacao = 'um desenvolvimento vegetativo satisfatório; a aplicação demonstrotou efeitos práticos na cultura, embora ainda haja potencial para otimização do estande e redução de quebras';
+                avaliacao = 'um desenvolvimento vegetativo satisfatório; a aplicação demonstrou efeitos práticos na cultura, embora ainda haja potencial para otimização do estande e redução de quebras';
             } else {
                 avaliacao = 'um rendimento geral abaixo do ideal, sugerindo a necessidade de revisão do protocolo adotado para evitar perdas ou estresse fisiológico e melhoria efetiva da cabeça';
             }
@@ -2422,7 +2522,6 @@
                 const blockKey = initRecord.bloco + (initRecord.nBloco || '');
                 let cycleDaysChartHTML = '';
                 
-                // Regra para não repetir gráficos num mesmo Bloco
                 if (!renderedCycleBlocks.has(blockKey)) {
                     cycleDaysChartHTML = generateCycleDaysChartSVG(initRecord, relativeWeeklies, harvest);
                     cycleDaysChartHTML += generatePlantingDataCard(initRecord);
@@ -2483,7 +2582,6 @@
                             </div>
                             
                             ${cycleDaysChartHTML ? `
-                            <!-- Secção de Gráficos do Ciclo e Saúde -->
                             <div class="mt-6 pt-6 border-t border-slate-200">
                                 ${cycleDaysChartHTML}
                             </div>
@@ -2578,12 +2676,12 @@
             if (modalOnConfirm) {
                 const action = modalOnConfirm;
                 modalOnConfirm = null;
-                action();
+                action(); 
             }
         }
 
         // ====================================================================
-        // GERAÇÃO DE RELATÓRIOS PARA JPG E PDF (ESTRUTURA DE PÁGINAS ESTRIBO)
+        // GERAÇÃO DE RELATÓRIOS PARA JPG E PDF
         // ====================================================================
         function generateOffscreenContentHTML(visibleInits) {
             let htmlContent = '';
