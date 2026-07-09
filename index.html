@@ -1967,12 +1967,6 @@
                     <rect x="${barX}" y="${p.y}" width="${barWidth}" height="${p.rawHeight}" fill="url(#boxesBarGrad)" rx="6" ry="6" />
                 `;
 
-                if (p.rawHeight > 45) {
-                    const barCenterX = barX + barWidth / 2;
-                    const textY = p.y + p.rawHeight - 12;
-                    barsHTML += `<text transform="rotate(-90 ${barCenterX} ${textY})" x="${barCenterX}" y="${textY}" fill="#ffffff" font-size="16" font-weight="900" text-anchor="start" font-family="sans-serif" style="pointer-events: none; text-shadow: 1px 1px 3px rgba(0,0,0,0.4);">${p.name}</text>`;
-                }
-
                 linePointsHTML += `
                     <line x1="${p.x}" y1="${p.y}" x2="${p.x}" y2="${p.y - 10}" stroke="#b45309" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.5" />
                     <circle cx="${p.x}" cy="${p.y}" r="5" fill="#ffffff" stroke="#d97706" stroke-width="3" />
